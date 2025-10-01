@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimized Code Generator Suite</title>
+    <!-- Bootstrap 5.0.2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <!-- External Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    
+    <style>
+        .card-header,h1,h2,h3,h4,h5,h6{color:#f8f9fa}:root{--primary-gradient:linear-gradient(135deg, #007bff, #260064);--primary-gradient-hover:linear-gradient(135deg, #260064, #007bff);--success-gradient:linear-gradient(135deg, #09ad30, #003b0d);--success-gradient-hover:linear-gradient(135deg, #003b0d, #09ad30);--secondary-gradient:linear-gradient(135deg, #707070, #2b2b2b);--secondary-gradient-hover:linear-gradient(135deg, #2b2b2b, #707070);--dark-bg:#1e1e2d;--darker-bg:#2a2a40;--card-bg:#2a2a40;--text-primary:#e9ecef;--text-secondary:#adb5bd;--border-color:#495057}body{background-color:var(--dark-bg);color:var(--text-primary);font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;line-height:1.6}.container{max-width:1200px}.card{background-color:var(--card-bg);border:none;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,.15)}.form-control,.form-select,textarea{border:1px solid var(--border-color)}.card-header{background-color:#343a40;border-bottom:1px solid var(--border-color)}.form-control,.form-control:focus,.form-select,.form-select:focus,textarea{background-color:var(--darker-bg);color:var(--text-primary)}.form-control,.form-select{transition:border-color .3s,box-shadow .3s}.form-control:focus,.form-select:focus{border-color:#6c757d;box-shadow:0 0 0 .25rem rgba(0,123,255,.25)}.btn{border:none;color:#fff;font-weight:500;transition:.3s;position:relative;overflow:hidden}.btn::after{content:'';position:absolute;top:50%;left:50%;width:0;height:0;background:rgba(255,255,255,.2);border-radius:50%;transform:translate(-50%,-50%);transition:width .3s,height .3s}.btn-primary:hover,.btn-secondary:hover,.btn-success:hover{transform:translateY(-2px);box-shadow:0 6px 12px rgba(0,0,0,.2)}.btn:hover::after{width:300px;height:300px}.btn-primary{background:var(--primary-gradient)}.btn-primary:hover{background:var(--primary-gradient-hover)}.btn-success{background:var(--success-gradient)}.btn-success:hover{background:var(--success-gradient-hover)}.btn-secondary{background:var(--secondary-gradient)}.btn-secondary:hover{background:var(--secondary-gradient-hover)}.btn-outline-primary{border-color:#007bff;color:#007bff;background:0 0}.btn-outline-primary:hover{background-color:#007bff;color:#fff}.nav-tabs .nav-link,.table th{background-color:#343a40}textarea{border-radius:5px;font-family:'Courier New',monospace}textarea::placeholder{color:#6c757d}.nav-tabs{border-bottom:1px solid var(--border-color)}.nav-tabs .nav-link{color:var(--text-secondary);border:1px solid var(--border-color);border-bottom:none;border-radius:5px 5px 0 0;margin-right:5px;padding:12px 24px;font-weight:500;transition:.3s}.nav-tabs .nav-link.active{background-color:var(--card-bg);color:#f8f9fa;border-color:var(--border-color);border-bottom-color:var(--card-bg)}.nav-tabs .nav-link:hover,.table{color:var(--text-primary)}.nav-tabs .nav-link:hover{background-color:#3a3a50}.tab-content{background-color:var(--card-bg);border:1px solid var(--border-color);border-top:none;border-radius:0 0 5px 5px;padding:20px}.table td,.table th{border-color:var(--border-color)}.table td{background-color:var(--darker-bg)}.glosary-item h2,.hero-section{border-bottom:1px solid var(--border-color)}.glossary-row{background-color:#2c2400!important}.bg-gray-300 td{background:#3a2a2a!important;color:#a0a0a0!important;text-decoration:line-through}.pdf-color{color:#e74c3c}.fa-link{color:#2c6fbb}.output-box{background:var(--dark-bg);border-radius:8px;padding:1rem;font-family:monospace;color:var(--text-primary);border:1px solid var(--border-color)}.copy-btn{float:right}.preview-box{max-height:400px;overflow:auto;color:#fff}.glossaryBtnMain{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}.glosary-item{margin-top:20px}.glosary-item h2{color:#17a2b8;padding-bottom:5px;margin-bottom:15px}.glosary-item div{margin-bottom:20px;line-height:1.6}.custom-glossary{padding:20px;background-color:var(--card-bg);border-radius:8px;box-shadow:0 4px 6px rgba(0,0,0,.1)}.hero-section{background:linear-gradient(135deg,var(--dark-bg) 0,var(--darker-bg) 100%);padding:30px 0;margin-bottom:30px}.hero-section h1{font-size:2.5rem;font-weight:700;background:linear-gradient(to right,#007bff,#17a2b8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-align:center}.hero-section p{color:var(--text-secondary);text-align:center;max-width:800px;margin:0 auto}.status-indicator{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px}.status-ready{background-color:#28a745}.status-processing{background-color:#ffc107}.status-error{background-color:#dc3545}.file-info,.tooltip-inner{background-color:var(--darker-bg)}.file-info{border-radius:5px;padding:10px;margin-top:10px;display:none}.alphabet-buttons{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-bottom:20px}.alphabet-buttons button{flex:0 0 calc(100% / 13 - 5px);max-width:calc(100% / 13 - 5px)}.progress-container{margin:15px 0;display:none}.fade-in{animation:.5s fadeIn}@keyframes fadeIn{from{opacity:0}to{opacity:1}}.tooltip-inner{color:var(--text-primary)}.tooltip.bs-tooltip-top .tooltip-arrow::before{border-top-color:var(--darker-bg)}.tooltip.bs-tooltip-bottom .tooltip-arrow::before{border-bottom-color:var(--darker-bg)}.tooltip.bs-tooltip-start .tooltip-arrow::before{border-left-color:var(--darker-bg)}.tooltip.bs-tooltip-end .tooltip-arrow::before{border-right-color:var(--darker-bg)}@media (max-width:768px){.alphabet-buttons button{flex:0 0 calc(100% / 7 - 5px);max-width:calc(100% / 7 - 5px)}.btn-lg{padding:.5rem 1rem;font-size:.9rem}.hero-section h1{font-size:2rem}}
+    </style>
+</head>
+<body>
+
+    <div class="hero-section">
+        <div class="container">
+            <h1>Optimized Code Generator Suite</h1>
+            <p class="lead">Generate glossary and resource codes from your documents with enhanced performance and beautiful UI</p>
+        </div>
+    </div>
+
+    <div class="container mb-5">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="glossary-tab" data-bs-toggle="tab" data-bs-target="#glossary" type="button" role="tab" aria-controls="glossary" aria-selected="true">
+                    <i class="fas fa-book me-2"></i>Glossary Generator
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="resources-tab" data-bs-toggle="tab" data-bs-target="#resources" type="button" role="tab" aria-controls="resources" aria-selected="false">
+                    <i class="fas fa-file-excel me-2"></i>Resource Generator
+                </button>
+            </li>
+        </ul>
+        
+        <div class="tab-content" id="myTabContent">
+            <!-- Glossary Tab -->
+            <div class="tab-pane fade show active" id="glossary" role="tabpanel" aria-labelledby="glossary-tab">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-4">
+                            <h3 class="mb-3"><i class="fas fa-file-word text-primary me-2"></i>Upload DOCX File</h3>
+                            <hr class="bg-primary">
+                            <input class="form-control" type="file" id="fileInput" accept=".docx" />
+                            <div class="file-info" id="glossaryFileInfo"></div>
+                        </div>
+                        
+                        <div class="progress-container" id="glossaryProgress">
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                            </div>
+                            <div class="text-center mt-2" id="glossaryProgressText">Processing...</div>
+                        </div>
+        
+                        <div class="d-grid gap-2 d-md-block mb-4">
+                            <button class="btn btn-primary btn-lg me-2 mb-2" onclick="uploadFile()">
+                                <i class="fas fa-upload me-2"></i>Upload File
+                            </button>
+                            <button class="btn btn-success btn-lg me-2 mb-2" onclick="generateGlossary()">
+                                <i class="fas fa-code me-2"></i>Generate Glossary Code
+                            </button>
+                            <button class="btn btn-secondary btn-lg mb-2" onclick="copyToClipboard('glossaryCode')">
+                                <i class="fas fa-copy me-2"></i>Copy Code
+                            </button>
+                        </div>
+                        
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Preview</h5>
+                            </div>
+                            <div class="card-body preview-box" id="glossaryPreview">
+                                Preview will appear here after generation
+                            </div>
+                        </div>
+                    </div>
+        
+                    <div class="col-md-6">
+                        <h3 class="mb-3"><i class="fas fa-code text-success me-2"></i>Generated Code</h3>
+                        <hr class="bg-success">
+                        <textarea class="form-control" id="glossaryCode" rows="15" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Resources Tab -->
+            <div class="tab-pane fade" id="resources" role="tabpanel" aria-labelledby="resources-tab">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-4">
+                            <h3 class="mb-3"><i class="fas fa-file-excel text-success me-2"></i>Upload Excel File</h3>
+                            <hr class="bg-success">
+                            <input id="resourceFileInput" type="file" accept=".xlsx,.xls" class="form-control"/>
+                            <div class="file-info" id="resourceFileInfo"></div>
+                        </div>
+                        
+                        <div class="progress-container" id="resourceProgress">
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                            </div>
+                            <div class="text-center mt-2" id="resourceProgressText">Processing...</div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-block mb-4">
+                            <button class="btn btn-primary btn-lg mb-2" onclick="processResourceFile()">
+                                <i class="fas fa-upload me-2"></i>Process File
+                            </button>
+                            <button class="btn btn-secondary btn-lg mb-2" onclick="copyToClipboard('htmlOutput')">
+                                <i class="fas fa-copy me-2"></i>Copy HTML
+                            </button>
+                        </div>
+                        
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Preview</h5>
+                            </div>
+                            <div class="card-body preview-box" id="resourcePreview">
+                                Preview will appear here after processing
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <h3 class="mb-3"><i class="fas fa-code text-primary me-2"></i>Generated HTML</h3>
+                        <hr class="bg-primary">
+                        <textarea class="form-control" id="htmlOutput" rows="15" readonly>HTML will appear here</textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5.0.2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <script>
+        // ========== COMMON UTILITY FUNCTIONS ==========
+        
+        function showFileInfo(e,t){let n=e.files[0];if(!n)return;let o=document.getElementById(t),i=(n.size/1024).toFixed(2);o.innerHTML=`\n                <div class="d-flex justify-content-between">\n                    <span><strong>Name:</strong> ${n.name}</span>\n                    <span><strong>Size:</strong> ${i} KB</span>\n                </div>\n                <div><strong>Type:</strong> ${n.type||"Unknown"}</div>\n            `,o.style.display="block"}function showProgress(e,t,n="Processing..."){let o=document.getElementById(e),i=document.getElementById(t);o.style.display="block",i.textContent=n;let s=o.querySelector(".progress-bar");s.style.width="0%";let r=0,l=setInterval(()=>{r>=90?clearInterval(l):(r+=5,s.style.width=r+"%")},100);return l}function hideProgress(e,t){clearInterval(t);let n=document.getElementById(e);n.querySelector(".progress-bar").style.width="100%",setTimeout(()=>{n.style.display="none"},500)}function copyToClipboard(e){let t=document.getElementById(e),n=t.value||t.textContent;n&&""!==n.trim()?navigator.clipboard.writeText(n).then(()=>{showNotification("Code copied to clipboard!","success")}).catch(e=>{console.error("Could not copy text: ",e),showNotification("Failed to copy text. Please try again.","error")}):showNotification("No content to copy!","warning")}function showNotification(e,t="info"){document.querySelectorAll(".custom-notification").forEach(e=>e.remove());let n=document.createElement("div");n.className=`custom-notification alert alert-${"error"===t?"danger":t} fade show`,n.style.cssText="\n                position: fixed;\n                top: 20px;\n                right: 20px;\n                z-index: 9999;\n                min-width: 300px;\n                box-shadow: 0 4px 12px rgba(0,0,0,0.15);\n            ",n.innerHTML=`\n                <div class="d-flex justify-content-between align-items-center">\n                    <span>${e}</span>\n                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>\n                </div>\n            `,document.body.appendChild(n),setTimeout(()=>{n.parentNode&&n.remove()},3e3)}document.addEventListener("DOMContentLoaded",function(){document.getElementById("fileInput").addEventListener("change",function(){showFileInfo(this,"glossaryFileInfo")}),document.getElementById("resourceFileInput").addEventListener("change",function(){showFileInfo(this,"resourceFileInfo")})});
+        
+        // ========== GLOSSARY GENERATOR FUNCTIONS ==========
+        
+        function uploadFile(){const e=document.getElementById("fileInput").files[0];if(!e)return void showNotification("Please select a file to upload.","warning");const t=showProgress("glossaryProgress","glossaryProgressText","Reading DOCX file..."),s=new FileReader;s.onload=function(e){const s=e.target.result;document.getElementById("glossaryProgressText").textContent="Converting DOCX to HTML...",mammoth.convertToHtml({arrayBuffer:s}).then(e=>{const s=e.value;document.getElementById("glossaryProgressText").textContent="Parsing glossary data...",parseGlossaryData(s,t)}).catch(e=>{console.error(e),hideProgress("glossaryProgress",t),showNotification("Error reading the file. Please try again.","error")})},s.onerror=function(){hideProgress("glossaryProgress",t),showNotification("Error reading the file. Please try again.","error")},s.readAsArrayBuffer(e)}function parseGlossaryData(e,t){try{const s=document.createElement("div");s.innerHTML=e;const r=[],n=s.getElementsByTagName("table");if(!(n.length>0))return hideProgress("glossaryProgress",t),void showNotification("No tables found in the document.","warning");{const e=n[0].getElementsByTagName("tr");for(let t=1;t<e.length;t++){const s=e[t].getElementsByTagName("td");if(2===s.length){const e=s[0].innerText.trim(),t=s[1].innerHTML.trim();e&&t&&r.push({term:e,definition:t})}}}0===r.length?(hideProgress("glossaryProgress",t),showNotification("No glossary terms found.","warning")):(localStorage.setItem("glossaryData",JSON.stringify(r)),hideProgress("glossaryProgress",t),showNotification(`Glossary data extracted successfully! Found ${r.length} terms.`,"success"))}catch(e){console.error("Error parsing glossary data:",e),hideProgress("glossaryProgress",t),showNotification("Error parsing glossary data. Please check the file format.","error")}}function generateGlossary(){const e=localStorage.getItem("glossaryData");if(e)try{const t=JSON.parse(e),s={};t.forEach(e=>{const t=e.term.trim(),r=e.definition.trim(),n=t.charAt(0).toUpperCase();s[n]||(s[n]=[]),s[n].push({term:t,definition:r})});let r="",n="";for(let e=65;e<=90;e++){const t=String.fromCharCode(e);r+=`<button class="glossaryBtn btn btn-outline-primary m-1 ${"A"===t?"active":""}" onclick="openItem('${t}', event)">${t}</button>\n`,n+=`<div id="${t}" class="result-container glosary-item" style="display:${"A"===t?"block":"none"};">\n`,s[t]?.length>0?s[t].forEach(e=>{n+=`<h2>${e.term}</h2>\n<div>${e.definition}</div>\n`}):n+=`<h2>${t}</h2><p>No terms found</p>\n`,n+="</div>\n"}const o=`\n            <style>\n                .active.glossaryBtn,\n                .glossaryBtn:hover {\n                    background: black !important;\n                    transform: translateY(-4px) scale(1);\n                    transition: 0.2s;\n                    color: #ffbf00!important\n                }\n            </style>\n            <div class="custom-glossary">\n                <script>\n                    function openItem(glossaryItem, evt) {\n                        var items = document.getElementsByClassName("result-container");\n                        for (var i = 0; i < items.length; i++) {\n                            items[i].style.display = "none";\n                        }\n                        document.getElementById(glossaryItem).style.display = "block";\n\n                        var btns = document.getElementsByClassName("glossaryBtn");\n                        for (var j = 0; j < btns.length; j++) {\n                            btns[j].classList.remove("active");\n                        }\n                        evt.target.classList.add("active");\n                    }\n                <\/script>\n                <div class="container">\n                    <div class="glossaryBtnMain alphabet-buttons mb-3">\n                        ${r}\n                    </div>\n                    ${n}\n                </div>\n            </div>`;document.getElementById("glossaryCode").value=o,document.getElementById("glossaryPreview").innerHTML=o,showNotification("Glossary code generated successfully!","success")}catch(e){console.error("Error generating glossary:",e),showNotification("Error generating glossary. Please try again.","error")}else showNotification("Please upload and parse a DOCX file first.","warning")}
+
+        // ========== RESOURCE GENERATOR FUNCTIONS ==========
+        
+        function processResourceFile(){const e=document.getElementById("resourceFileInput").files[0];if(!e)return void showNotification("Please select a file to upload.","warning");const t=showProgress("resourceProgress","resourceProgressText","Reading Excel file..."),r=new FileReader;r.onload=function(e){try{document.getElementById("resourceProgressText").textContent="Processing Excel data...";const r=new Uint8Array(e.target.result),s=XLSX.read(r,{type:"array"}),l=s.Sheets[s.SheetNames[0]];document.getElementById("resourceProgressText").textContent="Generating HTML...",processSheet(l,t)}catch(e){console.error("Error processing resource file:",e),hideProgress("resourceProgress",t),showNotification("Error processing Excel file. Please check the format.","error")}},r.onerror=function(){hideProgress("resourceProgress",t),showNotification("Error reading the file. Please try again.","error")},r.readAsArrayBuffer(e)}const extractActualUrl=e=>e?"string"==typeof e?e:e.Target||e.target||e.url||e.href||e.Rel&&e.Rel.Target||"":"";function normCell(e){if(!e)return{text:"",url:"",isHyperlink:!1};if("object"==typeof e&&("v"in e||"w"in e||"l"in e||"t"in e)){let t=void 0!==e.w&&null!==e.w?e.w:e.v;"object"==typeof t&&(t=e.w||JSON.stringify(t)||"");let r=String(null==t?"":t).trim(),s=e.l||e.hyperlink||null,l=extractActualUrl(s)||(r&&(r.startsWith("http")||r.includes("://"))?r:"");return{text:r,url:l,isHyperlink:!!s}}let t=String(e||"").trim();return{text:t,url:t&&(t.startsWith("http")||t.includes("://"))?t:"",isHyperlink:!1}}function splitMulti(e){if(!e)return[];if("object"==typeof e&&e.l)return[normCell(e)];let t="object"==typeof e?void 0!==e.w?e.w:e.v:e;return t=null==t?"":String(t),t.trim()?t.split(/[\n;]+/).map(e=>{const t=e.trim();return{text:t,url:t&&(t.startsWith("http")||t.includes("://"))?t:"",isHyperlink:!1}}).filter(e=>e.text):[]}const pdfHref=e=>e&&e.url&&e.url.toString().trim()?e.url:"#";function linkDisplay(e){if(!e)return"";if(e.isHyperlink)return e.text||"";try{const t=new URL(e.url||e.text),r=t.hostname.toLowerCase();return r.includes("google.com")?"Google":r.includes("youtube.com")?"YouTube":r.includes("github.com")?"GitHub":t.hostname.replace("www.","").split(".")[0]||e.text}catch(t){return e.text||""}}function processSheet(e,t){try{const r={};for(const t in e)t.startsWith("!")||(r[t]=e[t]);const s=Math.max(...Object.keys(r).map(e=>XLSX.utils.decode_cell(e).r)),l=[];for(let e=0;e<=s;e++){const t=[];for(let s=0;s<10;s++){const l=XLSX.utils.encode_cell({r:e,c:s});t[s]=r[l]||null}l.push(t)}const o=l.find(e=>e.some(e=>e&&"string"==typeof e.v&&e.v.toLowerCase().includes("title"))),n=o?l.indexOf(o):0,i=l[n].map(e=>e?String(e.v||"").toLowerCase():""),a=i.findIndex(e=>e.includes("module")),c=i.findIndex(e=>e.includes("title")),d=i.findIndex(e=>e.includes("pdf")),u=i.findIndex(e=>e.includes("link"));let f=-1===c?1:c,h=-1===d?2:d,p=-1===u?3:u;const m=l.slice(n+1),g=[],x={},b=e=>/^Module\s*\d+:/.test(e),y=e=>{const t=e.match(/^(Module\s*\d+):/);return t?t[1]:null};let w="",k="",v="",$='<table class="table table-bordered table-sm"><thead><tr><th>Module</th><th>Title</th><th>PDFs</th><th>Links</th></tr></thead><tbody>';for(let e=0;e<m.length;e++){const t=m[e],r=a>=0&&t[a]?normCell(t[a]).text:"",s=h>=0&&t[h]?splitMulti(t[h]):[],l=p>=0&&t[p]?splitMulti(t[p]):[];let o=f>=0&&t[f]?normCell(t[f]).text:"";if(!(r||o||s.length||l.length))continue;if(!r&&o&&b(o)){const e=y(o);if(e){w=e+(o.match(/^(Module\s*\d+):\s*(.*)/)[2]?": "+o.match(/^(Module\s*\d+):\s*(.*)/)[2].trim():""),$+=`<tr class="table-info"><td colspan="4"><b>${w}</b></td></tr>`;continue}}if(r&&r.toLowerCase().includes("glossary")||o&&o.toLowerCase().includes("glossary")){v=l[0]?.url||s[0]?.url||"#",$+=`<tr class="glossary-row"><td colspan="2"><b><i class="fa fa-book"></i> Glossary</b></td><td>${s.map(e=>e.text?`<a href="${e.url||"#"}" target="_blank"><i class="fa fa-file-pdf pdf-color"></i> ${e.text}</a>`:"").join("<br>")}</td><td>${l.map(e=>`<a href="${e.url||"#"}" target="_blank"><i class="fa fa-link"></i> ${linkDisplay(e)}</a>`).join("<br>")}</td></tr>`;continue}if(o){if(b(o)){const e=y(o);e&&(w=e,o=o.replace(/^Module\s*\d+:\s*/,"").trim())}k=o;const e=(w||"")+"||"+k;if(!x[e]){const t={module:w||null,title:k,pdfs:[],links:[]};g.push(t),x[e]=t}}else if(!k)continue;const n=x[(w||"")+"||"+k];n&&(s.forEach(e=>{e&&e.text&&!n.pdfs.some(t=>t.text===e.text&&(t.url||"")===(e.url||""))&&n.pdfs.push(e)}),l.forEach(e=>{e&&e.text&&!n.links.some(t=>t.text===e.text&&(t.url||"")===(e.url||""))&&n.links.push(e)}));const i=0===s.length&&0===l.length?"bg-gray-300":"";$+=`<tr class="${i}"><td>${w?y(w)||w:""}</td><td>${k||""}</td><td>${s.map(e=>e.text?`<a href="${e.url||"#"}" target="_blank"><i class="fa fa-file-pdf pdf-color"></i> ${e.text}</a>`:"").join("<br>")}</td><td>${l.map(e=>`<a href="${e.url||"#"}" target="_blank"><i class="fa fa-link"></i> ${linkDisplay(e)}</a>`).join("<br>")}</td></tr>`}$+="</tbody></table>",document.getElementById("resourcePreview").innerHTML=$;const P=g.filter(e=>e.pdfs&&e.pdfs.length||e.links&&e.links.length);document.getElementById("htmlOutput").value=generateHTML(v||"#",P),hideProgress("resourceProgress",t),showNotification(`Resource HTML generated successfully! Processed ${P.length} resources.`,"success")}catch(e){console.error("Error processing sheet:",e),hideProgress("resourceProgress",t),showNotification("Error processing Excel data. Please check the file format.","error")}}function generateHTML(e,t){let r=`<style>.bg-black.rounded-md.shadow-md:hover {border-left: 4px solid #000;transform: translate(2px);transition: .1s;}.bg-yellow-400.rounded-md.shadow-md:hover {border-left: 4px solid #ffc107;transform: translate(2px);transition: .1s;}</style><div class="bg-black rounded-md shadow-md"><div class="bg-yellow-400 my-4 p-3 w-full"><h2 class="text-2xl leading-none m-0 flex items-center space-x-2"><i class="fa fa-book"></i><a href="${e}" target="_blank" class="text-blue-600 hover:underline">Glossary</a></h2></div></div>\n`;const s={},l=e=>{if(!e.links.length&&!e.pdfs.length)return"";let t='  <ul class="ml-8 list-none space-y-1">\n';for(const r of e.links){if(!r.text)continue;t+=`    <li><i class="fa fa-link text-blue-600 me-2"></i><a href="${r.url&&r.url.trim()?r.url:"#"}" target="_blank" class="text-blue-600 hover:underline">${linkDisplay(r)}</a></li>\n`}for(const r of e.pdfs){if(!r.text)continue;t+=`    <li><i class="fa fa-file-pdf text-red-600 me-2"></i><a href="${pdfHref(r)}" target="_blank" class="ml-1 text-red-600 hover:underline">${r.text}</a></li>\n`}return t+'  </ul><hr class="bg-yellow-400 border-0 mx-3 my-2 opacity-75 pt-1 shadow">\n'};let o=!1;for(const e of t)e.module&&(o=!0,(s[e.module]||(s[e.module]=[])).push(e));if(o)for(const[e,t]of Object.entries(s)){r+=`<div class="bg-yellow-400 rounded-md shadow-md"><div class="bg-gray-100 my-4 p-3 w-full"><h4 class="mb-2 text-2xl font-semibold flex items-center space-x-2"><i class="fa fa-book-open-reader text-green-600"></i><span>${e}</span></h4><hr class="bg-green-600 border border-green-600 mb-3 mt-0 opacity-75 pt-1">`;for(const e of t)r+=`  <h5 class="flex font-semibold items-center mx-3 space-x-2 text-xl"><i class="fa fa-check-circle text-yellow-400"></i><span>${e.title}</span></h5><hr class="bg-yellow-400 border-0 mx-3 my-2 opacity-75 pt-1 shadow">${l(e)}`;r+="</div></div>\n"}else for(const e of t)r+=`<div class="bg-yellow-400 rounded-md shadow-md"><div class="bg-gray-100 my-4 p-3 w-full"><h5 class="flex font-semibold items-center mx-3 space-x-2 text-xl"><i class="fa fa-check-circle text-yellow-400"></i><span>${e.title}</span></h5><hr class="bg-yellow-400 border-0 mx-3 my-2 opacity-75 pt-1 shadow">${l(e)}</div></div>\n`;return r}
+        
+    </script>
+</body>
+</html>
