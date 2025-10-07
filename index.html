@@ -3,154 +3,1047 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Optimized Code Generator Suite</title>
-    <!-- Bootstrap 5.0.2 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <!-- Font Awesome -->
+    <title>Course Content Generator Suite</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
-    <!-- External Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     
     <style>
-        .card-header,h1,h2,h3,h4,h5,h6{color:#f8f9fa}:root{--primary-gradient:linear-gradient(135deg, #007bff, #260064);--primary-gradient-hover:linear-gradient(135deg, #260064, #007bff);--success-gradient:linear-gradient(135deg, #09ad30, #003b0d);--success-gradient-hover:linear-gradient(135deg, #003b0d, #09ad30);--secondary-gradient:linear-gradient(135deg, #707070, #2b2b2b);--secondary-gradient-hover:linear-gradient(135deg, #2b2b2b, #707070);--dark-bg:#1e1e2d;--darker-bg:#2a2a40;--card-bg:#2a2a40;--text-primary:#e9ecef;--text-secondary:#adb5bd;--border-color:#495057}body{background-color:var(--dark-bg);color:var(--text-primary);font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;line-height:1.6}.container{max-width:1200px}.card{background-color:var(--card-bg);border:none;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,.15)}.form-control,.form-select,textarea{border:1px solid var(--border-color)}.card-header{background-color:#343a40;border-bottom:1px solid var(--border-color)}.form-control,.form-control:focus,.form-select,.form-select:focus,textarea{background-color:var(--darker-bg);color:var(--text-primary)}.form-control,.form-select{transition:border-color .3s,box-shadow .3s}.form-control:focus,.form-select:focus{border-color:#6c757d;box-shadow:0 0 0 .25rem rgba(0,123,255,.25)}.btn{border:none;color:#fff;font-weight:500;transition:.3s;position:relative;overflow:hidden}.btn::after{content:'';position:absolute;top:50%;left:50%;width:0;height:0;background:rgba(255,255,255,.2);border-radius:50%;transform:translate(-50%,-50%);transition:width .3s,height .3s}.btn-primary:hover,.btn-secondary:hover,.btn-success:hover{transform:translateY(-2px);box-shadow:0 6px 12px rgba(0,0,0,.2)}.btn:hover::after{width:300px;height:300px}.btn-primary{background:var(--primary-gradient)}.btn-primary:hover{background:var(--primary-gradient-hover)}.btn-success{background:var(--success-gradient)}.btn-success:hover{background:var(--success-gradient-hover)}.btn-secondary{background:var(--secondary-gradient)}.btn-secondary:hover{background:var(--secondary-gradient-hover)}.btn-outline-primary{border-color:#007bff;color:#007bff;background:0 0}.btn-outline-primary:hover{background-color:#007bff;color:#fff}.nav-tabs .nav-link,.table th{background-color:#343a40}textarea{border-radius:5px;font-family:'Courier New',monospace}textarea::placeholder{color:#6c757d}.nav-tabs{border-bottom:1px solid var(--border-color)}.nav-tabs .nav-link{color:var(--text-secondary);border:1px solid var(--border-color);border-bottom:none;border-radius:5px 5px 0 0;margin-right:5px;padding:12px 24px;font-weight:500;transition:.3s}.nav-tabs .nav-link.active{background-color:var(--card-bg);color:#f8f9fa;border-color:var(--border-color);border-bottom-color:var(--card-bg)}.nav-tabs .nav-link:hover,.table{color:var(--text-primary)}.nav-tabs .nav-link:hover{background-color:#3a3a50}.tab-content{background-color:var(--card-bg);border:1px solid var(--border-color);border-top:none;border-radius:0 0 5px 5px;padding:20px}.table td,.table th{border-color:var(--border-color)}.table td{background-color:var(--darker-bg)}.glosary-item h2,.hero-section{border-bottom:1px solid var(--border-color)}.glossary-row{background-color:#2c2400!important}.bg-gray-300 td{background:#3a2a2a!important;color:#a0a0a0!important;text-decoration:line-through}.pdf-color{color:#e74c3c}.fa-link{color:#2c6fbb}.output-box{background:var(--dark-bg);border-radius:8px;padding:1rem;font-family:monospace;color:var(--text-primary);border:1px solid var(--border-color)}.copy-btn{float:right}.preview-box{max-height:400px;overflow:auto;color:#fff}.glossaryBtnMain{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}.glosary-item{margin-top:20px}.glosary-item h2{color:#17a2b8;padding-bottom:5px;margin-bottom:15px}.glosary-item div{margin-bottom:20px;line-height:1.6}.custom-glossary{padding:20px;background-color:var(--card-bg);border-radius:8px;box-shadow:0 4px 6px rgba(0,0,0,.1)}.hero-section{background:linear-gradient(135deg,var(--dark-bg) 0,var(--darker-bg) 100%);padding:30px 0;margin-bottom:30px}.hero-section h1{font-size:2.5rem;font-weight:700;background:linear-gradient(to right,#007bff,#17a2b8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-align:center}.hero-section p{color:var(--text-secondary);text-align:center;max-width:800px;margin:0 auto}.status-indicator{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px}.status-ready{background-color:#28a745}.status-processing{background-color:#ffc107}.status-error{background-color:#dc3545}.file-info,.tooltip-inner{background-color:var(--darker-bg)}.file-info{border-radius:5px;padding:10px;margin-top:10px;display:none}.alphabet-buttons{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-bottom:20px}.alphabet-buttons button{flex:0 0 calc(100% / 13 - 5px);max-width:calc(100% / 13 - 5px)}.progress-container{margin:15px 0;display:none}.fade-in{animation:.5s fadeIn}@keyframes fadeIn{from{opacity:0}to{opacity:1}}.tooltip-inner{color:var(--text-primary)}.tooltip.bs-tooltip-top .tooltip-arrow::before{border-top-color:var(--darker-bg)}.tooltip.bs-tooltip-bottom .tooltip-arrow::before{border-bottom-color:var(--darker-bg)}.tooltip.bs-tooltip-start .tooltip-arrow::before{border-left-color:var(--darker-bg)}.tooltip.bs-tooltip-end .tooltip-arrow::before{border-right-color:var(--darker-bg)}.mod-1{background:#f9f9ff}.resource-list{margin-left:2rem}@media (max-width:768px){.alphabet-buttons button{flex:0 0 calc(100% / 7 - 5px);max-width:calc(100% / 7 - 5px)}.btn-lg{padding:.5rem 1rem;font-size:.9rem}.hero-section h1{font-size:2rem}}
+        :root {
+            --primary-gradient: linear-gradient(135deg, #007bff, #260064);
+            --primary-gradient-hover: linear-gradient(135deg, #260064, #007bff);
+            --success-gradient: linear-gradient(135deg, #09ad30, #003b0d);
+            --success-gradient-hover: linear-gradient(135deg, #003b0d, #09ad30);
+            --secondary-gradient: linear-gradient(135deg, #707070, #2b2b2b);
+            --secondary-gradient-hover: linear-gradient(135deg, #2b2b2b, #707070);
+            --dark-bg: #1e1e2d;
+            --darker-bg: #2a2a40;
+            --card-bg: #2a2a40;
+            --text-primary: #e9ecef;
+            --text-secondary: #adb5bd;
+            --border-color: #495057;
+        }
+        body { background-color: var(--dark-bg); color: var(--text-primary); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .hero-section { background: linear-gradient(135deg, var(--dark-bg) 0, var(--darker-bg) 100%); padding: 30px 0; margin-bottom: 30px; }
+        .hero-section h1 { font-size: 2.5rem; font-weight: 700; background: linear-gradient(to right, #007bff, #17a2b8); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-align: center; }
+        .card { background-color: var(--card-bg); border: none; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,.15); }
+        .card-header { background-color: #343a40; border-bottom: 1px solid var(--border-color); }
+        .form-control, textarea { background-color: var(--darker-bg); color: var(--text-primary); border: 1px solid var(--border-color); }
+        .btn-primary { background: var(--primary-gradient); border: none; }
+        .btn-success { background: var(--success-gradient); border: none; }
+        .btn-secondary { background: transparent; border: none; color: darkgrey;}
+        .btn-info { background: linear-gradient(135deg, #17a2b8, #0d3c45); border: none; }
+        .btn-hover:hover { transition: 0.2s; transform: translate(-3px, -5px) scale(1.02);}
+        .preview-box { max-height: 400px; overflow: auto; color: #fff; background: var(--dark-bg); border-radius: 8px; padding: 1rem; border: 1px solid var(--border-color); }
+        .preview-box .sbox { margin: 10px 0; border: 1px solid #f5f5f5; background: #fff; padding: 10px 18px; box-shadow: 0 0 0px 1px rgba(20,23,28,.1), 0 3px 1px 0 rgba(20,23,28,.1); color: #000; }
+        .preview-box .objective-tab-list { list-style-type: disc; margin-left: 20px; }
+        .file-info, .progress-container { display: none; }
+        .notification { position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px; }
+        .nav-tabs .nav-link { color: var(--text-secondary); border: 1px solid var(--border-color); border-bottom: none; border-radius: 5px 5px 0 0; margin-right: 5px; padding: 12px 24px; font-weight: 500; transition: .3s; }
+        .nav-tabs .nav-link.active { background-color: var(--card-bg); color: #f8f9fa; border-color: var(--border-color); border-bottom-color: var(--card-bg); }
+        .tab-content { background-color: var(--card-bg); border: 1px solid var(--border-color); border-top: none; border-radius: 0 0 5px 5px; padding: 20px; }
+        .glossaryBtnMain { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+        .glosary-item { margin-top: 20px; }
+        .glosary-item h2 { color: #17a2b8; border-bottom: 1px solid var(--border-color); padding-bottom: 5px; margin-bottom: 15px; }
+        .custom-glossary { padding: 20px; background-color: var(--card-bg); border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,.1); }
+        .alphabet-buttons { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; margin-bottom: 20px; }
+        .alphabet-buttons button { flex: 0 0 calc(100% / 13 - 5px); max-width: calc(100% / 13 - 5px); }
+        .pdf-color { color: #e74c3c; }
+        .fa-link { color: #2c6fbb; }
+        .glossary-row { background-color: #2c2400 !important; }
+        .bg-gray-300 td { background: #ff9191 !important; color: #7a0000 !important; text-decoration: line-through; text-decoration-style: double;}
+        @media (max-width: 768px) { .alphabet-buttons button { flex: 0 0 calc(100% / 7 - 5px); max-width: calc(100% / 7 - 5px); } }
+        textarea { scrollbar-width: thin; scrollbar-color: #c1c1c1 #2a2a40;}
+        a[download] { text-decoration: none !important; color: inherit !important; }
+        a[download]:hover, a[download]:focus { text-decoration: none !important; color: inherit !important; }
     </style>
 </head>
 <body>
-
-    <div class="hero-section">
-        <div class="container">
-            <h1>Optimized Code Generator Suite</h1>
-            <p class="lead">Generate glossary and resource codes from your documents with enhanced performance and beautiful UI</p>
-        </div>
+<div class="hero-section">
+    <div class="container">
+        <h1>Course Content Generator Suite</h1>
+        <p class="lead text-center text-light">Extract Overview, Syllabus, Glossary, and Resources from your documents</p>
     </div>
+</div>
 
-    <div class="container mb-5">
-        <ul class="nav nav-tabs" id="myTab" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="glossary-tab" data-bs-toggle="tab" data-bs-target="#glossary" type="button" role="tab" aria-controls="glossary" aria-selected="true">
-                    <i class="fas fa-book me-2"></i>Glossary Generator
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="resources-tab" data-bs-toggle="tab" data-bs-target="#resources" type="button" role="tab" aria-controls="resources" aria-selected="false">
-                    <i class="fas fa-file-excel me-2"></i>Resource Generator
-                </button>
-            </li>
-        </ul>
-        
-        <div class="tab-content" id="myTabContent">
-            <!-- Glossary Tab -->
-            <div class="tab-pane fade show active" id="glossary" role="tabpanel" aria-labelledby="glossary-tab">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="mb-4">
-                            <h3 class="mb-3"><i class="fas fa-file-word text-primary me-2"></i>Upload DOCX File</h3>
-                            <hr class="bg-primary">
-                            <input class="form-control" type="file" id="fileInput" accept=".docx" />
-                            <div class="file-info" id="glossaryFileInfo"></div>
-                        </div>
+<div class="container mb-5">
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="course-tab" data-bs-toggle="tab" data-bs-target="#course" type="button" role="tab" aria-controls="course" aria-selected="true">
+                <i class="fas fa-graduation-cap me-2"></i>Web Content Generator
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="glossary-tab" data-bs-toggle="tab" data-bs-target="#glossary" type="button" role="tab" aria-controls="glossary" aria-selected="false">
+                <i class="fas fa-book me-2"></i>Glossary Generator
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="resources-tab" data-bs-toggle="tab" data-bs-target="#resources" type="button" role="tab" aria-controls="resources" aria-selected="false">
+                <i class="fas fa-file-excel me-2"></i>Resource Generator
+            </button>
+        </li>
+    </ul>
+    
+    <div class="tab-content" id="myTabContent">
+        <!-- Course Content Tab -->
+        <div class="tab-pane fade show active" id="course" role="tabpanel" aria-labelledby="course-tab">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-4">
+                        <h3 class="mb-3"><i class="fas fa-file-word text-warning me-2"></i>Upload DOCX File</h3>
+                        <hr class="bg-warning">
                         
-                        <div class="progress-container" id="glossaryProgress">
-                            <div class="progress">
-                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
-                            </div>
-                            <div class="text-center mt-2" id="glossaryProgressText">Processing...</div>
-                        </div>
-        
-                        <div class="d-grid gap-2 d-md-block mb-4">
-                            <button class="btn btn-primary btn-lg me-2 mb-2" onclick="uploadFile()">
-                                <i class="fas fa-upload me-2"></i>Upload File
-                            </button>
-                            <button class="btn btn-success btn-lg me-2 mb-2" onclick="generateGlossary()">
-                                <i class="fas fa-code me-2"></i>Generate Glossary Code
-                            </button>
-                            <button class="btn btn-secondary btn-lg mb-2" onclick="copyToClipboard('glossaryCode')">
-                                <i class="fas fa-copy me-2"></i>Copy Code
+                        <!-- Demo File Download Button -->
+                        <div class="mb-3">
+                            <p>Download our demo file to check the required structure. Create your course file following the same format, then upload for easy website content code generation.</p>
+                            <button class="btn-hover btn btn-outline-primary btn-sm" onclick="downloadDemoFile()">
+                                <i class="fas fa-download me-2"></i>Download Demo File
                             </button>
                         </div>
                         
-                        <div class="card mt-4">
-                            <div class="card-header">
-                                <h5 class="mb-0">Preview</h5>
-                            </div>
-                            <div class="card-body preview-box" id="glossaryPreview">
-                                Preview will appear here after generation
-                            </div>
-                        </div>
+                        <input class="form-control" type="file" id="courseFileInput" accept=".docx" />
+                        <div class="file-info" id="courseFileInfo"></div>
+                    </div>
+                    
+                    <div class="progress-container" id="courseProgress">
+                        <div class="progress"><div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div></div>
+                        <div class="text-center mt-2" id="courseProgressText">Processing...</div>
                     </div>
         
-                    <div class="col-md-6">
-                        <h3 class="mb-3"><i class="fas fa-code text-success me-2"></i>Generated Code</h3>
-                        <hr class="bg-success">
-                        <textarea class="form-control" id="glossaryCode" rows="15" readonly></textarea>
+                    <div class="d-grid gap-2 d-md-block mb-4">
+                        <button class="btn-hover btn btn-primary btn-lg me-2 mb-2" onclick="uploadCourseFile()"><i class="fas fa-upload me-2"></i>Upload File</button>
+                        <button class="btn-hover btn btn-success btn-lg me-2 mb-2" onclick="generateOverviewCode()"><i class="fas fa-code me-2"></i>Generate Overview</button>
+                        <button class="btn-hover btn btn-success btn-lg me-2 mb-2" onclick="generateCourseObjectivesCode()"><i class="fas fa-code me-2"></i>Course Objectives</button>
+                        <button class="btn-hover btn btn-success btn-lg me-2 mb-2" onclick="generateSyllabusCode()"><i class="fas fa-code me-2"></i>Generate Syllabus</button>
+                        <button class="btn-hover btn btn-info btn-lg me-2 mb-2" onclick="debugExtraction()"><i class="fas fa-bug me-2"></i>Debug Extraction</button>
+                    </div>
+                </div>
+        
+                <div class="col-md-6">
+                    <h3 class="mb-3"><i class="fas fa-code text-warning me-2"></i>Overview Code</h3><hr class="bg-warning">
+                    <div class="position-relative">
+                        <div class="position-absolute end-0"><button class="btn-hover btn-secondary rounded-start-0 rounded-top text-bg-warning" onclick="copyToClipboard('overviewCode')"><i class="fas fa-copy"></i></button></div>
+                        <textarea class="form-control pe-4" id="overviewCode" rows="4" readonly></textarea>
+                    </div>
+                    
+                    <h3 class="mb-3 mt-4"><i class="fas fa-code text-warning me-2"></i>Course Objectives Code</h3><hr class="bg-warning">
+                    <div class="position-relative">
+                        <div class="position-absolute end-0"><button class="btn-hover btn-secondary rounded-start-0 rounded-top text-bg-warning" onclick="copyToClipboard('courseObjectivesCode')"><i class="fas fa-copy"></i></button></div>
+                        <textarea class="form-control pe-4" id="courseObjectivesCode" rows="4" readonly></textarea>    
+                    </div>
+                    
+                    <h3 class="mb-3 mt-4"><i class="fas fa-code text-warning me-2"></i>Syllabus Code</h3><hr class="bg-warning">
+                    <div class="position-relative">
+                        <div class="position-absolute end-0"><button class="btn-hover btn-secondary rounded-start-0 rounded-top text-bg-warning" onclick="copyToClipboard('syllabusCode')"><i class="fas fa-copy"></i></button></div>
+                        <textarea class="form-control pe-4" id="syllabusCode" rows="4" readonly></textarea>
                     </div>
                 </div>
             </div>
             
-            <!-- Resources Tab -->
-            <div class="tab-pane fade" id="resources" role="tabpanel" aria-labelledby="resources-tab">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="mb-4">
-                            <h3 class="mb-3"><i class="fas fa-file-excel text-success me-2"></i>Upload Excel File</h3>
-                            <hr class="bg-success">
-                            <input id="resourceFileInput" type="file" accept=".xlsx,.xls" class="form-control"/>
-                            <div class="file-info" id="resourceFileInfo"></div>
-                        </div>
-                        
-                        <div class="progress-container" id="resourceProgress">
-                            <div class="progress">
-                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
-                            </div>
-                            <div class="text-center mt-2" id="resourceProgressText">Processing...</div>
-                        </div>
-                        
-                        <div class="d-grid gap-2 d-md-block mb-4">
-                            <button class="btn btn-primary btn-lg mb-2" onclick="processResourceFile()">
-                                <i class="fas fa-upload me-2"></i>Process File
-                            </button>
-                            <button class="btn btn-secondary btn-lg mb-2" onclick="copyToClipboard('htmlOutput')">
-                                <i class="fas fa-copy me-2"></i>Copy HTML
-                            </button>
-                        </div>
-                        
-                        <div class="card mt-4">
-                            <div class="card-header">
-                                <h5 class="mb-0">Preview</h5>
-                            </div>
-                            <div class="card-body preview-box" id="resourcePreview">
-                                Preview will appear here after processing
-                            </div>
-                        </div>
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header"><h5 class="mb-0">Preview</h5></div>
+                        <div class="card-body preview-box" id="coursePreview">Preview will appear here after generation</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Glossary Tab -->
+        <div class="tab-pane fade" id="glossary" role="tabpanel" aria-labelledby="glossary-tab">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-4">
+                        <h3 class="mb-3"><i class="fas fa-file-word text-primary me-2"></i>Upload DOCX File</h3>
+                        <hr class="bg-primary">
+                        <input class="form-control" type="file" id="glossaryFileInput" accept=".docx" />
+                        <div class="file-info" id="glossaryFileInfo"></div>
                     </div>
                     
-                    <div class="col-md-6">
-                        <h3 class="mb-3"><i class="fas fa-code text-primary me-2"></i>Generated HTML</h3>
-                        <hr class="bg-primary">
-                        <textarea class="form-control" id="htmlOutput" rows="15" readonly>HTML will appear here</textarea>
+                    <div class="progress-container" id="glossaryProgress">
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                        </div>
+                        <div class="text-center mt-2" id="glossaryProgressText">Processing...</div>
+                    </div>
+    
+                    <div class="d-grid gap-2 d-md-block mb-4">
+                        <button class="btn-hover btn btn-primary btn-lg me-2 mb-2" onclick="uploadGlossaryFile()">
+                            <i class="fas fa-upload me-2"></i>Upload File
+                        </button>
+                        <button class="btn-hover btn btn-success btn-lg me-2 mb-2" onclick="generateGlossary()">
+                            <i class="fas fa-code me-2"></i>Generate Glossary Code
+                        </button>
+                    </div>
+                    
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Preview</h5>
+                        </div>
+                        <div class="card-body preview-box" id="glossaryPreview">
+                            Preview will appear here after generation
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h3 class="mb-3"><i class="fas fa-code text-success me-2"></i>Generated Code</h3>
+                    <hr class="bg-success">
+                    <div class="position-relative">
+                        <div class="position-absolute end-0">
+                            <button class="btn-hover btn-secondary rounded-start-0 rounded-top text-bg-warning" onclick="copyToClipboard('glossaryCode')"><i class="fas fa-copy"></i></button>
+                        </div>
+                        <textarea class="form-control" id="glossaryCode" rows="15" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Resources Tab -->
+        <div class="tab-pane fade" id="resources" role="tabpanel" aria-labelledby="resources-tab">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-4">
+                        <h3 class="mb-3"><i class="fas fa-file-excel text-success me-2"></i>Upload Excel File</h3>
+                        <hr class="bg-success">
+                        <input id="resourceFileInput" type="file" accept=".xlsx,.xls" class="form-control"/>
+                        <div class="file-info" id="resourceFileInfo"></div>
+                    </div>
+                    
+                    <div class="progress-container" id="resourceProgress">
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                        </div>
+                        <div class="text-center mt-2" id="resourceProgressText">Processing...</div>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-block mb-4">
+                        <button class="btn-hover btn btn-primary btn-lg mb-2" onclick="processResourceFile()">
+                            <i class="fas fa-upload me-2"></i>Process File
+                        </button>
+                    </div>
+                    
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Preview</h5>
+                        </div>
+                        <div class="card-body preview-box" id="resourcePreview">
+                            Preview will appear here after processing
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <h3 class="mb-3"><i class="fas fa-code text-primary me-2"></i>Generated HTML</h3>
+                    <hr class="bg-primary">
+                    <div class="position-relative">
+                        <div class="position-absolute end-0"><button class="btn-hover btn-secondary rounded-start-0 rounded-top text-bg-warning" onclick="copyToClipboard('htmlOutput')"><i class="fas fa-copy"></i></button></div>
+                        <textarea class="form-control" id="htmlOutput" rows="15" readonly></textarea>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Bootstrap 5.0.2 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script>
-        // ========== COMMON UTILITY FUNCTIONS ==========
-        
-        function showFileInfo(e,t){let n=e.files[0];if(!n)return;let o=document.getElementById(t),i=(n.size/1024).toFixed(2);o.innerHTML=`\n                <div class="d-flex justify-content-between">\n                    <span><strong>Name:</strong> ${n.name}</span>\n                    <span><strong>Size:</strong> ${i} KB</span>\n                </div>\n                <div><strong>Type:</strong> ${n.type||"Unknown"}</div>\n            `,o.style.display="block"}function showProgress(e,t,n="Processing..."){let o=document.getElementById(e),i=document.getElementById(t);o.style.display="block",i.textContent=n;let s=o.querySelector(".progress-bar");s.style.width="0%";let r=0,l=setInterval(()=>{r>=90?clearInterval(l):(r+=5,s.style.width=r+"%")},100);return l}function hideProgress(e,t){clearInterval(t);let n=document.getElementById(e);n.querySelector(".progress-bar").style.width="100%",setTimeout(()=>{n.style.display="none"},500)}function copyToClipboard(e){let t=document.getElementById(e),n=t.value||t.textContent;n&&""!==n.trim()?navigator.clipboard.writeText(n).then(()=>{showNotification("Code copied to clipboard!","success")}).catch(e=>{console.error("Could not copy text: ",e),showNotification("Failed to copy text. Please try again.","error")}):showNotification("No content to copy!","warning")}function showNotification(e,t="info"){document.querySelectorAll(".custom-notification").forEach(e=>e.remove());let n=document.createElement("div");n.className=`custom-notification alert alert-${"error"===t?"danger":t} fade show`,n.style.cssText="\n                position: fixed;\n                top: 20px;\n                right: 20px;\n                z-index: 9999;\n                min-width: 300px;\n                box-shadow: 0 4px 12px rgba(0,0,0,0.15);\n            ",n.innerHTML=`\n                <div class="d-flex justify-content-between align-items-center">\n                    <span>${e}</span>\n                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>\n                </div>\n            `,document.body.appendChild(n),setTimeout(()=>{n.parentNode&&n.remove()},3e3)}document.addEventListener("DOMContentLoaded",function(){document.getElementById("fileInput").addEventListener("change",function(){showFileInfo(this,"glossaryFileInfo")}),document.getElementById("resourceFileInput").addEventListener("change",function(){showFileInfo(this,"resourceFileInfo")})});
-        
-        // ========== GLOSSARY GENERATOR FUNCTIONS ==========
-        
-        function uploadFile(){const e=document.getElementById("fileInput").files[0];if(!e)return void showNotification("Please select a file to upload.","warning");const t=showProgress("glossaryProgress","glossaryProgressText","Reading DOCX file..."),s=new FileReader;s.onload=function(e){const s=e.target.result;document.getElementById("glossaryProgressText").textContent="Converting DOCX to HTML...",mammoth.convertToHtml({arrayBuffer:s}).then(e=>{const s=e.value;document.getElementById("glossaryProgressText").textContent="Parsing glossary data...",parseGlossaryData(s,t)}).catch(e=>{console.error(e),hideProgress("glossaryProgress",t),showNotification("Error reading the file. Please try again.","error")})},s.onerror=function(){hideProgress("glossaryProgress",t),showNotification("Error reading the file. Please try again.","error")},s.readAsArrayBuffer(e)}function parseGlossaryData(e,t){try{const s=document.createElement("div");s.innerHTML=e;const r=[],n=s.getElementsByTagName("table");if(!(n.length>0))return hideProgress("glossaryProgress",t),void showNotification("No tables found in the document.","warning");{const e=n[0].getElementsByTagName("tr");for(let t=1;t<e.length;t++){const s=e[t].getElementsByTagName("td");if(2===s.length){const e=s[0].innerText.trim(),t=s[1].innerHTML.trim();e&&t&&r.push({term:e,definition:t})}}}0===r.length?(hideProgress("glossaryProgress",t),showNotification("No glossary terms found.","warning")):(localStorage.setItem("glossaryData",JSON.stringify(r)),hideProgress("glossaryProgress",t),showNotification(`Glossary data extracted successfully! Found ${r.length} terms.`,"success"))}catch(e){console.error("Error parsing glossary data:",e),hideProgress("glossaryProgress",t),showNotification("Error parsing glossary data. Please check the file format.","error")}}function generateGlossary(){const e=localStorage.getItem("glossaryData");if(e)try{const t=JSON.parse(e),s={};t.forEach(e=>{const t=e.term.trim(),r=e.definition.trim(),n=t.charAt(0).toUpperCase();s[n]||(s[n]=[]),s[n].push({term:t,definition:r})});let r="",n="";for(let e=65;e<=90;e++){const t=String.fromCharCode(e);r+=`<button class="glossaryBtn btn btn-outline-primary m-1 ${"A"===t?"active":""}" onclick="openItem('${t}', event)">${t}</button>\n`,n+=`<div id="${t}" class="result-container glosary-item" style="display:${"A"===t?"block":"none"};">\n`,s[t]?.length>0?s[t].forEach(e=>{n+=`<h2>${e.term}</h2>\n<div>${e.definition}</div>\n`}):n+=`<h2>${t}</h2><p>No terms found</p>\n`,n+="</div>\n"}const o=`\n            <style>\n                .active.glossaryBtn,\n                .glossaryBtn:hover {\n                    background: black !important;\n                    transform: translateY(-4px) scale(1);\n                    transition: 0.2s;\n                    color: #ffbf00!important\n                }\n            </style>\n            <div class="custom-glossary">\n                <script>\n                    function openItem(glossaryItem, evt) {\n                        var items = document.getElementsByClassName("result-container");\n                        for (var i = 0; i < items.length; i++) {\n                            items[i].style.display = "none";\n                        }\n                        document.getElementById(glossaryItem).style.display = "block";\n\n                        var btns = document.getElementsByClassName("glossaryBtn");\n                        for (var j = 0; j < btns.length; j++) {\n                            btns[j].classList.remove("active");\n                        }\n                        evt.target.classList.add("active");\n                    }\n                <\/script>\n                <div class="container">\n                    <div class="glossaryBtnMain alphabet-buttons mb-3">\n                        ${r}\n                    </div>\n                    ${n}\n                </div>\n            </div>`;document.getElementById("glossaryCode").value=o,document.getElementById("glossaryPreview").innerHTML=o,showNotification("Glossary code generated successfully!","success")}catch(e){console.error("Error generating glossary:",e),showNotification("Error generating glossary. Please try again.","error")}else showNotification("Please upload and parse a DOCX file first.","warning")}
+<script>
+// ========== COMMON UTILITY FUNCTIONS ==========
 
-        // ========== RESOURCE GENERATOR FUNCTIONS ==========
+function showFileInfo(fileInput, fileInfoId) {
+    const file = fileInput.files[0];
+    if (!file) return;
+    const fileInfo = document.getElementById(fileInfoId);
+    const fileSize = (file.size / 1024).toFixed(2);
+    fileInfo.innerHTML = `
+        <div class="d-flex justify-content-between">
+            <span><strong>Name:</strong> ${file.name}</span>
+            <span><strong>Size:</strong> ${fileSize} KB</span>
+        </div>
+        <div><strong>Type:</strong> ${file.type || "Unknown"}</div>
+    `;
+    fileInfo.style.display = "block";
+}
+
+function showProgress(progressId, progressTextId, message = "Processing...") {
+    const progressContainer = document.getElementById(progressId);
+    const progressText = document.getElementById(progressTextId);
+    progressContainer.style.display = "block";
+    progressText.textContent = message;
+    const progressBar = progressContainer.querySelector(".progress-bar");
+    progressBar.style.width = "0%";
+    let progress = 0;
+    const interval = setInterval(() => {
+        if (progress >= 90) clearInterval(interval);
+        progress += 5;
+        progressBar.style.width = progress + "%";
+    }, 100);
+    return interval;
+}
+
+function hideProgress(progressId, interval) {
+    clearInterval(interval);
+    const progressContainer = document.getElementById(progressId);
+    const progressBar = progressContainer.querySelector(".progress-bar");
+    progressBar.style.width = "100%";
+    setTimeout(() => { progressContainer.style.display = "none"; }, 500);
+}
+
+function showNotification(message, type = "info") {
+    document.querySelectorAll('.notification').forEach(el => el.remove());
+    const alertClass = type === "error" ? "danger" : type;
+    const icon = type === "success" ? "fa-check" : type === "warning" ? "fa-exclamation-triangle" : "fa-info-circle";
+    const notification = document.createElement("div");
+    notification.className = `notification alert alert-${alertClass} fade show`;
+    notification.innerHTML = `<div class="d-flex justify-content-between align-items-center"><span><i class="fas ${icon} me-2"></i>${message}</span><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>`;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.remove(), 3000);
+}
+
+function copyToClipboard(elementId) {
+    const element = document.getElementById(elementId);
+    const text = element.value || element.textContent;
+    if (text?.trim()) {
+        navigator.clipboard.writeText(text).then(() => {
+            showNotification("Code copied to clipboard!", "success");
+        }).catch(() => {
+            showNotification("Failed to copy text. Please try again.", "error");
+        });
+    } else {
+        showNotification("No content to copy!", "warning");
+    }
+}
+
+// Initialize file input listeners
+document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("courseFileInput").addEventListener("change", function() {
+        showFileInfo(this, "courseFileInfo");
+    });
+    document.getElementById("glossaryFileInput").addEventListener("change", function() {
+        showFileInfo(this, "glossaryFileInfo");
+    });
+    document.getElementById("resourceFileInput").addEventListener("change", function() {
+        showFileInfo(this, "resourceFileInfo");
+    });
+});
+
+// ========== COURSE CONTENT GENERATOR ==========
+
+const courseData = { 
+    overview: "", courseObjectives: "", syllabus: "", courseTitle: "",
+    overviewSections: [], courseObjectivesList: [], syllabusModules: [], courseObjectivesIntro: "",
+    fileProcessed: false
+};
+
+function uploadCourseFile() {
+    const file = document.getElementById("courseFileInput").files[0];
+    if (!file) { showNotification("Please select a file to upload.", "warning"); return; }
+    
+    const progressInterval = showProgress("courseProgress", "courseProgressText", "Reading DOCX file...");
+    const reader = new FileReader();
+    
+    reader.onload = (event) => {
+        document.getElementById("courseProgressText").textContent = "Converting DOCX to HTML...";
+        mammoth.convertToHtml({arrayBuffer: event.target.result})
+            .then(result => {
+                document.getElementById("courseProgressText").textContent = "Extracting course content...";
+                extractCourseContent(result.value, progressInterval);
+            })
+            .catch(error => {
+                console.error("Conversion error:", error);
+                hideProgress("courseProgress", progressInterval);
+                showNotification("Error reading the file. Please try again.", "error");
+            });
+    };
+    
+    reader.onerror = () => {
+        hideProgress("courseProgress", progressInterval);
+        showNotification("Error reading the file. Please try again.", "error");
+    };
+    
+    reader.readAsArrayBuffer(file);
+}
+
+function extractCourseContent(html, progressInterval) {
+    try {
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = html;
         
-        const extractActualUrl=e=>e?"string"==typeof e?e:e.Target||e.target||e.url||e.href||e.Rel&&e.Rel.Target||"":"";function normCell(e){if(!e)return{text:"",url:"",isHyperlink:!1};if("object"==typeof e&&("v"in e||"w"in e||"l"in e||"t"in e)){let t=void 0!==e.w&&null!==e.w?e.w:e.v;"object"==typeof t&&(t=e.w||JSON.stringify(t)||"");let r=String(null==t?"":t).trim(),s=e.l||e.hyperlink||null,l=extractActualUrl(s)||(r&&(r.startsWith("http")||r.includes("://"))?r:"");return{text:r,url:l,isHyperlink:!!s}}let t=String(e||"").trim();return{text:t,url:t&&(t.startsWith("http")||t.includes("://"))?t:"",isHyperlink:!1}}function splitMulti(e){if(!e)return[];if("object"==typeof e&&e.l)return[normCell(e)];let t="object"==typeof e?void 0!==e.w?e.w:e.v:e;return t=null==t?"":String(t),t.trim()?t.split(/[\n;]+/).map(e=>{const t=e.trim();return{text:t,url:t&&(t.startsWith("http")||t.includes("://"))?t:"",isHyperlink:!1}}).filter(e=>e.text):[]}const pdfHref=e=>e&&e.url&&e.url.toString().trim()?e.url:"#";function linkDisplay(e){if(!e)return"";if(e.isHyperlink)return e.text||"";try{const t=new URL(e.url||e.text),r=t.hostname.toLowerCase();return r.includes("google.com")?"Google":r.includes("youtube.com")?"YouTube":r.includes("github.com")?"GitHub":t.hostname.replace("www.","").split(".")[0]||e.text}catch(t){return e.text||""}}function processResourceFile(){const e=document.getElementById("resourceFileInput").files[0];if(!e)return void showNotification("Please select a file to upload.","warning");const t=showProgress("resourceProgress","resourceProgressText","Reading Excel file..."),r=new FileReader;r.onload=e=>{try{document.getElementById("resourceProgressText").textContent="Processing Excel data...";const r=new Uint8Array(e.target.result),s=XLSX.read(r,{type:"array"}),l=s.Sheets[s.SheetNames[0]];let o={};l["!merges"]&&l["!merges"].forEach(e=>{const t=XLSX.utils.encode_cell({r:e.s.r,c:e.s.c});for(let r=e.s.r;r<=e.e.r;++r)for(let s=e.s.c;s<=e.e.c;++s){const e=XLSX.utils.encode_cell({r:r,c:s});o[e]=t,l[e]||(l[e]={t:"s",v:l[t]?l[t].v:""})}}),document.getElementById("resourceProgressText").textContent="Generating HTML...",processSheet(l,o,t)}catch(e){console.error("Error processing resource file:",e),hideProgress("resourceProgress",t),showNotification("Error processing Excel file. Please check the format.","error")}},r.onerror=function(){hideProgress("resourceProgress",t),showNotification("Error reading the file. Please try again.","error")},r.readAsArrayBuffer(e)}function processSheet(e,t={},r){try{const s={};for(const t in e)t.startsWith("!")||(s[t]=e[t]);const l=Math.max(...Object.keys(s).map(e=>XLSX.utils.decode_cell(e).r)),o=[];for(let e=0;e<=l;e++){const t=[];for(let r=0;r<10;r++){const l=XLSX.utils.encode_cell({r:e,c:r});t[r]=s[l]||null}o.push(t)}const n=o.find(e=>e.some(e=>e&&"string"==typeof e.v&&e.v.toLowerCase().includes("title"))),i=n?o.indexOf(n):0,a=o[i].map(e=>e?String(e.v||"").toLowerCase():""),c=a.findIndex(e=>e.includes("module")),d=a.findIndex(e=>e.includes("title")),u=a.findIndex(e=>e.includes("pdf")),f=a.findIndex(e=>e.includes("link"));let h=-1===d?1:d,m=-1===u?2:u,p=-1===f?3:f;const g=o.slice(i+1),x=[],b={},y=e=>/^Module\s*\d+:/.test(e),w=e=>{const t=e.match(/^(Module\s*\d+):/);return t?t[1]:null};let k="",v="",$="",P='<table class="table table-bordered table-sm"><thead><tr><th>Module</th><th>Title</th><th>PDFs</th><th>Links</th></tr></thead><tbody>';for(let e=0;e<g.length;e++){const r=g[e],s=c>=0&&r[c]?normCell(r[c]).text:"",l=m>=0?XLSX.utils.encode_cell({r:e+i+1,c:m}):"",o=p>=0?XLSX.utils.encode_cell({r:e+i+1,c:p}):"",n=!l||!t[l]||t[l]===l,a=!o||!t[o]||t[o]===o,d=n&&m>=0&&r[m]?splitMulti(r[m]):[],u=a&&p>=0&&r[p]?splitMulti(r[p]):[];let f=h>=0&&r[h]?normCell(r[h]).text:"";if(!(s||f||d.length||u.length))continue;if(!s&&f&&y(f)){const e=w(f);if(e){k=e+(f.match(/^(Module\s*\d+):\s*(.*)/)[2]?": "+f.match(/^(Module\s*\d+):\s*(.*)/)[2].trim():""),P+=`<tr class="table-info"><td colspan="4"><b>${k}</b></td></tr>`;continue}}if(s&&s.toLowerCase().includes("glossary")||f&&f.toLowerCase().includes("glossary")){$=u[0]?.url||d[0]?.url||"#",P+=`<tr class="glossary-row"><td colspan="2"><b><i class="fa fa-book"></i> Glossary</b></td><td>${d.map(e=>e.text?`<a href="${e.url||"#"}" target="_blank"><i class="fa fa-file-pdf pdf-color"></i> ${e.text}</a>`:"").join("<br>")}</td><td>${u.map(e=>`<a href="${e.url||"#"}" target="_blank"><i class="fa fa-link"></i> ${linkDisplay(e)}</a>`).join("<br>")}</td></tr>`;continue}if(f){if(y(f)){const e=w(f);e&&(k=e,f=f.replace(/^Module\s*\d+:\s*/,"").trim())}v=f;const e=(k||"")+"||"+v;if(!b[e]){const t={module:k||null,title:v,pdfs:[],links:[]};x.push(t),b[e]=t}}else if(!v)continue;const L=b[(k||"")+"||"+v];L&&(d.forEach(e=>{e&&e.text&&!L.pdfs.some(t=>t.text===e.text&&(t.url||"")===(e.url||""))&&L.pdfs.push(e)}),u.forEach(e=>{e&&e.text&&!L.links.some(t=>t.text===e.text&&(t.url||"")===(e.url||""))&&L.links.push(e)}));const E=0===d.length&&0===u.length?"bg-gray-300":"";P+=`<tr class="${E}"><td>${k?w(k)||k:""}</td><td>${v||""}</td><td>${d.map(e=>e.text?`<a href="${e.url||"#"}" target="_blank"><i class="fa fa-file-pdf pdf-color"></i> ${e.text}</a>`:"").join("<br>")}</td><td>${u.map(e=>`<a href="${e.url||"#"}" target="_blank"><i class="fa fa-link"></i> ${linkDisplay(e)}</a>`).join("<br>")}</td></tr>`}P+="</tbody></table>",document.getElementById("resourcePreview").innerHTML=P;const L=x.filter(e=>e.pdfs&&e.pdfs.length||e.links&&e.links.length);document.getElementById("htmlOutput").value=generateHTML($||"#",L),hideProgress("resourceProgress",r),showNotification(`Resource HTML generated successfully! Processed ${L.length} resources.`,"success")}catch(e){console.error("Error processing sheet:",e),hideProgress("resourceProgress",r),showNotification("Error processing Excel data. Please check the file format.","error")}}function generateHTML(e,t){let r=`<style>.bg-black.rounded-md.shadow-md:hover {border-left: 4px solid #000;transform: translate(2px);transition: .1s;}.bg-yellow-400.rounded-md.shadow-md:hover {border-left: 4px solid #ffc107;transform: translate(2px);transition: .1s;}</style><div class="bg-black rounded-md shadow-md"><div class="rounded-sm bg-yellow-400 my-4 p-3 w-full"><h2 class="text-2xl leading-none m-0 flex items-center space-x-2"><i class="fa fa-book"></i><a href="${e}" target="_blank" class="text-blue-600 hover:underline">Glossary</a></h2></div></div>\n`;const s={},l=e=>{if(!e.links.length&&!e.pdfs.length)return"";let t='  <ul class="ml-8 list-none space-y-1">\n';for(const r of e.links){if(!r.text)continue;t+=`    <li><i class="fa fa-link text-blue-600 me-2"></i><a href="${r.url&&r.url.trim()?r.url:"#"}" target="_blank" class="text-blue-600 hover:underline">${linkDisplay(r)}</a></li>\n`}for(const r of e.pdfs){if(!r.text)continue;t+=`    <li><i class="fa fa-file-pdf text-red-600 me-2"></i><a href="${pdfHref(r)}" target="_blank" class="ml-1 text-red-600 hover:underline">${r.text}</a></li>\n`}return t+'  </ul><hr class="bg-yellow-400 border-0 mx-3 my-2 opacity-75 pt-1 shadow">\n'};let o=!1;for(const e of t)e.module&&(o=!0,(s[e.module]||(s[e.module]=[])).push(e));if(o)for(const[e,t]of Object.entries(s)){r+=`<div class="bg-yellow-400 rounded-md shadow-md"><div class="rounded-sm bg-gray-100 my-4 p-3 w-full"><h4 class="mb-2 text-2xl font-semibold flex items-center space-x-2"><i class="fa fa-book-open-reader text-green-600"></i><span>${e}</span></h4><hr class="bg-green-600 border border-green-600 mb-3 mt-0 opacity-75 pt-1">`;for(const e of t)r+=`  <h5 class="flex font-semibold items-center mx-3 space-x-2 text-xl"><i class="fa fa-check-circle text-yellow-400"></i><span>${e.title}</span></h5><hr class="bg-yellow-400 border-0 mx-3 my-2 opacity-75 pt-1 shadow">${l(e)}`;r+="</div></div>\n"}else for(const e of t)r+=`<div class="bg-yellow-400 rounded-md shadow-md"><div class="rounded-sm bg-gray-100 my-4 p-3 w-full"><h5 class="flex font-semibold items-center mx-3 space-x-2 text-xl"><i class="fa fa-check-circle text-yellow-400"></i><span>${e.title}</span></h5><hr class="bg-yellow-400 border-0 mx-3 my-2 opacity-75 pt-1 shadow">${l(e)}</div></div>\n`;return r}
+        courseData.courseTitle = tempDiv.querySelector("h1")?.textContent.trim() || "";
+        courseData.overviewSections = [];
+        courseData.courseObjectivesList = [];
+        courseData.syllabusModules = [];
+        courseData.courseObjectivesIntro = "";
         
-    </script>
+        const elementsArray = Array.from(tempDiv.children);
+        let overviewStart = -1, courseObjectivesStart = -1, syllabusStart = -1;
+        
+        elementsArray.forEach((element, i) => {
+            const text = element.textContent.trim().toLowerCase();
+            if (text.includes("overview") && overviewStart === -1) overviewStart = i;
+            else if (text.includes("course objectives") && courseObjectivesStart === -1) courseObjectivesStart = i;
+            else if ((text.includes("syllabus") || text.includes("course syllabus")) && syllabusStart === -1) syllabusStart = i;
+        });
+        
+        if (overviewStart !== -1) {
+            const overviewEnd = syllabusStart !== -1 ? syllabusStart : elementsArray.length;
+            const overviewElements = elementsArray.slice(overviewStart + 1, overviewEnd);
+            courseData.overview = overviewElements.map(el => el.outerHTML).join("");
+            courseData.overviewSections = [{ heading: "Overview", content: courseData.overview }];
+        }
+        
+        if (syllabusStart !== -1) {
+            const syllabusElements = elementsArray.slice(syllabusStart);
+            let foundSyllabusHeading = false;
+            
+            for (const element of syllabusElements) {
+                const text = element.textContent.trim();
+                if (text.toLowerCase().includes("syllabus")) {
+                    foundSyllabusHeading = true;
+                    continue;
+                }
+                if (foundSyllabusHeading && element.tagName === 'P') {
+                    courseData.courseObjectivesIntro = element.innerHTML.trim();
+                    break;
+                }
+            }
+            
+            let inObjectives = false;
+            for (const element of syllabusElements) {
+                const text = element.textContent.trim().toLowerCase();
+                if (text.includes("course objectives")) {
+                    inObjectives = true;
+                    continue;
+                }
+                if (inObjectives && element.tagName === 'UL') {
+                    const items = element.querySelectorAll('li');
+                    items.forEach(item => {
+                        const itemText = item.innerHTML.trim();
+                        if (!isUnwantedObjective(itemText)) {
+                            courseData.courseObjectivesList.push(itemText);
+                        }
+                    });
+                    break;
+                }
+            }
+            
+            courseData.syllabusModules = extractAllSyllabusContent(elementsArray);
+        }
+        
+        courseData.fileProcessed = true;
+        hideProgress("courseProgress", progressInterval);
+        showNotification("Course content extracted successfully!", "success");
+        
+    } catch (error) {
+        console.error("Extraction error:", error);
+        hideProgress("courseProgress", progressInterval);
+        showNotification("Error extracting content. Please check the file format.", "error");
+    }
+}
+
+function isUnwantedObjective(itemText) {
+    const unwantedPatterns = [
+        "identify various categories", "assessing weather", "maintaining compliance", 
+        "safely integrating hoists", "individuals who are appointed", "employees charged with checking", 
+        "safety officers", "employees who want advanced training", "how to identify", 
+        "methods for assessing", "techniques for maintaining", "methods for safely integrating", 
+        "who should enroll"
+    ];
+    const lowerItem = itemText.toLowerCase();
+    return unwantedPatterns.some(pattern => lowerItem.includes(pattern));
+}
+
+function extractAllSyllabusContent(elementsArray) {
+    const modules = [];
+    let currentModule = null;
+    
+    for (let i = 0; i < elementsArray.length; i++) {
+        const element = elementsArray[i];
+        const text = element.textContent.trim();
+        if (!text) continue;
+        
+        if (text.match(/^Module\s*\d+:/i)) {
+            if (currentModule) modules.push(currentModule);
+            
+            currentModule = {
+                title: text,
+                description: "",
+                lessons: []
+            };
+            
+            for (let j = i + 1; j < Math.min(i + 5, elementsArray.length); j++) {
+                const nextElement = elementsArray[j];
+                const nextText = nextElement.textContent.trim();
+                
+                if (nextElement.tagName === 'P' && nextText && 
+                    !nextText.match(/^Module\s*\d+:/i) && 
+                    !nextText.match(/^Lesson\s*\d+:/i) &&
+                    !nextText.includes("LESSONS") &&
+                    !nextText.includes("Course Content")) {
+                    currentModule.description = nextText;
+                    break;
+                }
+            }
+        }
+        else if (element.tagName === 'UL' && currentModule) {
+            const listItems = element.querySelectorAll('li');
+            let currentLesson = null;
+            
+            for (const item of listItems) {
+                const itemText = item.textContent.trim();
+                const itemHTML = item.innerHTML.trim();
+                
+                if (itemText.match(/^Lesson\s*\d+:/i)) {
+                    if (currentLesson) {
+                        if (!currentLesson.items.some(item => item.toLowerCase().includes("lesson quiz"))) {
+                            currentLesson.items.push("Lesson quiz.");
+                        }
+                        currentModule.lessons.push(currentLesson);
+                    }
+                    
+                    currentLesson = {
+                        title: itemText,
+                        items: []
+                    };
+                    
+                    const nestedList = item.querySelector('ul');
+                    if (nestedList) {
+                        const nestedItems = nestedList.querySelectorAll('li');
+                        nestedItems.forEach(nestedItem => {
+                            const nestedText = nestedItem.innerHTML.trim();
+                            if (nestedText && !nestedText.match(/^Lesson\s*\d+:/i)) {
+                                currentLesson.items.push(nestedText);
+                            }
+                        });
+                    }
+                }
+                else if (currentLesson && itemText && !itemText.match(/^Lesson\s*\d+:/i)) {
+                    currentLesson.items.push(itemHTML);
+                }
+            }
+            
+            if (currentLesson) {
+                if (!currentLesson.items.some(item => item.toLowerCase().includes("lesson quiz"))) {
+                    currentLesson.items.push("Lesson quiz.");
+                }
+                currentModule.lessons.push(currentLesson);
+            }
+        }
+    }
+    
+    if (currentModule) modules.push(currentModule);
+    return modules;
+}
+
+function generateOverviewCode() {
+    if (!courseData.fileProcessed) {
+        showNotification("Please upload and process a DOCX file first.", "warning");
+        return;
+    }
+    
+    const videoHtml = `<div class="col-md-5 col-sm-12 elementor-col-40 elementor-column ml-md-3 p-0 pb-0 pt-0 verified-field-container" style="float:right"><div class="demo-video"><iframe title="${courseData.courseTitle || 'Course Video'}" src="https://player.vimeo.com/video/680313019?h=6c9335ab94" width="560" height="200" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen data-ready="true"></iframe></div></div>`;
+    
+    let contentHtml = "";
+    if (courseData.overviewSections.length > 0) {
+        courseData.overviewSections.forEach(section => {
+            const tempDiv = document.createElement("div");
+            tempDiv.innerHTML = section.content;
+            tempDiv.querySelectorAll("h1, h2, h3, h4, h5, h6").forEach(heading => {
+                const newHeading = document.createElement("h2");
+                newHeading.className = "fs-4 text-warning";
+                newHeading.innerHTML = heading.innerHTML;
+                heading.parentNode.replaceChild(newHeading, heading);
+            });
+            tempDiv.querySelectorAll("ul, ol").forEach(list => { list.className = "objective-tab-list"; });
+            tempDiv.querySelectorAll("a").forEach(link => { link.setAttribute("target", "_blank"); });
+            contentHtml += tempDiv.innerHTML;
+        });
+    } else {
+        contentHtml = "<p>No overview content found.</p>";
+    }
+    
+    const overviewHtml = videoHtml + contentHtml;
+    document.getElementById("overviewCode").value = overviewHtml;
+    document.getElementById("coursePreview").innerHTML = overviewHtml;
+    showNotification("Overview code generated successfully!", "success");
+}
+
+function generateCourseObjectivesCode() {
+    if (!courseData.fileProcessed) {
+        showNotification("Please upload and process a DOCX file first.", "warning");
+        return;
+    }
+    
+    const introParagraph = courseData.courseObjectivesIntro || `This ${courseData.courseTitle || 'Course'} will equip workers with the information and authority required.`;
+    let listItemsHtml = "";
+    
+    if (courseData.courseObjectivesList.length > 0) {
+        listItemsHtml = courseData.courseObjectivesList.map(item => `<li>${item}</li>`).join('\n');
+    } else {
+        listItemsHtml = "<li>No course objectives found in the document.</li>";
+    }
+    
+    const courseObjectivesHtml = `<p>${introParagraph}</p><h2 class="h3">Course Objectives</h2><p class="m-0"><b>After completing this course, the learner will be able to:</b></p><ul class="objective-tab-list">${listItemsHtml}</ul>`;
+    
+    document.getElementById("courseObjectivesCode").value = courseObjectivesHtml;
+    document.getElementById("coursePreview").innerHTML = courseObjectivesHtml;
+    showNotification("Course Objectives code generated successfully!", "success");
+}
+
+function generateSyllabusCode() {
+    if (!courseData.fileProcessed) {
+        showNotification("Please upload and process a DOCX file first.", "warning");
+        return;
+    }
+
+    const syllabusHtml = generateSyllabusHTML();
+    document.getElementById("syllabusCode").value = syllabusHtml;
+    document.getElementById("coursePreview").innerHTML = syllabusHtml;
+    showNotification("Syllabus code generated successfully!", "success");
+}
+
+function debugExtraction() {
+    if (!courseData.fileProcessed) {
+        showNotification("Please upload and process a DOCX file first.", "warning");
+        return;
+    }
+    
+    let debugInfo = `
+        <h3>Debug Information</h3>
+        <h4>Course Title: ${courseData.courseTitle || 'Not found'}</h4>
+        <h4>Overview Sections: ${courseData.overviewSections.length}</h4>
+        <h4>Course Objectives: ${courseData.courseObjectivesList.length}</h4>
+        <h4>Syllabus Modules: ${courseData.syllabusModules.length}</h4>
+        <hr>
+    `;
+    
+    if (courseData.syllabusModules.length > 0) {
+        debugInfo += '<h4>Modules Details:</h4>';
+        courseData.syllabusModules.forEach((module, index) => {
+            debugInfo += `
+                <div style="border: 1px solid #ccc; margin: 10px 0; padding: 10px;">
+                    <h5>Module ${index + 1}: ${module.title}</h5>
+                    <p><strong>Description:</strong> ${module.description || 'No description'}</p>
+                    <p><strong>Lessons:</strong> ${module.lessons.length}</p>
+            `;
+            
+            module.lessons.forEach((lesson, lessonIndex) => {
+                debugInfo += `
+                    <div style="margin-left: 20px; border-left: 2px solid #007bff; padding-left: 10px; margin: 10px 0;">
+                        <h6>Lesson ${lessonIndex + 1}: ${lesson.title}</h6>
+                        <p><strong>Items:</strong> ${lesson.items.length}</p>
+                        <ul>
+                `;
+                lesson.items.forEach((item, itemIndex) => {
+                    debugInfo += `<li>${itemIndex + 1}. ${item.substring(0, 100)}${item.length > 100 ? '...' : ''}</li>`;
+                });
+                debugInfo += '</ul></div>';
+            });
+            debugInfo += '</div>';
+        });
+    } else {
+        debugInfo += '<p>No modules found. Check the document structure.</p>';
+    }
+    
+    document.getElementById("coursePreview").innerHTML = debugInfo;
+    showNotification("Debug information displayed in preview area", "info");
+}
+
+function generateSyllabusHTML() {
+    let totalLessons = 0;
+    let modulesHTML = '';
+    
+    if (courseData.syllabusModules.length > 0) {
+        courseData.syllabusModules.forEach((module, moduleIndex) => {
+            totalLessons += module.lessons.length;
+            let lessonsHTML = '';
+            
+            module.lessons.forEach((lesson, lessonIndex) => {
+                let lessonItemsHTML = '';
+                if (lesson.items && lesson.items.length > 0) {
+                    lessonItemsHTML = lesson.items.map(item => {
+                        const cleanItem = item.replace(/\s+/g, ' ').trim();
+                        return `<li>${cleanItem}</li>`;
+                    }).join('');
+                } else {
+                    lessonItemsHTML = '<li>No content available for this lesson.</li>';
+                }
+                
+                lessonsHTML += `
+                    <li>
+                        <b>${lesson.title}</b>
+                        <ul class="objective-tab-list">
+                            ${lessonItemsHTML}
+                        </ul>
+                    </li>`;
+            });
+
+            modulesHTML += `
+                <div class="sbox">
+                    <h4 class="h6 fw-normal"><strong>${module.title}</strong></h4>
+                    <hr class="border-3 my-2" style="background: #ffcd05;opacity: 1;padding: 2px;">
+                    ${module.description ? `<p class="pl-3">${module.description}</p>` : ''}
+                    <ul>
+                        ${lessonsHTML}
+                    </ul>
+                </div>`;
+        });
+    } else {
+        modulesHTML = '<div class="sbox"><p>No syllabus content could be extracted. Please check the document structure.</p></div>';
+    }
+
+    const courseTitle = courseData.courseTitle || 'Course';
+    const syllabusTitle = `${courseTitle} Syllabus`;
+    
+    return `<style>
+        .sbox {
+            margin: 10px 0;
+            border: 1px solid #f5f5f5;
+            background: #fff;
+            padding: 10px 18px;
+            box-shadow: 0 0 0px 1px rgba(20,23,28,.1), 0 3px 1px 0 rgba(20,23,28,.1);
+            color: #000;
+        }
+        </style>
+        <h2 class="font-poppins h6"><strong>${syllabusTitle}</strong></h2>
+        <p>This ${courseTitle} course consists of ${totalLessons} lessons divided into ${courseData.syllabusModules.length} modules. Students are required to complete each lesson in the sequence listed below.</p>
+        <div class="h3">Course Content</div>
+        <div style="background: #f2f3f5;padding-bottom:1px;">
+            <div class="border-0 pl-3 sbox" style="background-color: #ffcd05;">
+                <div class="fs-6 fw-normal lh-sm m-0 text-uppercase"><strong>Lessons</strong></div>
+            </div>
+            <h3 class="fs-6 fw-normal pl-3 sbox"><strong>Introduction</strong></h3>
+            ${modulesHTML}
+            <div class="sbox">
+                <h4 class="h6 m-0 fw-normal"><strong>Final Examination</strong></h4>
+            </div>
+        </div>`;
+}
+
+function downloadDemoFile(){
+    const a=document.createElement('a');
+    a.style.display='none';
+    a.href='https://staging-media.hazwoper-osha.com/wp-content/uploads/2025/10/1759820370/demo-file-of-website-content-for-3-section.docx';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a)
+}
+
+// ========== GLOSSARY GENERATOR FUNCTIONS ==========
+
+function uploadGlossaryFile() {
+    const file = document.getElementById("glossaryFileInput").files[0];
+    if (!file) return void showNotification("Please select a file to upload.", "warning");
+    const progressInterval = showProgress("glossaryProgress", "glossaryProgressText", "Reading DOCX file...");
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const arrayBuffer = e.target.result;
+        document.getElementById("glossaryProgressText").textContent = "Converting DOCX to HTML...";
+        mammoth.convertToHtml({arrayBuffer: arrayBuffer}).then(result => {
+            const html = result.value;
+            document.getElementById("glossaryProgressText").textContent = "Parsing glossary data...";
+            parseGlossaryData(html, progressInterval);
+        }).catch(e => {
+            console.error(e);
+            hideProgress("glossaryProgress", progressInterval);
+            showNotification("Error reading the file. Please try again.", "error");
+        });
+    };
+    reader.onerror = function() {
+        hideProgress("glossaryProgress", progressInterval);
+        showNotification("Error reading the file. Please try again.", "error");
+    };
+    reader.readAsArrayBuffer(file);
+}
+
+function parseGlossaryData(html, progressInterval) {
+    try {
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = html;
+        const glossaryData = [];
+        const tables = tempDiv.getElementsByTagName("table");
+        if (!(tables.length > 0)) return hideProgress("glossaryProgress", progressInterval), void showNotification("No tables found in the document.", "warning");
+        {
+            const rows = tables[0].getElementsByTagName("tr");
+            for (let i = 1; i < rows.length; i++) {
+                const cells = rows[i].getElementsByTagName("td");
+                if (2 === cells.length) {
+                    const term = cells[0].innerText.trim();
+                    const definition = cells[1].innerHTML.trim();
+                    term && definition && glossaryData.push({term: term, definition: definition});
+                }
+            }
+        }
+        0 === glossaryData.length ? (hideProgress("glossaryProgress", progressInterval), showNotification("No glossary terms found.", "warning")) : (localStorage.setItem("glossaryData", JSON.stringify(glossaryData)), hideProgress("glossaryProgress", progressInterval), showNotification(`Glossary data extracted successfully! Found ${glossaryData.length} terms.`, "success"));
+    } catch (e) {
+        console.error("Error parsing glossary data:", e);
+        hideProgress("glossaryProgress", progressInterval);
+        showNotification("Error parsing glossary data. Please check the file format.", "error");
+    }
+}
+
+function generateGlossary() {
+    const storedData = localStorage.getItem("glossaryData");
+    if (storedData) try {
+        const glossaryData = JSON.parse(storedData);
+        const groupedData = {};
+        glossaryData.forEach(item => {
+            const term = item.term.trim();
+            const definition = item.definition.trim();
+            const firstLetter = term.charAt(0).toUpperCase();
+            groupedData[firstLetter] || (groupedData[firstLetter] = []);
+            groupedData[firstLetter].push({term: term, definition: definition});
+        });
+        let alphabetButtons = "";
+        let glossaryContent = "";
+        for (let i = 65; i <= 90; i++) {
+            const letter = String.fromCharCode(i);
+            alphabetButtons += `<button class="glossaryBtn btn btn-outline-primary m-1 ${"A" === letter ? "active" : ""}" onclick="openItem('${letter}', event)">${letter}</button>\n`;
+            glossaryContent += `<div id="${letter}" class="result-container glosary-item" style="display:${"A" === letter ? "block" : "none"};">\n`;
+            groupedData[letter]?.length > 0 ? groupedData[letter].forEach(item => {
+                glossaryContent += `<h2>${item.term}</h2>\n<div>${item.definition}</div>\n`;
+            }) : glossaryContent += `<h2>${letter}</h2><p>No terms found</p>\n`;
+            glossaryContent += "</div>\n";
+        }
+        const glossaryHtml = `
+            <style>
+                .active.glossaryBtn,
+                .glossaryBtn:hover {
+                    background: black !important;
+                    transform: translateY(-4px) scale(1);
+                    transition: 0.2s;
+                    color: #ffbf00!important
+                }
+            </style>
+            <div class="custom-glossary">
+                <script>
+                    function openItem(glossaryItem, evt) {
+                        var items = document.getElementsByClassName("result-container");
+                        for (var i = 0; i < items.length; i++) {
+                            items[i].style.display = "none";
+                        }
+                        document.getElementById(glossaryItem).style.display = "block";
+
+                        var btns = document.getElementsByClassName("glossaryBtn");
+                        for (var j = 0; j < btns.length; j++) {
+                            btns[j].classList.remove("active");
+                        }
+                        evt.target.classList.add("active");
+                    }
+                <\/script>
+                <div class="container">
+                    <div class="glossaryBtnMain alphabet-buttons mb-3">
+                        ${alphabetButtons}
+                    </div>
+                    ${glossaryContent}
+                </div>
+            </div>`;
+        document.getElementById("glossaryCode").value = glossaryHtml;
+        document.getElementById("glossaryPreview").innerHTML = glossaryHtml;
+        showNotification("Glossary code generated successfully!", "success");
+    } catch (e) {
+        console.error("Error generating glossary:", e);
+        showNotification("Error generating glossary. Please try again.", "error");
+    } else showNotification("Please upload and parse a DOCX file first.", "warning");
+}
+
+// ========== RESOURCE GENERATOR FUNCTIONS ==========
+
+const extractActualUrl = url => url ? "string" == typeof url ? url : url.Target || url.target || url.url || url.href || url.Rel && url.Rel.Target || "" : "";
+
+function normCell(cell) {
+    if (!cell) return {text: "", url: "", isHyperlink: false};
+    if ("object" == typeof cell && ("v" in cell || "w" in cell || "l" in cell || "t" in cell)) {
+        let text = void 0 !== cell.w && null !== cell.w ? cell.w : cell.v;
+        "object" == typeof text && (text = cell.w || JSON.stringify(text) || "");
+        let url = cell.l || cell.hyperlink || null;
+        url = extractActualUrl(url) || (text && (text.startsWith("http") || text.includes("://")) ? text : "");
+        return {text: String(null == text ? "" : text).trim(), url: url, isHyperlink: !!cell.l};
+    }
+    let text = String(cell || "").trim();
+    return {text: text, url: text && (text.startsWith("http") || text.includes("://")) ? text : "", isHyperlink: false};
+}
+
+function splitMulti(cell) {
+    if (!cell) return [];
+    if ("object" == typeof cell && cell.l) return [normCell(cell)];
+    let text = "object" == typeof cell ? void 0 !== cell.w ? cell.w : cell.v : cell;
+    return text = null == text ? "" : String(text), text.trim() ? text.split(/[\n;]+/).map(item => {
+        const text = item.trim();
+        return {text: text, url: text && (text.startsWith("http") || text.includes("://")) ? text : "", isHyperlink: false};
+    }).filter(item => item.text) : [];
+}
+
+const pdfHref = pdf => pdf && pdf.url && pdf.url.toString().trim() ? pdf.url : "#";
+
+function linkDisplay(link) {
+    if (!link) return "";
+    if (link.isHyperlink) return link.text || "";
+    try {
+        const url = new URL(link.url || link.text);
+        const hostname = url.hostname.toLowerCase();
+        return hostname.includes("google.com") ? "Google" : hostname.includes("youtube.com") ? "YouTube" : hostname.includes("github.com") ? "GitHub" : url.hostname.replace("www.", "").split(".")[0] || link.text;
+    } catch (e) {
+        return link.text || "";
+    }
+}
+
+function processResourceFile() {
+    const file = document.getElementById("resourceFileInput").files[0];
+    if (!file) return void showNotification("Please select a file to upload.", "warning");
+    const progressInterval = showProgress("resourceProgress", "resourceProgressText", "Reading Excel file...");
+    const reader = new FileReader();
+    reader.onload = e => {
+        try {
+            document.getElementById("resourceProgressText").textContent = "Processing Excel data...";
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, {type: "array"});
+            const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+            let mergedCells = {};
+            worksheet["!merges"] && worksheet["!merges"].forEach(merge => {
+                const startCell = XLSX.utils.encode_cell({r: merge.s.r, c: merge.s.c});
+                for (let row = merge.s.r; row <= merge.e.r; ++row) for (let col = merge.s.c; col <= merge.e.c; ++col) {
+                    const cell = XLSX.utils.encode_cell({r: row, c: col});
+                    mergedCells[cell] = startCell;
+                    worksheet[cell] || (worksheet[cell] = {t: "s", v: worksheet[startCell] ? worksheet[startCell].v : ""});
+                }
+            });
+            document.getElementById("resourceProgressText").textContent = "Generating HTML...";
+            processSheet(worksheet, mergedCells, progressInterval);
+        } catch (e) {
+            console.error("Error processing resource file:", e);
+            hideProgress("resourceProgress", progressInterval);
+            showNotification("Error processing Excel file. Please check the format.", "error");
+        }
+    };
+    reader.onerror = function() {
+        hideProgress("resourceProgress", progressInterval);
+        showNotification("Error reading the file. Please try again.", "error");
+    };
+    reader.readAsArrayBuffer(file);
+}
+
+function processSheet(worksheet, mergedCells = {}, progressInterval) {
+    try {
+        const cells = {};
+        for (const cell in worksheet) cell.startsWith("!") || (cells[cell] = worksheet[cell]);
+        const maxRow = Math.max(...Object.keys(cells).map(cell => XLSX.utils.decode_cell(cell).r));
+        const rows = [];
+        for (let row = 0; row <= maxRow; row++) {
+            const rowData = [];
+            for (let col = 0; col < 10; col++) {
+                const cellAddress = XLSX.utils.encode_cell({r: row, c: col});
+                rowData[col] = cells[cellAddress] || null;
+            }
+            rows.push(rowData);
+        }
+        const headerRow = rows.find(row => row.some(cell => cell && "string" == typeof cell.v && cell.v.toLowerCase().includes("title")));
+        const headerIndex = headerRow ? rows.indexOf(headerRow) : 0;
+        const headers = rows[headerIndex].map(cell => cell ? String(cell.v || "").toLowerCase() : "");
+        const moduleCol = headers.findIndex(header => header.includes("module"));
+        const titleCol = headers.findIndex(header => header.includes("title"));
+        const pdfCol = headers.findIndex(header => header.includes("pdf"));
+        const linkCol = headers.findIndex(header => header.includes("link"));
+        let titleIndex = -1 === titleCol ? 1 : titleCol;
+        let pdfIndex = -1 === pdfCol ? 2 : pdfCol;
+        let linkIndex = -1 === linkCol ? 3 : linkCol;
+        const dataRows = rows.slice(headerIndex + 1);
+        const resources = [];
+        const resourceMap = {};
+        let currentModule = "";
+        let currentTitle = "";
+        let glossaryLink = "";
+        let tableHTML = '<table class="table table-bordered table-sm"><thead><tr><th>Module</th><th>Title</th><th>PDFs</th><th>Links</th></tr></thead><tbody>';
+        for (let i = 0; i < dataRows.length; i++) {
+            const row = dataRows[i];
+            const moduleCell = moduleCol >= 0 && row[moduleCol] ? normCell(row[moduleCol]).text : "";
+            const pdfCell = pdfIndex >= 0 ? XLSX.utils.encode_cell({r: i + headerIndex + 1, c: pdfIndex}) : "";
+            const linkCell = linkIndex >= 0 ? XLSX.utils.encode_cell({r: i + headerIndex + 1, c: linkIndex}) : "";
+            const isPdfMerged = !pdfCell || !mergedCells[pdfCell] || mergedCells[pdfCell] === pdfCell;
+            const isLinkMerged = !linkCell || !mergedCells[linkCell] || mergedCells[linkCell] === linkCell;
+            const pdfs = isPdfMerged && pdfIndex >= 0 && row[pdfIndex] ? splitMulti(row[pdfIndex]) : [];
+            const links = isLinkMerged && linkIndex >= 0 && row[linkIndex] ? splitMulti(row[linkIndex]) : [];
+            let titleCell = titleIndex >= 0 && row[titleIndex] ? normCell(row[titleIndex]).text : "";
+            if (!(moduleCell || titleCell || pdfs.length || links.length)) continue;
+            if (!moduleCell && titleCell && /^Module\s*\d+:/.test(titleCell)) {
+                const moduleMatch = titleCell.match(/^(Module\s*\d+):\s*(.*)/);
+                if (moduleMatch) {
+                    currentModule = moduleMatch[1] + (moduleMatch[2] ? ": " + moduleMatch[2].trim() : "");
+                    tableHTML += `<tr class="table-info"><td colspan="4"><b>${currentModule}</b></td></tr>`;
+                    continue;
+                }
+            }
+            if (moduleCell && moduleCell.toLowerCase().includes("glossary") || titleCell && titleCell.toLowerCase().includes("glossary")) {
+                glossaryLink = links[0]?.url || pdfs[0]?.url || "#";
+                tableHTML += `<tr class="glossary-row"><td colspan="2"><b><i class="fa fa-book"></i> Glossary</b></td><td>${pdfs.map(pdf => pdf.text ? `<a href="${pdf.url || "#"}" target="_blank"><i class="fa fa-file-pdf pdf-color"></i> ${pdf.text}</a>` : "").join("<br>")}</td><td>${links.map(link => `<a href="${link.url || "#"}" target="_blank"><i class="fa fa-link"></i> ${linkDisplay(link)}</a>`).join("<br>")}</td></tr>`;
+                continue;
+            }
+            if (titleCell) {
+                if (/^Module\s*\d+:/.test(titleCell)) {
+                    const moduleMatch = titleCell.match(/^(Module\s*\d+):/);
+                    if (moduleMatch) {
+                        currentModule = moduleMatch[1];
+                        titleCell = titleCell.replace(/^Module\s*\d+:\s*/, "").trim();
+                    }
+                }
+                currentTitle = titleCell;
+                const resourceKey = (currentModule || "") + "||" + currentTitle;
+                if (!resourceMap[resourceKey]) {
+                    const resource = {module: currentModule || null, title: currentTitle, pdfs: [], links: []};
+                    resources.push(resource);
+                    resourceMap[resourceKey] = resource;
+                }
+            } else if (!currentTitle) continue;
+            const resource = resourceMap[(currentModule || "") + "||" + currentTitle];
+            resource && (pdfs.forEach(pdf => {
+                pdf && pdf.text && !resource.pdfs.some(existing => existing.text === pdf.text && (existing.url || "") === (pdf.url || "")) && resource.pdfs.push(pdf);
+            }), links.forEach(link => {
+                link && link.text && !resource.links.some(existing => existing.text === link.text && (existing.url || "") === (link.url || "")) && resource.links.push(link);
+            }));
+            const rowClass = 0 === pdfs.length && 0 === links.length ? "bg-gray-300" : "";
+            tableHTML += `<tr class="${rowClass}"><td>${currentModule ? currentModule.match(/^(Module\s*\d+)/)?.[1] || currentModule : ""}</td><td>${currentTitle || ""}</td><td>${pdfs.map(pdf => pdf.text ? `<a href="${pdf.url || "#"}" target="_blank"><i class="fa fa-file-pdf pdf-color"></i> ${pdf.text}</a>` : "").join("<br>")}</td><td>${links.map(link => `<a href="${link.url || "#"}" target="_blank"><i class="fa fa-link"></i> ${linkDisplay(link)}</a>`).join("<br>")}</td></tr>`;
+        }
+        tableHTML += "</tbody></table>";
+        document.getElementById("resourcePreview").innerHTML = tableHTML;
+        const filteredResources = resources.filter(resource => resource.pdfs && resource.pdfs.length || resource.links && resource.links.length);
+        document.getElementById("htmlOutput").value = generateResourceHTML(glossaryLink || "#", filteredResources);
+        hideProgress("resourceProgress", progressInterval);
+        showNotification(`Resource HTML generated successfully! Processed ${filteredResources.length} resources.`, "success");
+    } catch (e) {
+        console.error("Error processing sheet:", e);
+        hideProgress("resourceProgress", progressInterval);
+        showNotification("Error processing Excel data. Please check the file format.", "error");
+    }
+}
+
+function generateResourceHTML(glossaryLink, resources) {
+    let html = `<style>.bg-black.rounded-md.shadow-md:hover {border-left: 4px solid #000;transform: translate(2px);transition: .1s;}.bg-yellow-400.rounded-md.shadow-md:hover {border-left: 4px solid #ffc107;transform: translate(2px);transition: .1s;}</style><div class="bg-black rounded-md shadow-md"><div class="rounded-sm bg-yellow-400 my-4 p-3 w-full"><h2 class="text-2xl leading-none m-0 flex items-center space-x-2"><i class="fa fa-book"></i><a href="${glossaryLink}" target="_blank" class="text-blue-600 hover:underline">Glossary</a></h2></div></div>\n`;
+    const groupedResources = {};
+    const generateResourceList = resource => {
+        if (!resource.links.length && !resource.pdfs.length) return "";
+        let list = '  <ul class="ml-8 list-none space-y-1">\n';
+        for (const link of resource.links) {
+            if (!link.text) continue;
+            list += `    <li><i class="fa fa-link text-blue-600 me-2"></i><a href="${link.url && link.url.trim() ? link.url : "#"}" target="_blank" class="text-blue-600 hover:underline">${linkDisplay(link)}</a></li>\n`;
+        }
+        for (const pdf of resource.pdfs) {
+            if (!pdf.text) continue;
+            list += `    <li><i class="fa fa-file-pdf text-red-600 me-2"></i><a href="${pdfHref(pdf)}" target="_blank" class="ml-1 text-red-600 hover:underline">${pdf.text}</a></li>\n`;
+        }
+        return list + '  </ul><hr class="bg-yellow-400 border-0 mx-3 my-2 opacity-75 pt-1 shadow">\n';
+    };
+    let hasModules = false;
+    for (const resource of resources) resource.module && (hasModules = true, (groupedResources[resource.module] || (groupedResources[resource.module] = [])).push(resource));
+    if (hasModules) for (const [module, moduleResources] of Object.entries(groupedResources)) {
+        html += `<div class="bg-yellow-400 rounded-md shadow-md"><div class="rounded-sm bg-gray-100 my-4 p-3 w-full"><h4 class="mb-2 text-2xl font-semibold flex items-center space-x-2"><i class="fa fa-book-open-reader text-green-600"></i><span>${module}</span></h4><hr class="bg-green-600 border border-green-600 mb-3 mt-0 opacity-75 pt-1">`;
+        for (const resource of moduleResources) html += `  <h5 class="flex font-semibold items-center mx-3 space-x-2 text-xl"><i class="fa fa-check-circle text-yellow-400"></i><span>${resource.title}</span></h5><hr class="bg-yellow-400 border-0 mx-3 my-2 opacity-75 pt-1 shadow">${generateResourceList(resource)}`;
+        html += "</div></div>\n";
+    } else for (const resource of resources) html += `<div class="bg-yellow-400 rounded-md shadow-md"><div class="rounded-sm bg-gray-100 my-4 p-3 w-full"><h5 class="flex font-semibold items-center mx-3 space-x-2 text-xl"><i class="fa fa-check-circle text-yellow-400"></i><span>${resource.title}</span></h5><hr class="bg-yellow-400 border-0 mx-3 my-2 opacity-75 pt-1 shadow">${generateResourceList(resource)}</div></div>\n`;
+    return html;
+}
+</script>
 </body>
 </html>
