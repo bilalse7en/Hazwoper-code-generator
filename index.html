@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Course Content Generator Suite</title>
+    <title>Course Content Generator</title>
+    <link rel="icon" href="https://staging-media.hazwoper-osha.com/wp-content/uploads/2025/10/1759823873/logo.png" type="image/gif">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
@@ -62,8 +63,12 @@
 <body>
 <div class="hero-section">
     <div class="container">
-        <h1>Course Content Generator Suite</h1>
-        <p class="lead text-center text-light">Extract Overview, Syllabus, Glossary, and Resources from your documents</p>
+        <div class="row"> 
+            <div class="col-auto mb-4 text-center">
+                <img src="https://staging-media.hazwoper-osha.com/wp-content/uploads/2025/10/1759824844/logo.gif" alt="Website Logo" style="height: 125px;width: auto;border-radius: 50%;" class="position-absolute">
+            </div>
+            <h1>Course Content Generator Suite</h1><p class="lead text-center text-light">Extract Overview, Syllabus, Glossary, and Resources from your documents</p>
+        </div>
     </div>
 </div>
 
@@ -94,6 +99,12 @@
                     <div class="mb-4">
                         <h3 class="mb-3"><i class="fas fa-file-word text-warning me-2"></i>Upload DOCX File</h3>
                         <hr class="bg-warning">
+                        
+                        <!-- Course Name Input -->
+                        <div class="mb-3">
+                            <label for="courseNameInput" class="form-label">Course Name</label>
+                            <input type="text" class="form-control" id="courseNameInput" placeholder="Enter course name (e.g., Swing Stage Scaffold Training)">
+                        </div>
                         
                         <!-- Demo File Download Button -->
                         <div class="mb-3">
@@ -340,7 +351,20 @@ const courseData = {
 
 function uploadCourseFile() {
     const file = document.getElementById("courseFileInput").files[0];
-    if (!file) { showNotification("Please select a file to upload.", "warning"); return; }
+    const courseName = document.getElementById("courseNameInput").value.trim();
+    
+    if (!file) { 
+        showNotification("Please select a file to upload.", "warning"); 
+        return; 
+    }
+    
+    if (!courseName) {
+        showNotification("Please enter a course name.", "warning");
+        return;
+    }
+    
+    // Set course title from user input
+    courseData.courseTitle = courseName;
     
     const progressInterval = showProgress("courseProgress", "courseProgressText", "Reading DOCX file...");
     const reader = new FileReader();
@@ -372,7 +396,9 @@ function extractCourseContent(html, progressInterval) {
         const tempDiv = document.createElement("div");
         tempDiv.innerHTML = html;
         
-        courseData.courseTitle = tempDiv.querySelector("h1")?.textContent.trim() || "";
+        // Use the course title from user input instead of extracting from document
+        // courseData.courseTitle is already set from the input field
+        
         courseData.overviewSections = [];
         courseData.courseObjectivesList = [];
         courseData.syllabusModules = [];
@@ -544,7 +570,7 @@ function generateOverviewCode() {
         return;
     }
     
-    const videoHtml = `<div class="col-md-5 col-sm-12 elementor-col-40 elementor-column ml-md-3 p-0 pb-0 pt-0 verified-field-container" style="float:right"><div class="demo-video"><iframe title="${courseData.courseTitle || 'Course Video'}" src="https://player.vimeo.com/video/680313019?h=6c9335ab94" width="560" height="200" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen data-ready="true"></iframe></div></div>`;
+    const videoHtml = `<!-- <div class="col-md-5 col-sm-12 elementor-col-40 elementor-column ml-md-3 p-0 pb-0 pt-0 verified-field-container" style="float:right"><div class="demo-video"><iframe title="${courseData.courseTitle || 'Course Video'}" src="https://player.vimeo.com/video/680313019?h=6c9335ab94" width="560" height="200" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen data-ready="true"></iframe><img src="" alt="${courseData.courseTitle || 'Course Name'}"></div></div> -->`;
     
     let contentHtml = "";
     if (courseData.overviewSections.length > 0) {
@@ -708,17 +734,17 @@ function generateSyllabusHTML() {
             color: #000;
         }
         </style>
-        <h2 class="font-poppins h6"><strong>${syllabusTitle}</strong></h2>
+        <h2 class="font-poppins fw-bold fs-6"><strong>${courseTitle} Course Syllabus</strong></h2>
         <p>This ${courseTitle} course consists of ${totalLessons} lessons divided into ${courseData.syllabusModules.length} modules. Students are required to complete each lesson in the sequence listed below.</p>
-        <div class="h3">Course Content</div>
+        <div class="h3 font-poppins">Course Content</div>
         <div style="background: #f2f3f5;padding-bottom:1px;">
             <div class="border-0 pl-3 sbox" style="background-color: #ffcd05;">
                 <div class="fs-6 fw-normal lh-sm m-0 text-uppercase"><strong>Lessons</strong></div>
             </div>
-            <h3 class="fs-6 fw-normal pl-3 sbox"><strong>Introduction</strong></h3>
+            <h3 class="font-poppins fs-6 fw-normal pl-3 sbox"><strong>Introduction</strong></h3>
             ${modulesHTML}
             <div class="sbox">
-                <h4 class="h6 m-0 fw-normal"><strong>Final Examination</strong></h4>
+                <h4 class="font-poppins fs-5 m-0 fw-normal"><strong>Final Examination</strong></h4>
             </div>
         </div>`;
 }
