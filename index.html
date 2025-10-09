@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Course Content Generator</title>
-    <link rel="icon" href="https://staging-media.hazwoper-osha.com/wp-content/uploads/2025/10/1759823873/logo.png" type="image/gif">
+    <link rel="icon" href="" type="image/gif" id="animatedFavicon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
@@ -29,8 +29,7 @@
         .hero-section { background: linear-gradient(135deg, var(--dark-bg) 0, var(--darker-bg) 100%); padding: 30px 0; margin-bottom: 30px; }
         .hero-section h1 { font-size: 2.5rem; font-weight: 700; background: linear-gradient(to right, #007bff, #17a2b8); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-align: center; }
         .card { background-color: var(--card-bg); border: none; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,.15); }
-        .card-header { background-color: #343a40; border-bottom: 1px solid var(--border-color); }
-        .form-control, textarea { background-color: var(--darker-bg); color: var(--text-primary); border: 1px solid var(--border-color); }
+        .card-header { background-color: #343a40; border-bottom: 1px solid var(--border-color); color: #d6d6d6; }
         .btn-primary { background: var(--primary-gradient); border: none; }
         .btn-success { background: var(--success-gradient); border: none; }
         .btn-secondary { background: transparent; border: none; color: darkgrey;}
@@ -54,10 +53,41 @@
         .fa-link { color: #2c6fbb; }
         .glossary-row { background-color: #2c2400 !important; }
         .bg-gray-300 td { background: #ff9191 !important; color: #7a0000 !important; text-decoration: line-through; text-decoration-style: double;}
+        .faq-item { border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; margin-bottom: 15px; background: var(--darker-bg); }
+        .faq-question { font-weight: bold; color: #ffc107; margin-bottom: 10px; }
+        .faq-answer { color: var(--text-primary); }
+        .copy-btn { margin: 5px 0; }
         @media (max-width: 768px) { .alphabet-buttons button { flex: 0 0 calc(100% / 7 - 5px); max-width: calc(100% / 7 - 5px); } }
         textarea { scrollbar-width: thin; scrollbar-color: #c1c1c1 #2a2a40;}
         a[download] { text-decoration: none !important; color: inherit !important; }
         a[download]:hover, a[download]:focus { text-decoration: none !important; color: inherit !important; }
+        
+        /* Blog Content Styles */
+        .blog-content { color: #333; background: white; padding: 20px; border-radius: 8px; }
+        .blog-content h1 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; margin-top: 0; }
+        .blog-content h2 { color: #34495e; margin-top: 25px; margin-bottom: 15px; }
+        .blog-content h3 { color: #7f8c8d; margin-top: 20px; margin-bottom: 12px; }
+        .blog-content p { line-height: 1.6; margin-bottom: 15px; }
+        .blog-content img { max-width: 100%; height: auto; border-radius: 8px; margin: 15px 0; }
+        .blog-content ul, .blog-content ol { margin-bottom: 15px; padding-left: 20px; }
+        .blog-content li { margin-bottom: 5px; line-height: 1.5; }
+        
+        /* Center H1 headings */
+        .blog-content h1.text-center {
+            text-align: center;
+            border-bottom: none;
+            padding-bottom: 0;
+            margin-bottom: 20px;
+        }
+        
+        /* Highlight the featured image section */
+        .featured-image-section {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            background-color: rgba(0, 123, 255, 0.1);
+        }
     </style>
 </head>
 <body>
@@ -67,7 +97,7 @@
             <div class="col-auto mb-4 text-center">
                 <img src="https://staging-media.hazwoper-osha.com/wp-content/uploads/2025/10/1759824844/logo.gif" alt="Website Logo" style="height: 125px;width: auto;border-radius: 50%;" class="position-absolute">
             </div>
-            <h1>Course Content Generator Suite</h1><p class="lead text-center text-light">Extract Overview, Syllabus, Glossary, and Resources from your documents</p>
+            <h1>Course Content Generator Suite</h1><p class="lead text-center text-light">Extract Overview, Syllabus, FAQs, Glossary, Resources and Blog Content from your documents</p>
         </div>
     </div>
 </div>
@@ -87,6 +117,11 @@
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="resources-tab" data-bs-toggle="tab" data-bs-target="#resources" type="button" role="tab" aria-controls="resources" aria-selected="false">
                 <i class="fas fa-file-excel me-2"></i>Resource Generator
+            </button>
+        </li>
+        <li class="nav-item" role="presentation"></li>
+            <button class="nav-link" id="blog-tab" data-bs-toggle="tab" data-bs-target="#blog" type="button" role="tab" aria-controls="blog" aria-selected="false">
+                <i class="fas fa-blog me-2"></i>Blog Generator
             </button>
         </li>
     </ul>
@@ -128,6 +163,7 @@
                         <button class="btn-hover btn btn-success btn-lg me-2 mb-2" onclick="generateOverviewCode()"><i class="fas fa-code me-2"></i>Generate Overview</button>
                         <button class="btn-hover btn btn-success btn-lg me-2 mb-2" onclick="generateCourseObjectivesCode()"><i class="fas fa-code me-2"></i>Course Objectives</button>
                         <button class="btn-hover btn btn-success btn-lg me-2 mb-2" onclick="generateSyllabusCode()"><i class="fas fa-code me-2"></i>Generate Syllabus</button>
+                        <button class="btn-hover btn btn-success btn-lg me-2 mb-2" onclick="generateFAQCode()"><i class="fas fa-code me-2"></i>Generate FAQ</button>
                         <button class="btn-hover btn btn-info btn-lg me-2 mb-2" onclick="debugExtraction()"><i class="fas fa-bug me-2"></i>Debug Extraction</button>
                     </div>
                 </div>
@@ -150,6 +186,18 @@
                         <div class="position-absolute end-0"><button class="btn-hover btn-secondary rounded-start-0 rounded-top text-bg-warning" onclick="copyToClipboard('syllabusCode')"><i class="fas fa-copy"></i></button></div>
                         <textarea class="form-control pe-4" id="syllabusCode" rows="4" readonly></textarea>
                     </div>
+
+                    <h3 class="mb-3 mt-4"><i class="fas fa-code text-info me-2"></i>FAQ Code</h3><hr class="bg-info">
+                    <div class="position-relative">
+                        <div class="position-absolute end-0"><button class="btn-hover btn-secondary rounded-start-0 rounded-top text-bg-warning" onclick="copyToClipboard('faqCode')"><i class="fas fa-copy"></i></button></div>
+                        <textarea class="form-control pe-4" id="faqCode" rows="4" readonly></textarea>
+                    </div>
+                    
+                    <div class="mt-4" id="faqIndividualItems" style="display: none;">
+                        <h4 class="mb-3"><i class="fas fa-copy text-warning me-2"></i>Individual FAQ Items</h4>
+                        <hr class="bg-warning">
+                        <div id="faqItemsContainer"></div>
+                    </div>
                 </div>
             </div>
             
@@ -158,6 +206,78 @@
                     <div class="card">
                         <div class="card-header"><h5 class="mb-0">Preview</h5></div>
                         <div class="card-body preview-box" id="coursePreview">Preview will appear here after generation</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Blog Tab -->
+        <div class="tab-pane fade" id="blog" role="tabpanel" aria-labelledby="blog-tab">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-4">
+                        <h3 class="mb-3"><i class="fas fa-file-word text-warning me-2"></i>Upload DOCX File</h3>
+                        <hr class="bg-warning">
+                        <input class="form-control" type="file" id="blogFileInput" accept=".docx" />
+                        <div class="file-info" id="blogFileInfo"></div>
+                    </div>
+                    
+                    <!-- Featured Image Section - ALWAYS VISIBLE -->
+                    <div class="featured-image-section">
+                        <h4 class="mb-3"><i class="fas fa-star text-warning me-2"></i>Featured Image (Appears after H1)</h4>
+                        <div class="mb-3">
+                            <label class="form-label text-light">Image URL:</label>
+                            <input type="text" class="form-control" id="featuredImageUrl" 
+                                   placeholder="https://example.com/featured-image.jpg">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-light">Alt Text:</label>
+                            <input type="text" class="form-control" id="featuredImageAlt" 
+                                   placeholder="Description of the image for accessibility">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-light">Title Text:</label>
+                            <input type="text" class="form-control" id="featuredImageTitle" 
+                                   placeholder="Title of the image">
+                        </div>
+                    </div>
+                    
+                    <div class="progress-container" id="blogProgress">
+                        <div class="progress"><div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div></div>
+                        <div class="text-center mt-2" id="blogProgressText">Processing...</div>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-block mb-4">
+                        <button class="btn-hover btn btn-primary btn-lg me-2 mb-2" onclick="uploadBlogFile()"><i class="fas fa-upload me-2"></i>Upload File</button>
+                        <button class="btn-hover btn btn-success btn-lg me-2 mb-2" onclick="generateBlogCode()"><i class="fas fa-code me-2"></i>Generate Blog Code</button>
+                    </div>
+                    
+                    <div id="imageInputsContainer" class="mb-4" style="display: none;">
+                        <h4 class="mb-3"><i class="fas fa-images text-info me-2"></i>Content Images</h4>
+                        <hr class="bg-info">
+                        <p class="text-light">Add image URLs that appear in your blog content.</p>
+                        <div id="imageInputs"></div>
+                        <button class="btn btn-outline-info btn-sm mt-2" onclick="addImageInput()"><i class="fas fa-plus me-1"></i>Add Another Image</button>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <h3 class="mb-3"><i class="fas fa-code text-warning me-2"></i>Generated Blog Code</h3>
+                    <hr class="bg-warning">
+                    <div class="position-relative">
+                        <div class="position-absolute end-0"><button class="btn-hover btn-secondary rounded-start-0 rounded-top text-bg-warning" onclick="copyToClipboard('blogCode')"><i class="fas fa-copy"></i></button></div>
+                        <textarea class="form-control pe-4" id="blogCode" rows="15" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header"><h5 class="mb-0">Preview</h5></div>
+                        <div class="card-body preview-box">
+                            <div id="blogPreview" class="blog-content">Blog preview will appear here after generation</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -262,89 +382,547 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-// ========== COMMON UTILITY FUNCTIONS ==========
-
-function showFileInfo(fileInput, fileInfoId) {
-    const file = fileInput.files[0];
-    if (!file) return;
-    const fileInfo = document.getElementById(fileInfoId);
-    const fileSize = (file.size / 1024).toFixed(2);
-    fileInfo.innerHTML = `
-        <div class="d-flex justify-content-between">
-            <span><strong>Name:</strong> ${file.name}</span>
-            <span><strong>Size:</strong> ${fileSize} KB</span>
-        </div>
-        <div><strong>Type:</strong> ${file.type || "Unknown"}</div>
-    `;
-    fileInfo.style.display = "block";
-}
-
-function showProgress(progressId, progressTextId, message = "Processing...") {
-    const progressContainer = document.getElementById(progressId);
-    const progressText = document.getElementById(progressTextId);
-    progressContainer.style.display = "block";
-    progressText.textContent = message;
-    const progressBar = progressContainer.querySelector(".progress-bar");
-    progressBar.style.width = "0%";
-    let progress = 0;
-    const interval = setInterval(() => {
-        if (progress >= 90) clearInterval(interval);
-        progress += 5;
-        progressBar.style.width = progress + "%";
-    }, 100);
-    return interval;
-}
-
-function hideProgress(progressId, interval) {
-    clearInterval(interval);
-    const progressContainer = document.getElementById(progressId);
-    const progressBar = progressContainer.querySelector(".progress-bar");
-    progressBar.style.width = "100%";
-    setTimeout(() => { progressContainer.style.display = "none"; }, 500);
-}
-
-function showNotification(message, type = "info") {
-    document.querySelectorAll('.notification').forEach(el => el.remove());
-    const alertClass = type === "error" ? "danger" : type;
-    const icon = type === "success" ? "fa-check" : type === "warning" ? "fa-exclamation-triangle" : "fa-info-circle";
-    const notification = document.createElement("div");
-    notification.className = `notification alert alert-${alertClass} fade show`;
-    notification.innerHTML = `<div class="d-flex justify-content-between align-items-center"><span><i class="fas ${icon} me-2"></i>${message}</span><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>`;
-    document.body.appendChild(notification);
-    setTimeout(() => notification.remove(), 3000);
-}
-
-function copyToClipboard(elementId) {
-    const element = document.getElementById(elementId);
-    const text = element.value || element.textContent;
-    if (text?.trim()) {
-        navigator.clipboard.writeText(text).then(() => {
-            showNotification("Code copied to clipboard!", "success");
-        }).catch(() => {
-            showNotification("Failed to copy text. Please try again.", "error");
-        });
-    } else {
-        showNotification("No content to copy!", "warning");
+    // ========== ANIMATED FAVICON ==========
+function createAnimatedFavicon() {
+    // Add your frame image URLs here
+    const frameUrls = [
+        'https://api.imghippo.com/files/xaDF5036Pg.webp',
+        'https://api.imghippo.com/files/Byw8441LyU.webp',
+        'https://api.imghippo.com/files/OMRB5894PM.webp',
+        'https://api.imghippo.com/files/OMRB5894PM.webp',
+        'https://api.imghippo.com/files/aWwT8956okE.webp',
+        'https://api.imghippo.com/files/szpK3253uQ.webp',
+        'https://api.imghippo.com/files/OCNp9289B.webp',
+        'https://api.imghippo.com/files/Cve4428hjE.webp',
+        'https://api.imghippo.com/files/oEdX3633KQ.webp',
+        'https://api.imghippo.com/files/pe5312jh.webp',
+        'https://api.imghippo.com/files/tN6032k.webp',
+        'https://api.imghippo.com/files/ALhs5878PIM.webp',
+        'https://api.imghippo.com/files/jJ7827D.webp',
+        'https://api.imghippo.com/files/hHv5541MA.webp',
+        'https://api.imghippo.com/files/JTKk1632gk.webp',
+        'https://api.imghippo.com/files/cy6079QM.webp',
+        'https://api.imghippo.com/files/hzUt2965X.webp',
+        'https://api.imghippo.com/files/Tngt2746aI.webp',
+        'https://api.imghippo.com/files/tNI6716EY.webp',
+        'https://api.imghippo.com/files/fdzK3248hwE.webp',
+        'https://api.imghippo.com/files/WmU5310QWs.webp',
+        'https://api.imghippo.com/files/btnl8092nWk.webp',
+        'https://api.imghippo.com/files/mBT8928I.webp',
+        'https://api.imghippo.com/files/uV5779NE.webp',
+        'https://api.imghippo.com/files/wdgF7812gz.webp',
+        'https://api.imghippo.com/files/HgWv5913es.webp'
+        // Add more frame URLs as needed
+    ];
+    
+    let currentFrame = 0;
+    const favicon = document.getElementById('animatedFavicon');
+    
+    // Function to rotate through frames
+    function rotateFavicon() {
+        if (frameUrls.length > 0) {
+            favicon.href = frameUrls[currentFrame];
+            currentFrame = (currentFrame + 1) % frameUrls.length;
+        }
+    }
+    
+    // Start animation (change frame every 500ms)
+    if (frameUrls.length > 1) {
+        setInterval(rotateFavicon, 100);
+    } else if (frameUrls.length === 1) {
+        // If only one frame, just set it once
+        favicon.href = frameUrls[0];
     }
 }
 
+// Initialize animated favicon when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    createAnimatedFavicon();
+});
+// ========== COMMON UTILITY FUNCTIONS ==========
+const utils = {
+    showFileInfo(fileInput, fileInfoId) {
+        const file = fileInput.files[0];
+        if (!file) return;
+        const fileInfo = document.getElementById(fileInfoId);
+        const fileSize = (file.size / 1024).toFixed(2);
+        fileInfo.innerHTML = `<div class="d-flex justify-content-between"><span><strong>Name:</strong> ${file.name}</span><span><strong>Size:</strong> ${fileSize} KB</span></div><div><strong>Type:</strong> ${file.type || "Unknown"}</div>`;
+        fileInfo.style.display = "block";
+    },
+
+    showProgress(progressId, progressTextId, message = "Processing...") {
+        const progressContainer = document.getElementById(progressId);
+        const progressText = document.getElementById(progressTextId);
+        progressContainer.style.display = "block";
+        progressText.textContent = message;
+        const progressBar = progressContainer.querySelector(".progress-bar");
+        progressBar.style.width = "0%";
+        let progress = 0;
+        const interval = setInterval(() => {
+            if (progress >= 90) clearInterval(interval);
+            progress += 5;
+            progressBar.style.width = progress + "%";
+        }, 100);
+        return interval;
+    },
+
+    hideProgress(progressId, interval) {
+        clearInterval(interval);
+        const progressContainer = document.getElementById(progressId);
+        const progressBar = progressContainer.querySelector(".progress-bar");
+        progressBar.style.width = "100%";
+        setTimeout(() => { progressContainer.style.display = "none"; }, 500);
+    },
+
+    showNotification(message, type = "info") {
+        document.querySelectorAll('.notification').forEach(el => el.remove());
+        const alertClass = type === "error" ? "danger" : type;
+        const icon = type === "success" ? "fa-check" : type === "warning" ? "fa-exclamation-triangle" : "fa-info-circle";
+        const notification = document.createElement("div");
+        notification.className = `notification alert alert-${alertClass} fade show`;
+        notification.innerHTML = `<div class="d-flex justify-content-between align-items-center"><span><i class="fas ${icon} me-2"></i>${message}</span><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>`;
+        document.body.appendChild(notification);
+        setTimeout(() => notification.remove(), 3000);
+    },
+
+    copyToClipboard(elementId) {
+        const element = document.getElementById(elementId);
+        const text = element.value || element.textContent;
+        if (text?.trim()) {
+            navigator.clipboard.writeText(text).then(() => {
+                this.showNotification("Code copied to clipboard!", "success");
+            }).catch(() => {
+                this.showNotification("Failed to copy text. Please try again.", "error");
+            });
+        } else {
+            this.showNotification("No content to copy!", "warning");
+        }
+    }
+};
+
 // Initialize file input listeners
 document.addEventListener("DOMContentLoaded", function() {
-    document.getElementById("courseFileInput").addEventListener("change", function() {
-        showFileInfo(this, "courseFileInfo");
-    });
-    document.getElementById("glossaryFileInput").addEventListener("change", function() {
-        showFileInfo(this, "glossaryFileInfo");
-    });
-    document.getElementById("resourceFileInput").addEventListener("change", function() {
-        showFileInfo(this, "resourceFileInfo");
+    const fileInputs = [
+        { id: "courseFileInput", infoId: "courseFileInfo" },
+        { id: "blogFileInput", infoId: "blogFileInfo" },
+        { id: "glossaryFileInput", infoId: "glossaryFileInfo" },
+        { id: "resourceFileInput", infoId: "resourceFileInfo" }
+    ];
+    
+    fileInputs.forEach(({id, infoId}) => {
+        document.getElementById(id).addEventListener("change", function() {
+            utils.showFileInfo(this, infoId);
+        });
     });
 });
 
-// ========== COURSE CONTENT GENERATOR ==========
+// ========== BLOG CONTENT GENERATOR ==========
+// Blog data storage
+let blogData = {
+    title: "",
+    content: [],
+    imageCount: 0,
+    fileProcessed: false
+};
 
+// Blog processing functions
+function uploadBlogFile() {
+    const file = document.getElementById("blogFileInput").files[0];
+    if (!file) {
+        utils.showNotification("Please select a file to upload.", "warning");
+        return;
+    }
+    
+    const progressInterval = utils.showProgress("blogProgress", "blogProgressText", "Reading DOCX file...");
+    const reader = new FileReader();
+    
+    reader.onload = (event) => {
+        document.getElementById("blogProgressText").textContent = "Converting DOCX to HTML...";
+        mammoth.convertToHtml({arrayBuffer: event.target.result})
+            .then(result => {
+                document.getElementById("blogProgressText").textContent = "Extracting blog content...";
+                extractBlogContent(result.value, progressInterval);
+            })
+            .catch(error => {
+                console.error("Conversion error:", error);
+                utils.hideProgress("blogProgress", progressInterval);
+                utils.showNotification("Error reading the file. Please try again.", "error");
+            });
+    };
+    
+    reader.onerror = () => {
+        utils.hideProgress("blogProgress", progressInterval);
+        utils.showNotification("Error reading the file. Please try again.", "error");
+    };
+    
+    reader.readAsArrayBuffer(file);
+}
+
+function extractBlogContent(html, progressInterval) {
+    try {
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = html;
+        
+        blogData = {
+            title: "",
+            content: [],
+            imageCount: 0,
+            fileProcessed: false
+        };
+        
+        // Clean up the HTML - remove unnecessary tags and styles
+        cleanHTML(tempDiv);
+        
+        // Extract title (first H1)
+        extractTitle(tempDiv);
+        
+        // Process all elements to create structured content
+        processContentElements(tempDiv);
+        
+        blogData.fileProcessed = true;
+        utils.hideProgress("blogProgress", progressInterval);
+        
+        // Show image input fields if images were detected
+        if (blogData.imageCount > 0) {
+            document.getElementById("imageInputsContainer").style.display = "block";
+            createImageInputs();
+            utils.showNotification(`Blog content extracted successfully! Found ${blogData.imageCount} image placeholders.`, "success");
+        } else {
+            document.getElementById("imageInputsContainer").style.display = "none";
+            utils.showNotification("Blog content extracted successfully! No images detected.", "success");
+        }
+        
+    } catch (error) {
+        console.error("Extraction error:", error);
+        utils.hideProgress("blogProgress", progressInterval);
+        utils.showNotification("Error extracting content. Please check the file format.", "error");
+    }
+}
+
+function cleanHTML(element) {
+    // Remove all style attributes
+    const styledElements = element.querySelectorAll('*[style]');
+    styledElements.forEach(el => {
+        el.removeAttribute('style');
+    });
+    
+    // Remove span tags but keep their content
+    const spanElements = element.querySelectorAll('span');
+    spanElements.forEach(span => {
+        const parent = span.parentNode;
+        while (span.firstChild) {
+            parent.insertBefore(span.firstChild, span);
+        }
+        parent.removeChild(span);
+    });
+    
+    // Remove excessive <br> tags
+    const brTags = element.querySelectorAll('br');
+    let previousWasBr = false;
+    brTags.forEach(br => {
+        if (previousWasBr) {
+            br.remove();
+        }
+        previousWasBr = true;
+    });
+    
+    // Remove empty elements
+    const allElements = element.querySelectorAll('*');
+    allElements.forEach(el => {
+        if (!el.textContent.trim() && el.children.length === 0 && el.tagName !== 'IMG') {
+            el.remove();
+        }
+    });
+}
+
+function extractTitle(element) {
+    // Try to find H1 first
+    const h1Element = element.querySelector("h1");
+    if (h1Element) {
+        blogData.title = h1Element.textContent.trim();
+        h1Element.remove();
+        return;
+    }
+    
+    // If no H1, look for the first significant paragraph
+    const paragraphs = element.querySelectorAll("p");
+    for (const p of paragraphs) {
+        const text = p.textContent.trim();
+        if (text && text.length > 10 && text.length < 200) {
+            blogData.title = text;
+            p.remove();
+            return;
+        }
+    }
+    
+    // Fallback: use first non-empty text content
+    const allElements = element.querySelectorAll('*');
+    for (const el of allElements) {
+        const text = el.textContent.trim();
+        if (text && text.length > 5) {
+            blogData.title = text.split('.')[0]; // Take first sentence
+            return;
+        }
+    }
+}
+
+function processContentElements(element) {
+    const elements = Array.from(element.children);
+    
+    for (const el of elements) {
+        if (!el.textContent || !el.textContent.trim()) continue;
+        
+        const tagName = el.tagName.toLowerCase();
+        const textContent = el.textContent.trim();
+        
+        // Skip the title if it appears again in the content
+        if (textContent === blogData.title) continue;
+        
+        // Skip metadata paragraphs
+        if (tagName === 'p' && shouldSkipParagraph(textContent)) {
+            continue;
+        }
+        
+        // Handle headings
+        if (tagName.match(/^h[1-6]$/)) {
+            const headingLevel = parseInt(tagName.charAt(1));
+            blogData.content.push({
+                type: 'heading',
+                level: headingLevel,
+                content: cleanTextContent(el.innerHTML.trim())
+            });
+        } 
+        // Handle paragraphs - check for Introduction
+        else if (tagName === 'p' && textContent.length > 0) {
+            processParagraph(el, textContent);
+        }
+        // Handle lists
+        else if (tagName === 'ul' || tagName === 'ol') {
+            blogData.content.push({
+                type: 'list',
+                ordered: tagName === 'ol',
+                items: Array.from(el.querySelectorAll('li')).map(li => cleanTextContent(li.innerHTML.trim()))
+            });
+        }
+        // Handle images
+        else if (tagName === 'img') {
+            blogData.imageCount++;
+            blogData.content.push({
+                type: 'image',
+                alt: el.getAttribute('alt') || `Blog image ${blogData.imageCount}`,
+                placeholder: `[Image ${blogData.imageCount}]`
+            });
+        }
+        // Handle divs and other containers - recursively process their children
+        else if (el.children.length > 0) {
+            processChildElements(el);
+        }
+    }
+}
+
+function processParagraph(element, textContent) {
+    // Check if this paragraph starts with "Introduction:"
+    if (textContent.toLowerCase().startsWith('introduction:')) {
+        // Add H2 heading for Introduction
+        blogData.content.push({
+            type: 'heading',
+            level: 2,
+            content: 'Introduction'
+        });
+        
+        // Extract the content after "Introduction:"
+        const introContent = textContent.substring('introduction:'.length).trim();
+        
+        // If there's content after "Introduction:", add it as a paragraph
+        if (introContent) {
+            blogData.content.push({
+                type: 'paragraph',
+                content: introContent
+            });
+        }
+    } else {
+        // Regular paragraph
+        blogData.content.push({
+            type: 'paragraph',
+            content: cleanTextContent(element.innerHTML.trim())
+        });
+    }
+}
+
+// Function to check if paragraph should be skipped
+function shouldSkipParagraph(text) {
+    const skipKeywords = [
+        'link:',
+        'alt text:',
+        'title text:',
+        'meta description:',
+        'slug:',
+        'relevant courses:',
+        'category:'
+    ];
+    
+    const lowerText = text.toLowerCase();
+    return skipKeywords.some(keyword => lowerText.startsWith(keyword));
+}
+
+function processChildElements(parentElement) {
+    const children = Array.from(parentElement.children);
+    children.forEach(child => {
+        const textContent = child.textContent.trim();
+        if (!textContent) return;
+        
+        const tagName = child.tagName.toLowerCase();
+        
+        // Skip metadata paragraphs
+        if (tagName === 'p' && shouldSkipParagraph(textContent)) {
+            return;
+        }
+        
+        if (tagName === 'p') {
+            processParagraph(child, textContent);
+        } else if (tagName === 'ul' || tagName === 'ol') {
+            blogData.content.push({
+                type: 'list',
+                ordered: tagName === 'ol',
+                items: Array.from(child.querySelectorAll('li')).map(li => cleanTextContent(li.innerHTML.trim()))
+            });
+        } else if (tagName === 'img') {
+            blogData.imageCount++;
+            blogData.content.push({
+                type: 'image',
+                alt: child.getAttribute('alt') || `Blog image ${blogData.imageCount}`,
+                placeholder: `[Image ${blogData.imageCount}]`
+            });
+        }
+        // Recursively process nested elements
+        else if (child.children.length > 0) {
+            processChildElements(child);
+        }
+    });
+}
+
+function cleanTextContent(content) {
+    // Remove any remaining style attributes and span tags
+    return content
+        .replace(/<br\s*\/?>/gi, ' ') // Convert br to space
+        .replace(/<span[^>]*>/gi, '') // Remove opening span tags
+        .replace(/<\/span>/gi, '') // Remove closing span tags
+        .replace(/\s+/g, ' ') // Normalize whitespace
+        .trim();
+}
+
+function createImageInputs() {
+    const container = document.getElementById("imageInputs");
+    container.innerHTML = "";
+    
+    for (let i = 1; i <= blogData.imageCount; i++) {
+        const inputGroup = document.createElement("div");
+        inputGroup.className = "image-input-group";
+        inputGroup.innerHTML = `
+            <label class="form-label text-light">Image ${i} URL:</label>
+            <input type="text" class="form-control image-url-input" id="imageUrl${i}" 
+                   placeholder="https://example.com/image${i}.jpg" data-index="${i}">
+        `;
+        container.appendChild(inputGroup);
+    }
+}
+
+function addImageInput() {
+    blogData.imageCount++;
+    const container = document.getElementById("imageInputs");
+    const inputGroup = document.createElement("div");
+    inputGroup.className = "image-input-group";
+    inputGroup.innerHTML = `
+        <label class="form-label text-light">Image ${blogData.imageCount} URL:</label>
+        <input type="text" class="form-control image-url-input" id="imageUrl${blogData.imageCount}" 
+               placeholder="https://example.com/image${blogData.imageCount}.jpg" data-index="${blogData.imageCount}">
+    `;
+    container.appendChild(inputGroup);
+}
+
+function generateBlogCode() {
+    if (!blogData.fileProcessed) {
+        utils.showNotification("Please upload and process a DOCX file first.", "warning");
+        return;
+    }
+
+    // Get featured image data from the input fields
+    const featuredImageUrl = document.getElementById("featuredImageUrl").value.trim();
+    const featuredImageAlt = document.getElementById("featuredImageAlt").value.trim();
+    const featuredImageTitle = document.getElementById("featuredImageTitle").value.trim();
+
+    // Collect image URLs for content images
+    const imageUrls = [];
+    const imageInputs = document.querySelectorAll('.image-url-input');
+    imageInputs.forEach(input => {
+        if (input.value.trim()) {
+            const index = parseInt(input.getAttribute('data-index')) - 1;
+            imageUrls[index] = input.value.trim();
+        }
+    });
+    
+    let imageIndex = 0;
+    let blogHTML = "";
+    
+    // Add title as H1 with text-center class
+    if (blogData.title) {
+        blogHTML += `<h1 class="text-center">${blogData.title}</h1>\n\n`;
+    }
+    
+    // ALWAYS add featured image after H1 (even if empty)
+    let imgTag = `<img`;
+    if (featuredImageUrl) imgTag += ` src="${featuredImageUrl}"`;
+    if (featuredImageAlt) imgTag += ` alt="${featuredImageAlt}"`;
+    if (featuredImageTitle) imgTag += ` title="${featuredImageTitle}"`;
+    imgTag += ` class="img-fluid">\n\n`;
+    blogHTML += imgTag;
+    
+    // Process content
+    for (const item of blogData.content) {
+        switch (item.type) {
+            case 'heading':
+                // Add text-center class only to H1 headings
+                if (item.level === 1) {
+                    blogHTML += `<h${item.level} class="text-center">${item.content}</h${item.level}>\n\n`;
+                } else {
+                    blogHTML += `<h${item.level}>${item.content}</h${item.level}>\n\n`;
+                }
+                break;
+                
+            case 'paragraph':
+                // Only add paragraph if it has meaningful content
+                const cleanContent = item.content.replace(/<[^>]*>/g, '').trim();
+                if (cleanContent && cleanContent.length > 10) {
+                    blogHTML += `<p>${item.content}</p>\n\n`;
+                }
+                break;
+                
+            case 'list':
+                const tag = item.ordered ? 'ol' : 'ul';
+                blogHTML += `<${tag}>\n`;
+                item.items.forEach(listItem => {
+                    blogHTML += `  <li>${listItem}</li>\n`;
+                });
+                blogHTML += `</${tag}>\n\n`;
+                break;
+                
+            case 'image':
+                const imageUrl = imageUrls[imageIndex] || "#";
+                blogHTML += `<img src="${imageUrl}" alt="${item.alt}" class="img-fluid">\n\n`;
+                imageIndex++;
+                break;
+        }
+    }
+    
+    // Set the blog code
+    document.getElementById("blogCode").value = blogHTML;
+    document.getElementById("blogPreview").innerHTML = blogHTML;
+    utils.showNotification("Blog code generated successfully!", "success");
+}
+
+// ========== COURSE CONTENT GENERATOR ==========
 const courseData = { 
-    overview: "", courseObjectives: "", syllabus: "", courseTitle: "",
+    overview: "", courseObjectives: "", syllabus: "", courseTitle: "", faqData: [],
     overviewSections: [], courseObjectivesList: [], syllabusModules: [], courseObjectivesIntro: "",
     fileProcessed: false
 };
@@ -353,20 +931,11 @@ function uploadCourseFile() {
     const file = document.getElementById("courseFileInput").files[0];
     const courseName = document.getElementById("courseNameInput").value.trim();
     
-    if (!file) { 
-        showNotification("Please select a file to upload.", "warning"); 
-        return; 
-    }
+    if (!file) return utils.showNotification("Please select a file to upload.", "warning");
+    if (!courseName) return utils.showNotification("Please enter a course name.", "warning");
     
-    if (!courseName) {
-        showNotification("Please enter a course name.", "warning");
-        return;
-    }
-    
-    // Set course title from user input
     courseData.courseTitle = courseName;
-    
-    const progressInterval = showProgress("courseProgress", "courseProgressText", "Reading DOCX file...");
+    const progressInterval = utils.showProgress("courseProgress", "courseProgressText", "Reading DOCX file...");
     const reader = new FileReader();
     
     reader.onload = (event) => {
@@ -378,14 +947,14 @@ function uploadCourseFile() {
             })
             .catch(error => {
                 console.error("Conversion error:", error);
-                hideProgress("courseProgress", progressInterval);
-                showNotification("Error reading the file. Please try again.", "error");
+                utils.hideProgress("courseProgress", progressInterval);
+                utils.showNotification("Error reading the file. Please try again.", "error");
             });
     };
     
     reader.onerror = () => {
-        hideProgress("courseProgress", progressInterval);
-        showNotification("Error reading the file. Please try again.", "error");
+        utils.hideProgress("courseProgress", progressInterval);
+        utils.showNotification("Error reading the file. Please try again.", "error");
     };
     
     reader.readAsArrayBuffer(file);
@@ -396,77 +965,150 @@ function extractCourseContent(html, progressInterval) {
         const tempDiv = document.createElement("div");
         tempDiv.innerHTML = html;
         
-        // Use the course title from user input instead of extracting from document
-        // courseData.courseTitle is already set from the input field
-        
         courseData.overviewSections = [];
         courseData.courseObjectivesList = [];
         courseData.syllabusModules = [];
         courseData.courseObjectivesIntro = "";
+        courseData.faqData = [];
         
         const elementsArray = Array.from(tempDiv.children);
-        let overviewStart = -1, courseObjectivesStart = -1, syllabusStart = -1;
         
-        elementsArray.forEach((element, i) => {
-            const text = element.textContent.trim().toLowerCase();
-            if (text.includes("overview") && overviewStart === -1) overviewStart = i;
-            else if (text.includes("course objectives") && courseObjectivesStart === -1) courseObjectivesStart = i;
-            else if ((text.includes("syllabus") || text.includes("course syllabus")) && syllabusStart === -1) syllabusStart = i;
-        });
-        
-        if (overviewStart !== -1) {
-            const overviewEnd = syllabusStart !== -1 ? syllabusStart : elementsArray.length;
-            const overviewElements = elementsArray.slice(overviewStart + 1, overviewEnd);
-            courseData.overview = overviewElements.map(el => el.outerHTML).join("");
-            courseData.overviewSections = [{ heading: "Overview", content: courseData.overview }];
-        }
-        
-        if (syllabusStart !== -1) {
-            const syllabusElements = elementsArray.slice(syllabusStart);
-            let foundSyllabusHeading = false;
-            
-            for (const element of syllabusElements) {
-                const text = element.textContent.trim();
-                if (text.toLowerCase().includes("syllabus")) {
-                    foundSyllabusHeading = true;
-                    continue;
-                }
-                if (foundSyllabusHeading && element.tagName === 'P') {
-                    courseData.courseObjectivesIntro = element.innerHTML.trim();
-                    break;
-                }
-            }
-            
-            let inObjectives = false;
-            for (const element of syllabusElements) {
-                const text = element.textContent.trim().toLowerCase();
-                if (text.includes("course objectives")) {
-                    inObjectives = true;
-                    continue;
-                }
-                if (inObjectives && element.tagName === 'UL') {
-                    const items = element.querySelectorAll('li');
-                    items.forEach(item => {
-                        const itemText = item.innerHTML.trim();
-                        if (!isUnwantedObjective(itemText)) {
-                            courseData.courseObjectivesList.push(itemText);
-                        }
-                    });
-                    break;
-                }
-            }
-            
-            courseData.syllabusModules = extractAllSyllabusContent(elementsArray);
-        }
+        // Extract all content sections
+        extractOverview(elementsArray);
+        extractCourseObjectives(elementsArray);
+        extractSyllabus(elementsArray);
+        extractFAQContent(elementsArray);
         
         courseData.fileProcessed = true;
-        hideProgress("courseProgress", progressInterval);
-        showNotification("Course content extracted successfully!", "success");
+        utils.hideProgress("courseProgress", progressInterval);
+        utils.showNotification("Course content extracted successfully!", "success");
         
     } catch (error) {
         console.error("Extraction error:", error);
-        hideProgress("courseProgress", progressInterval);
-        showNotification("Error extracting content. Please check the file format.", "error");
+        utils.hideProgress("courseProgress", progressInterval);
+        utils.showNotification("Error extracting content. Please check the file format.", "error");
+    }
+}
+
+function extractOverview(elementsArray) {
+    let overviewStart = -1;
+    elementsArray.forEach((element, i) => {
+        const text = element.textContent.trim().toLowerCase();
+        if (text.includes("overview") && overviewStart === -1) overviewStart = i;
+    });
+    
+    if (overviewStart !== -1) {
+        const syllabusStart = elementsArray.findIndex(el => 
+            el.textContent.trim().toLowerCase().includes("syllabus") || 
+            el.textContent.trim().toLowerCase().includes("course syllabus")
+        );
+        const overviewEnd = syllabusStart !== -1 ? syllabusStart : elementsArray.length;
+        const overviewElements = elementsArray.slice(overviewStart + 1, overviewEnd);
+        courseData.overview = overviewElements.map(el => el.outerHTML).join("");
+        courseData.overviewSections = [{ heading: "Overview", content: courseData.overview }];
+    }
+}
+
+function extractCourseObjectives(elementsArray) {
+    const syllabusStart = elementsArray.findIndex(el => 
+        el.textContent.trim().toLowerCase().includes("syllabus")
+    );
+    
+    if (syllabusStart !== -1) {
+        const syllabusElements = elementsArray.slice(syllabusStart);
+        
+        // Find course objectives intro
+        let foundSyllabusHeading = false;
+        for (const element of syllabusElements) {
+            const text = element.textContent.trim();
+            if (text.toLowerCase().includes("syllabus")) {
+                foundSyllabusHeading = true;
+                continue;
+            }
+            if (foundSyllabusHeading && element.tagName === 'P') {
+                courseData.courseObjectivesIntro = element.innerHTML.trim();
+                break;
+            }
+        }
+        
+        // Extract course objectives list
+        let inObjectives = false;
+        for (const element of syllabusElements) {
+            const text = element.textContent.trim().toLowerCase();
+            if (text.includes("course objectives")) {
+                inObjectives = true;
+                continue;
+            }
+            if (inObjectives && element.tagName === 'UL') {
+                const items = element.querySelectorAll('li');
+                items.forEach(item => {
+                    const itemText = item.innerHTML.trim();
+                    if (!isUnwantedObjective(itemText)) {
+                        courseData.courseObjectivesList.push(itemText);
+                    }
+                });
+                break;
+            }
+        }
+    }
+}
+
+function extractSyllabus(elementsArray) {
+    courseData.syllabusModules = extractAllSyllabusContent(elementsArray);
+}
+
+function extractFAQContent(elementsArray) {
+    let faqStart = -1;
+    elementsArray.forEach((element, i) => {
+        const text = element.textContent.trim().toLowerCase();
+        if ((text.includes("faq") || text.includes("frequently asked questions")) && faqStart === -1) {
+            faqStart = i;
+        }
+    });
+    
+    if (faqStart !== -1) {
+        let currentQuestion = "", currentAnswer = "", inFAQSection = false;
+        
+        for (let i = faqStart; i < elementsArray.length; i++) {
+            const element = elementsArray[i];
+            const text = element.textContent.trim();
+            
+            if (i > faqStart && (text.toLowerCase().includes("glossary") || text.toLowerCase().includes("resources"))) {
+                break;
+            }
+            
+            if (text.toLowerCase().includes("faq") || text.toLowerCase().includes("frequently asked questions")) {
+                inFAQSection = true;
+                continue;
+            }
+            
+            if (inFAQSection) {
+                const isQuestion = element.tagName.match(/^H[1-6]$/i) || 
+                                 element.innerHTML.includes('<strong>') || 
+                                 element.innerHTML.includes('<b>') ||
+                                 text.endsWith('?');
+                
+                if (isQuestion) {
+                    if (currentQuestion && currentAnswer) {
+                        courseData.faqData.push({
+                            question: currentQuestion.trim(),
+                            answer: currentAnswer.trim()
+                        });
+                        currentAnswer = "";
+                    }
+                    currentQuestion = text;
+                } else if (currentQuestion && text) {
+                    currentAnswer += (currentAnswer ? " " : "") + element.outerHTML;
+                }
+            }
+        }
+        
+        if (currentQuestion && currentAnswer) {
+            courseData.faqData.push({
+                question: currentQuestion.trim(),
+                answer: currentAnswer.trim()
+            });
+        }
     }
 }
 
@@ -565,10 +1207,7 @@ function extractAllSyllabusContent(elementsArray) {
 }
 
 function generateOverviewCode() {
-    if (!courseData.fileProcessed) {
-        showNotification("Please upload and process a DOCX file first.", "warning");
-        return;
-    }
+    if (!courseData.fileProcessed) return utils.showNotification("Please upload and process a DOCX file first.", "warning");
     
     const videoHtml = `<!-- <div class="col-md-5 col-sm-12 elementor-col-40 elementor-column ml-md-3 p-0 pb-0 pt-0 verified-field-container" style="float:right"><div class="demo-video"><iframe title="${courseData.courseTitle || 'Course Video'}" src="https://player.vimeo.com/video/680313019?h=6c9335ab94" width="560" height="200" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen data-ready="true"></iframe><img src="" alt="${courseData.courseTitle || 'Course Name'}"></div></div> -->`;
     
@@ -594,14 +1233,11 @@ function generateOverviewCode() {
     const overviewHtml = videoHtml + contentHtml;
     document.getElementById("overviewCode").value = overviewHtml;
     document.getElementById("coursePreview").innerHTML = overviewHtml;
-    showNotification("Overview code generated successfully!", "success");
+    utils.showNotification("Overview code generated successfully!", "success");
 }
 
 function generateCourseObjectivesCode() {
-    if (!courseData.fileProcessed) {
-        showNotification("Please upload and process a DOCX file first.", "warning");
-        return;
-    }
+    if (!courseData.fileProcessed) return utils.showNotification("Please upload and process a DOCX file first.", "warning");
     
     const introParagraph = courseData.courseObjectivesIntro || `This ${courseData.courseTitle || 'Course'} will equip workers with the information and authority required.`;
     let listItemsHtml = "";
@@ -616,26 +1252,92 @@ function generateCourseObjectivesCode() {
     
     document.getElementById("courseObjectivesCode").value = courseObjectivesHtml;
     document.getElementById("coursePreview").innerHTML = courseObjectivesHtml;
-    showNotification("Course Objectives code generated successfully!", "success");
+    utils.showNotification("Course Objectives code generated successfully!", "success");
 }
 
 function generateSyllabusCode() {
-    if (!courseData.fileProcessed) {
-        showNotification("Please upload and process a DOCX file first.", "warning");
-        return;
-    }
+    if (!courseData.fileProcessed) return utils.showNotification("Please upload and process a DOCX file first.", "warning");
 
     const syllabusHtml = generateSyllabusHTML();
     document.getElementById("syllabusCode").value = syllabusHtml;
     document.getElementById("coursePreview").innerHTML = syllabusHtml;
-    showNotification("Syllabus code generated successfully!", "success");
+    utils.showNotification("Syllabus code generated successfully!", "success");
+}
+
+function generateFAQCode() {
+    if (!courseData.fileProcessed) return utils.showNotification("Please upload and process a DOCX file first.", "warning");
+    if (courseData.faqData.length === 0) return utils.showNotification("No FAQ content found in the document.", "warning");
+
+    let faqHTML = `<div class="faq-section">\n`;
+    
+    courseData.faqData.forEach((faq, index) => {
+        faqHTML += `  <div class="faq-item">\n`;
+        faqHTML += `    <div class="faq-question">Q: ${faq.question}</div>\n`;
+        faqHTML += `    <div class="faq-answer">A: ${faq.answer}</div>\n`;
+        faqHTML += `  </div>\n`;
+        
+        if (index < courseData.faqData.length - 1) {
+            faqHTML += `  <hr>\n`;
+        }
+    });
+    
+    faqHTML += `</div>`;
+    
+    document.getElementById("faqCode").value = faqHTML;
+    document.getElementById("coursePreview").innerHTML = faqHTML;
+    generateIndividualFAQItems();
+    utils.showNotification("FAQ code generated successfully!", "success");
+}
+
+function generateIndividualFAQItems() {
+    const container = document.getElementById("faqItemsContainer");
+    container.innerHTML = "";
+    
+    courseData.faqData.forEach((faq, index) => {
+        const faqItem = document.createElement("div");
+        faqItem.className = "faq-item mb-4 p-3 border rounded";
+        
+        faqItem.innerHTML = `
+            <div class="mb-3">
+                <label class="form-label fw-bold text-warning">Question ${index + 1}:</label>
+                <div class="position-relative">
+                    <button class="btn btn-sm btn-outline-warning position-absolute top-0 end-0 copy-btn" onclick="copyFAQText('question${index}')">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <textarea class="form-control" id="question${index}" rows="2" readonly>${faq.question}</textarea>
+                </div>
+            </div>
+            <div>
+                <label class="form-label fw-bold text-info">Answer ${index + 1}:</label>
+                <div class="position-relative">
+                    <button class="btn btn-sm btn-outline-info position-absolute top-0 end-0 copy-btn" onclick="copyFAQText('answer${index}')">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <textarea class="form-control" id="answer${index}" rows="4" readonly>${faq.answer}</textarea>
+                </div>
+            </div>
+        `;
+        
+        container.appendChild(faqItem);
+    });
+    
+    document.getElementById("faqIndividualItems").style.display = "block";
+}
+
+function copyFAQText(elementId) {
+    const element = document.getElementById(elementId);
+    if (element) {
+        element.select();
+        navigator.clipboard.writeText(element.value).then(() => {
+            utils.showNotification("Text copied to clipboard!", "success");
+        }).catch(() => {
+            utils.showNotification("Failed to copy text.", "error");
+        });
+    }
 }
 
 function debugExtraction() {
-    if (!courseData.fileProcessed) {
-        showNotification("Please upload and process a DOCX file first.", "warning");
-        return;
-    }
+    if (!courseData.fileProcessed) return utils.showNotification("Please upload and process a DOCX file first.", "warning");
     
     let debugInfo = `
         <h3>Debug Information</h3>
@@ -643,6 +1345,7 @@ function debugExtraction() {
         <h4>Overview Sections: ${courseData.overviewSections.length}</h4>
         <h4>Course Objectives: ${courseData.courseObjectivesList.length}</h4>
         <h4>Syllabus Modules: ${courseData.syllabusModules.length}</h4>
+        <h4>FAQ Items: ${courseData.faqData.length}</h4>
         <hr>
     `;
     
@@ -675,7 +1378,7 @@ function debugExtraction() {
     }
     
     document.getElementById("coursePreview").innerHTML = debugInfo;
-    showNotification("Debug information displayed in preview area", "info");
+    utils.showNotification("Debug information displayed in preview area", "info");
 }
 
 function generateSyllabusHTML() {
@@ -759,11 +1462,10 @@ function downloadDemoFile(){
 }
 
 // ========== GLOSSARY GENERATOR FUNCTIONS ==========
-
 function uploadGlossaryFile() {
     const file = document.getElementById("glossaryFileInput").files[0];
-    if (!file) return void showNotification("Please select a file to upload.", "warning");
-    const progressInterval = showProgress("glossaryProgress", "glossaryProgressText", "Reading DOCX file...");
+    if (!file) return void utils.showNotification("Please select a file to upload.", "warning");
+    const progressInterval = utils.showProgress("glossaryProgress", "glossaryProgressText", "Reading DOCX file...");
     const reader = new FileReader();
     reader.onload = function(e) {
         const arrayBuffer = e.target.result;
@@ -774,13 +1476,13 @@ function uploadGlossaryFile() {
             parseGlossaryData(html, progressInterval);
         }).catch(e => {
             console.error(e);
-            hideProgress("glossaryProgress", progressInterval);
-            showNotification("Error reading the file. Please try again.", "error");
+            utils.hideProgress("glossaryProgress", progressInterval);
+            utils.showNotification("Error reading the file. Please try again.", "error");
         });
     };
     reader.onerror = function() {
-        hideProgress("glossaryProgress", progressInterval);
-        showNotification("Error reading the file. Please try again.", "error");
+        utils.hideProgress("glossaryProgress", progressInterval);
+        utils.showNotification("Error reading the file. Please try again.", "error");
     };
     reader.readAsArrayBuffer(file);
 }
@@ -791,7 +1493,7 @@ function parseGlossaryData(html, progressInterval) {
         tempDiv.innerHTML = html;
         const glossaryData = [];
         const tables = tempDiv.getElementsByTagName("table");
-        if (!(tables.length > 0)) return hideProgress("glossaryProgress", progressInterval), void showNotification("No tables found in the document.", "warning");
+        if (!(tables.length > 0)) return utils.hideProgress("glossaryProgress", progressInterval), void utils.showNotification("No tables found in the document.", "warning");
         {
             const rows = tables[0].getElementsByTagName("tr");
             for (let i = 1; i < rows.length; i++) {
@@ -803,11 +1505,11 @@ function parseGlossaryData(html, progressInterval) {
                 }
             }
         }
-        0 === glossaryData.length ? (hideProgress("glossaryProgress", progressInterval), showNotification("No glossary terms found.", "warning")) : (localStorage.setItem("glossaryData", JSON.stringify(glossaryData)), hideProgress("glossaryProgress", progressInterval), showNotification(`Glossary data extracted successfully! Found ${glossaryData.length} terms.`, "success"));
+        0 === glossaryData.length ? (utils.hideProgress("glossaryProgress", progressInterval), utils.showNotification("No glossary terms found.", "warning")) : (localStorage.setItem("glossaryData", JSON.stringify(glossaryData)), utils.hideProgress("glossaryProgress", progressInterval), utils.showNotification(`Glossary data extracted successfully! Found ${glossaryData.length} terms.`, "success"));
     } catch (e) {
         console.error("Error parsing glossary data:", e);
-        hideProgress("glossaryProgress", progressInterval);
-        showNotification("Error parsing glossary data. Please check the file format.", "error");
+        utils.hideProgress("glossaryProgress", progressInterval);
+        utils.showNotification("Error parsing glossary data. Please check the file format.", "error");
     }
 }
 
@@ -869,15 +1571,14 @@ function generateGlossary() {
             </div>`;
         document.getElementById("glossaryCode").value = glossaryHtml;
         document.getElementById("glossaryPreview").innerHTML = glossaryHtml;
-        showNotification("Glossary code generated successfully!", "success");
+        utils.showNotification("Glossary code generated successfully!", "success");
     } catch (e) {
         console.error("Error generating glossary:", e);
-        showNotification("Error generating glossary. Please try again.", "error");
-    } else showNotification("Please upload and parse a DOCX file first.", "warning");
+        utils.showNotification("Error generating glossary. Please try again.", "error");
+    } else utils.showNotification("Please upload and parse a DOCX file first.", "warning");
 }
 
 // ========== RESOURCE GENERATOR FUNCTIONS ==========
-
 const extractActualUrl = url => url ? "string" == typeof url ? url : url.Target || url.target || url.url || url.href || url.Rel && url.Rel.Target || "" : "";
 
 function normCell(cell) {
@@ -919,8 +1620,8 @@ function linkDisplay(link) {
 
 function processResourceFile() {
     const file = document.getElementById("resourceFileInput").files[0];
-    if (!file) return void showNotification("Please select a file to upload.", "warning");
-    const progressInterval = showProgress("resourceProgress", "resourceProgressText", "Reading Excel file...");
+    if (!file) return void utils.showNotification("Please select a file to upload.", "warning");
+    const progressInterval = utils.showProgress("resourceProgress", "resourceProgressText", "Reading Excel file...");
     const reader = new FileReader();
     reader.onload = e => {
         try {
@@ -941,13 +1642,13 @@ function processResourceFile() {
             processSheet(worksheet, mergedCells, progressInterval);
         } catch (e) {
             console.error("Error processing resource file:", e);
-            hideProgress("resourceProgress", progressInterval);
-            showNotification("Error processing Excel file. Please check the format.", "error");
+            utils.hideProgress("resourceProgress", progressInterval);
+            utils.showNotification("Error processing Excel file. Please check the format.", "error");
         }
     };
     reader.onerror = function() {
-        hideProgress("resourceProgress", progressInterval);
-        showNotification("Error reading the file. Please try again.", "error");
+        utils.hideProgress("resourceProgress", progressInterval);
+        utils.showNotification("Error reading the file. Please try again.", "error");
     };
     reader.readAsArrayBuffer(file);
 }
@@ -1036,12 +1737,12 @@ function processSheet(worksheet, mergedCells = {}, progressInterval) {
         document.getElementById("resourcePreview").innerHTML = tableHTML;
         const filteredResources = resources.filter(resource => resource.pdfs && resource.pdfs.length || resource.links && resource.links.length);
         document.getElementById("htmlOutput").value = generateResourceHTML(glossaryLink || "#", filteredResources);
-        hideProgress("resourceProgress", progressInterval);
-        showNotification(`Resource HTML generated successfully! Processed ${filteredResources.length} resources.`, "success");
+        utils.hideProgress("resourceProgress", progressInterval);
+        utils.showNotification(`Resource HTML generated successfully! Processed ${filteredResources.length} resources.`, "success");
     } catch (e) {
         console.error("Error processing sheet:", e);
-        hideProgress("resourceProgress", progressInterval);
-        showNotification("Error processing Excel data. Please check the file format.", "error");
+        utils.hideProgress("resourceProgress", progressInterval);
+        utils.showNotification("Error processing Excel data. Please check the file format.", "error");
     }
 }
 
