@@ -219,4 +219,9 @@ function generateBlogCode(){
 /** Helpers */
 function escapeHtml(str){ if(str===null||str===undefined) return ''; return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function escapeAttr(str){ if(str===null||str===undefined) return ''; return String(str).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function showGeneratedCode(type,sectionId){ const section=document.getElementById(sectionId); if(section) section.style.display='block'; }
+function showGeneratedCode(type,sectionId){
+    const emptyState = document.getElementById(`${type}EmptyState`);
+    if (emptyState) emptyState.classList.add('d-none');
+    const section = document.getElementById(sectionId);
+    if (section) section.style.display = 'block';
+}

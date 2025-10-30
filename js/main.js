@@ -81,7 +81,7 @@ function showCodeSection(sectionId) {
 function activateCodeArea(tab) {
     // Hide empty state
     const emptyState = document.getElementById(`${tab}EmptyState`);
-    if (emptyState) emptyState.style.display = 'none';
+    if (emptyState) emptyState.classList.add('d-none');
     
     // Show code area
     const codeArea = document.getElementById(`${tab}CodeArea`);
