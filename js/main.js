@@ -153,19 +153,19 @@ function openPreviewDrawer(codeElementId, title) {
                     <div class="faq-question-section">
                         <h5>Question ${index + 1}:</h5>
                         <div class="faq-content-box">
-                            <button class="copy-btn-small" onclick="copyFaqContent('question${index}')">
+                            <button class="copy-btn-small" onclick="copyFaqQuestion(${index})">
                                 <i class="fas fa-copy"></i> Copy
                             </button>
-                            <div id="question${index}">${faq.question}</div>
+                            <div>${faq.question}</div>
                         </div>
                     </div>
                     <div class="faq-answer-section">
                         <h5>Answer ${index + 1}:</h5>
                         <div class="faq-content-box">
-                            <button class="copy-btn-small" onclick="copyFaqContent('answer${index}')">
+                            <button class="copy-btn-small" onclick="copyFaqAnswer(${index})">
                                 <i class="fas fa-copy"></i> Copy
                             </button>
-                            <div id="answer${index}">${faq.answer}</div>
+                            <div>${faq.answer}</div>
                         </div>
                     </div>
                 </div>
@@ -208,18 +208,52 @@ function openPreviewDrawer(codeElementId, title) {
     document.addEventListener('keydown', handleEscapeKey);
 }
 
-function copyFaqContent(elementId) {
-    const element = document.getElementById(elementId);
-    const text = element.textContent;
+// Simple FAQ copying functions
+function copyFaqQuestion(index) {
+    if (!previewDrawerState.faqArray || !previewDrawerState.faqArray[index]) {
+        utils.showNotification("No question found to copy!", "warning");
+        return;
+    }
     
-    if (text && text.trim()) {
-        navigator.clipboard.writeText(text).then(() => {
-            utils.showNotification("Content copied to clipboard!", "success");
-        }).catch(() => {
-            utils.showNotification("Failed to copy content. Please try again.", "error");
-        });
-    } else {
-        utils.showNotification("No content to copy!", "warning");
+    const question = previewDrawerState.faqArray[index].question;
+    copyToClipboardSimple(question, "Question");
+}
+
+function copyFaqAnswer(index) {
+    if (!previewDrawerState.faqArray || !previewDrawerState.faqArray[index]) {
+        utils.showNotification("No answer found to copy!", "warning");
+        return;
+    }
+    
+    const answer = previewDrawerState.faqArray[index].answer;
+    copyToClipboardSimple(answer, "Answer");
+}
+
+function copyToClipboardSimple(text, type) {
+    // Create a temporary textarea
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.left = '-999999px';
+    textarea.style.top = '-999999px';
+    document.body.appendChild(textarea);
+    
+    // Select and copy
+    textarea.focus();
+    textarea.select();
+    
+    try {
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textarea);
+        
+        if (successful) {
+            utils.showNotification(`${type} copied to clipboard!`, "success");
+        } else {
+            utils.showNotification(`Failed to copy ${type.toLowerCase()}. Please try again.`, "error");
+        }
+    } catch (err) {
+        document.body.removeChild(textarea);
+        utils.showNotification(`Failed to copy ${type.toLowerCase()}. Please try again.`, "error");
     }
 }
 
@@ -358,3 +392,4 @@ document.addEventListener("DOMContentLoaded", function() {
 document.getElementById('openaiKey')?.addEventListener('input', function(e) {
     window.OPENAI_API_KEY = e.target.value;
 });
+// ... rest of your existing courseData and other functions remain exactly the same ...

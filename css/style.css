@@ -11,6 +11,7 @@
     --border-color: #495057;
     --code-bg: #1e1e1e;
     --code-text: #d4d4d4;
+    --placeholder-color: #aaaaaa;
     --transition: all .4s cubic-bezier(.25, .8, .25, 1);
 }
 
@@ -363,12 +364,12 @@ body {
 }
 
 .form-control, .form-select {
-    background-color: rgba(255, 255, 255, .1);
     border: 1px solid var(--border-color);
     color: var(--text-primary);
     border-radius: 8px;
     padding: 10px 15px;
     transition: all .3s ease;
+    background: linear-gradient(178deg, rgb(255 255 255 / 25%), rgb(255 255 255 / 3%));
 }
 
 .form-control:focus, .form-select:focus {
@@ -650,4 +651,14 @@ tr.bg-gray-300 td {
     text-decoration-style: double;
     text-decoration-line: line-through;
     text-wrap-mode: nowrap;
+}
+
+input.form-control::placeholder,
+textarea.form-control::placeholder {
+  color: var(--placeholder-color) !important;
+  opacity: 1;
+}
+
+.nav-tabs .nav-link:focus, .nav-tabs .nav-link:hover {
+    border-color: none;
 }
