@@ -388,7 +388,7 @@ function extractAllSyllabusContent(elementsArray) {
 function generateOverviewCode() {
     if (!courseData.fileProcessed) return utils.showNotification("Please upload and process a DOCX file first.", "warning");
     
-    const videoHtml = `<!-- <div class="col-md-5 col-sm-12 elementor-col-40 elementor-column ml-md-3 p-0 pb-0 pt-0 verified-field-container" style="float:right"><div class="demo-video"><iframe title="${courseData.courseTitle || 'Course Video'}" src="https://player.vimeo.com/video/680313019?h=6c9335ab94" width="560" height="200" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen data-ready="true"></iframe><img src="" alt="${courseData.courseTitle || 'Course Name'}"></div></div> -->`;
+    const videoHtml = `<!-- <div class="col-md-5 col-sm-12 elementor-col-40 elementor-column ml-md-3 p-0 pb-0 pt-0 verified-field-container" style="float:right"><div class="demo-video"><iframe title="${courseData.courseTitle || 'Course Video'}" src="https://player.vimeo.com/video/680313019?h=6c9335ab94" width="560" height="200" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen data-ready="true"></iframe><img src="" class="w-100 ps-3" alt="${courseData.courseTitle || 'Course Name'}"></div></div> -->`;
     
     let contentHtml = "";
     if (courseData.overviewSections.length > 0) {

@@ -32,8 +32,7 @@ function uploadBlogFile(){
 function enhancedCleanHTML(html){
     const tempDiv=document.createElement("div");
     tempDiv.innerHTML=html;
-
-    const metaMarkers=['meta description','meta title','slug','relevant courses'];
+    const metaMarkers=['faq', 'frequently asked questions', 'faqs', 'Meta Description', 'Meta Title', 'meta description','meta title', 'Slug', 'Category', 'category', 'slug','relevant courses'];
     const lineRemoveMarkers=['link:','alt-text','alt text:','title text:'];
 
     const allElements=Array.from(tempDiv.querySelectorAll('*'));
