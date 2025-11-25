@@ -303,17 +303,117 @@ function isUnwantedObjective(itemText) {
     return unwantedPatterns.some(pattern => lowerItem.includes(pattern));
 }
 
+function splitLessonSegments(text) {
+    if (!text) return [];
+    
+    const lessonRegex = /(lesson\s*\d+:[\s\S]*?)(?=(lesson\s*\d+:)|$)/gi;
+    const segments = [];
+    let match;
+    
+    while ((match = lessonRegex.exec(text)) !== null) {
+        segments.push(match[1].trim());
+    }
+    
+    return segments.length > 0 ? segments : [];
+}
+
+function getLessonNumber(title) {
+    if (!title) return null;
+    const match = title.match(/lesson\s*(\d+)/i);
+    return match ? parseInt(match[1], 10) : null;
+}
+
+function getModuleNumber(title) {
+    if (!title) return null;
+    const match = title.match(/module\s*(\d+)/i);
+    return match ? parseInt(match[1], 10) : null;
+}
+
+function sortNumberedEntries(entries, numberExtractor) {
+    if (!Array.isArray(entries) || entries.length === 0) return entries || [];
+    
+    return entries
+        .map((entry, index) => ({
+            ...entry,
+            _originalIndex: index,
+            _number: numberExtractor(entry)
+        }))
+        .sort((a, b) => {
+            const hasNumA = typeof a._number === 'number';
+            const hasNumB = typeof b._number === 'number';
+            
+            if (hasNumA && hasNumB) return a._number - b._number;
+            if (hasNumA) return -1;
+            if (hasNumB) return 1;
+            return a._originalIndex - b._originalIndex;
+        })
+        .map(({ _originalIndex, _number, ...rest }) => rest);
+}
+
 function extractAllSyllabusContent(elementsArray) {
     const modules = [];
     let currentModule = null;
+    let currentLesson = null;
+    let foundSyllabusContent = false;
     
+    // Find where the syllabus content actually starts
+    let syllabusStartIndex = -1;
     for (let i = 0; i < elementsArray.length; i++) {
         const element = elementsArray[i];
+        const text = element.textContent.trim().toLowerCase();
+        
+        // Look for syllabus/content headings
+        if (text.includes("course content") || 
+            text.includes("syllabus") || 
+            text.includes("lessons") || 
+            text.includes("modules")) {
+            syllabusStartIndex = i;
+            foundSyllabusContent = true;
+            break;
+        }
+    }
+    
+    // If no specific syllabus heading found, start from beginning
+    if (syllabusStartIndex === -1) {
+        syllabusStartIndex = 0;
+    }
+    
+    console.log("Syllabus extraction starting from index:", syllabusStartIndex);
+    
+    for (let i = syllabusStartIndex; i < elementsArray.length; i++) {
+        const element = elementsArray[i];
         const text = element.textContent.trim();
+        const tagName = element.tagName;
+        
         if (!text) continue;
         
-        if (text.match(/^Module\s*\d+:/i)) {
-            if (currentModule) modules.push(currentModule);
+        const lowerText = text.toLowerCase();
+        
+        // Skip the main syllabus heading itself
+        if (lowerText.includes("course content") || 
+            lowerText.includes("syllabus") || 
+            lowerText.includes("lessons") || 
+            lowerText.includes("modules")) {
+            continue;
+        }
+        
+        // Stop if we hit final examination or another major section
+        if (lowerText.includes("final examination") || 
+            lowerText.includes("faq") || 
+            lowerText.includes("frequently asked questions") ||
+            (tagName.match(/^H[1-3]$/i) && i > syllabusStartIndex + 2)) {
+            break;
+        }
+        
+        // Handle MODULE pattern
+        if (text.match(/^Module\s*\d+:/i) || text.match(/^MODULE\s*\d+/i)) {
+            if (currentModule) {
+                if (currentLesson) {
+                    currentModule.lessons.push(currentLesson);
+                    currentLesson = null;
+                }
+                modules.push(currentModule);
+            }
             
             currentModule = {
                 title: text,
@@ -321,67 +421,233 @@ function extractAllSyllabusContent(elementsArray) {
                 lessons: []
             };
             
-            for (let j = i + 1; j < Math.min(i + 5, elementsArray.length); j++) {
+            // Look for module description in next paragraphs
+            for (let j = i + 1; j < Math.min(i + 3, elementsArray.length); j++) {
                 const nextElement = elementsArray[j];
                 const nextText = nextElement.textContent.trim();
+                const nextTag = nextElement.tagName;
                 
-                if (nextElement.tagName === 'P' && nextText && 
+                if (nextTag === 'P' && nextText && 
                     !nextText.match(/^Module\s*\d+:/i) && 
                     !nextText.match(/^Lesson\s*\d+:/i) &&
-                    !nextText.includes("LESSONS") &&
-                    !nextText.includes("Course Content")) {
+                    !nextText.match(/^MODULE\s*\d+/i) &&
+                    !nextText.match(/^LESSON\s*\d+/i) &&
+                    !nextText.toLowerCase().includes("final examination")) {
                     currentModule.description = nextText;
+                    break;
+                }
+                
+                if (nextText.toLowerCase().includes("final examination")) {
                     break;
                 }
             }
         }
-        else if (element.tagName === 'UL' && currentModule) {
-            const listItems = element.querySelectorAll('li');
-            let currentLesson = null;
-            
-            for (const item of listItems) {
-                const itemText = item.textContent.trim();
-                const itemHTML = item.innerHTML.trim();
-                
-                if (itemText.match(/^Lesson\s*\d+:/i)) {
-                    if (currentLesson) {
-                        if (!currentLesson.items.some(item => item.toLowerCase().includes("lesson quiz"))) {
-                            currentLesson.items.push("Lesson quiz.");
-                        }
-                        currentModule.lessons.push(currentLesson);
-                    }
-                    
-                    currentLesson = {
-                        title: itemText,
-                        items: []
-                    };
-                    
-                    const nestedList = item.querySelector('ul');
-                    if (nestedList) {
-                        const nestedItems = nestedList.querySelectorAll('li');
-                        nestedItems.forEach(nestedItem => {
-                            const nestedText = nestedItem.innerHTML.trim();
-                            if (nestedText && !nestedText.match(/^Lesson\s*\d+:/i)) {
-                                currentLesson.items.push(nestedText);
-                            }
-                        });
-                    }
-                }
-                else if (currentLesson && itemText && !itemText.match(/^Lesson\s*\d+:/i)) {
-                    currentLesson.items.push(itemHTML);
-                }
+        // Handle LESSON pattern (direct lessons without modules)
+        else if (text.match(/lesson\s*\d+:/i)) {
+            // If we encounter a lesson but no module exists, create a default module
+            if (!currentModule) {
+                currentModule = {
+                    title: `${courseData.courseTitle || 'Course'} Content`,
+                    description: "",
+                    lessons: []
+                };
             }
             
+            // Save previous lesson if exists
             if (currentLesson) {
-                if (!currentLesson.items.some(item => item.toLowerCase().includes("lesson quiz"))) {
-                    currentLesson.items.push("Lesson quiz.");
-                }
                 currentModule.lessons.push(currentLesson);
+            }
+            
+            const lessonSegments = splitLessonSegments(text);
+            currentLesson = {
+                title: lessonSegments[0] || text,
+                items: []
+            };
+            
+            // Look for lesson content in nested lists or next elements
+            const nestedList = element.querySelector('ul');
+            if (nestedList) {
+                const listItems = nestedList.querySelectorAll('li');
+                listItems.forEach(item => {
+                    const itemText = item.innerHTML.trim();
+                    if (itemText && !itemText.match(/^Lesson\s*\d+:/i)) {
+                        currentLesson.items.push(itemText);
+                    }
+                });
+            }
+            
+            if (lessonSegments.length > 1 && currentModule) {
+                lessonSegments.slice(1).forEach(segment => {
+                    if (segment.trim()) {
+                        currentModule.lessons.push({
+                            title: segment.trim(),
+                            items: []
+                        });
+                    }
+                });
+            }
+        }
+        // Handle list items for current lesson
+        else if (tagName === 'UL' && currentLesson) {
+            const listItems = element.querySelectorAll('li');
+            listItems.forEach(item => {
+                const itemText = item.innerHTML.trim();
+                // Only add if it's not another lesson heading
+                if (itemText && !itemText.match(/^Lesson\s*\d+:/i)) {
+                    currentLesson.items.push(itemText);
+                }
+            });
+        }
+        // Handle standalone list items that might be lessons
+        else if (tagName === 'LI' && !text.match(/^Lesson\s*\d+:/i)) {
+            // If we have a current lesson, add to its items
+            if (currentLesson) {
+                currentLesson.items.push(element.innerHTML.trim());
+            }
+            // If no current lesson but we have a module, create a lesson from this item
+            else if (currentModule && text.length > 10) {
+                currentLesson = {
+                    title: `Lesson ${currentModule.lessons.length + 1}: ${text.substring(0, 50)}...`,
+                    items: [element.innerHTML.trim()]
+                };
+            }
+        }
+        // Handle paragraphs that might be module descriptions
+        else if (tagName === 'P' && text && currentModule && !currentModule.description) {
+            // Only use as description if it's substantial text and not a heading
+            if (text.length > 20 && !text.match(/^Module\s*\d+:/i) && !text.match(/^Lesson\s*\d+:/i)) {
+                currentModule.description = text;
             }
         }
     }
     
-    if (currentModule) modules.push(currentModule);
+    // Push any remaining module/lesson
+    if (currentLesson) {
+        if (currentModule) {
+            currentModule.lessons.push(currentLesson);
+        } else {
+            // Create a default module if we have lessons but no module
+            currentModule = {
+                title: `${courseData.courseTitle || 'Course'} Content`,
+                description: "",
+                lessons: [currentLesson]
+            };
+        }
+    }
+    
+    if (currentModule) {
+        modules.push(currentModule);
+    }
+    
+    // If no modules found but we have syllabus content, try alternative extraction
+    if (modules.length === 0 && foundSyllabusContent) {
+        console.log("No modules found with standard extraction, trying alternative method...");
+        modules.push(...extractLessonsDirectly(elementsArray, syllabusStartIndex));
+    }
+    
+    modules.forEach(module => {
+        if (module.lessons && module.lessons.length > 0) {
+            module.lessons = sortNumberedEntries(module.lessons, lesson => getLessonNumber(lesson.title));
+        }
+    });
+    
+    const sortedModules = sortNumberedEntries(modules, module => getModuleNumber(module.title));
+    
+    console.log("Extracted modules:", sortedModules.length);
+    sortedModules.forEach((module, idx) => {
+        console.log(`Module ${idx + 1}: ${module.title}, Lessons: ${module.lessons.length}`);
+    });
+    
+    return sortedModules;
+}
+
+function extractLessonsDirectly(elementsArray, startIndex) {
+    const modules = [];
+    const defaultModule = {
+        title: `${courseData.courseTitle || 'Course'} Content`,
+        description: "",
+        lessons: []
+    };
+    
+    let currentLesson = null;
+    let inSyllabusSection = false;
+    
+    for (let i = startIndex; i < elementsArray.length; i++) {
+        const element = elementsArray[i];
+        const text = element.textContent.trim();
+        const tagName = element.tagName;
+        const lowerText = text.toLowerCase();
+        
+        if (!text) continue;
+        
+        // Check if we're in the syllabus section
+        if (!inSyllabusSection && 
+            (lowerText.includes("course content") || 
+             lowerText.includes("syllabus") || 
+             lowerText.includes("lessons"))) {
+            inSyllabusSection = true;
+            continue;
+        }
+        
+        // Stop conditions
+        if (inSyllabusSection && 
+            (lowerText.includes("final examination") || 
+             lowerText.includes("faq") || 
+             (tagName.match(/^H[1-3]$/i) && i > startIndex + 3 && !lowerText.includes("lesson")))) {
+            break;
+        }
+        
+        if (!inSyllabusSection) continue;
+        
+        // Look for lesson patterns
+        if (text.match(/^Lesson\s*\d+:/i) || text.match(/^LESSON\s*\d+/i) ||
+            (tagName === 'P' && text.match(/\d+\./)) || // Numbered items
+            (tagName.match(/^H[3-4]$/i) && text.length < 100)) { // Likely lesson headings
+            
+            if (currentLesson) {
+                defaultModule.lessons.push(currentLesson);
+            }
+            
+            currentLesson = {
+                title: text,
+                items: []
+            };
+            
+            // Check for nested content
+            const nestedList = element.querySelector('ul');
+            if (nestedList) {
+                const listItems = nestedList.querySelectorAll('li');
+                listItems.forEach(item => {
+                    currentLesson.items.push(item.innerHTML.trim());
+                });
+            }
+        }
+        // Handle list items
+        else if (tagName === 'UL' && currentLesson) {
+            const listItems = element.querySelectorAll('li');
+            listItems.forEach(item => {
+                const itemText = item.innerHTML.trim();
+                if (itemText && !itemText.match(/^Lesson\s*\d+:/i)) {
+                    currentLesson.items.push(itemText);
+                }
+            });
+        }
+        // Handle standalone list items
+        else if (tagName === 'LI' && currentLesson && !text.match(/^Lesson\s*\d+:/i)) {
+            currentLesson.items.push(element.innerHTML.trim());
+        }
+    }
+    
+    // Add the last lesson
+    if (currentLesson) {
+        defaultModule.lessons.push(currentLesson);
+    }
+    
+    if (defaultModule.lessons.length > 0) {
+        defaultModule.lessons = sortNumberedEntries(defaultModule.lessons, lesson => getLessonNumber(lesson.title));
+        modules.push(defaultModule);
+    }
+    
     return modules;
 }
 
@@ -401,7 +667,7 @@ function generateOverviewCode() {
                 newHeading.innerHTML = heading.innerHTML;
                 heading.parentNode.replaceChild(newHeading, heading);
             });
-            tempDiv.querySelectorAll("ul, ol").forEach(list => { list.className = "objective-tab-list"; });
+            tempDiv.querySelectorAll("ul, ol").forEach(list => { list.className = ""; });
             tempDiv.querySelectorAll("a").forEach(link => { link.setAttribute("target", "_blank"); });
             contentHtml += tempDiv.innerHTML;
         });
@@ -427,7 +693,7 @@ function generateCourseObjectivesCode() {
         listItemsHtml = "<li>No course objectives found in the document.</li>";
     }
     
-    const courseObjectivesHtml = `<p>${introParagraph}</p><h2 class="h3">Course Objectives</h2><p class="m-0"><b>After completing this course, the learner will be able to:</b></p><ul class="objective-tab-list">${listItemsHtml}</ul>`;
+    const courseObjectivesHtml = `<h2 class="h3">Course Objectives</h2><p class="m-0"><strong>After completing this course, the learner will be able to:</strong></p><ul>${listItemsHtml}</ul>`;
     
     document.getElementById("courseObjectivesCode").value = courseObjectivesHtml;
     showGeneratedCode('course', 'courseObjectivesCodeSection');
@@ -500,15 +766,15 @@ function debugExtraction() {
             debugInfo += `
                 <div style="border: 1px solid #ccc; margin: 10px 0; padding: 10px;">
                     <h5>Module ${index + 1}: ${module.title}</h5>
-                    <p><strong>Description:</strong> ${module.description || 'No description'}</p>
-                    <p><strong>Lessons:</strong> ${module.lessons.length}</p>
+                    <p>Description: ${module.description || 'No description'}</p>
+                    <p>Lessons: ${module.lessons.length}</p>
             `;
             
             module.lessons.forEach((lesson, lessonIndex) => {
                 debugInfo += `
                     <div style="margin-left: 20px; border-left: 2px solid #007bff; padding-left: 10px; margin: 10px 0;">
-                        <h6>Lesson ${lessonIndex + 1}: ${lesson.title}</h6>
-                        <p><strong>Items:</strong> ${lesson.items.length}</p>
+                        <h6 class="fs-5">Lesson ${lessonIndex + 1}: ${lesson.title}</h6>
+                        <p>Items: ${lesson.items.length}</p>
                         <ul>
                 `;
                 lesson.items.forEach((item, itemIndex) => {
@@ -530,69 +796,104 @@ function generateSyllabusHTML() {
     let totalLessons = 0;
     let modulesHTML = '';
     
+    // Check if this is a lessons-only structure
+    const isLessonsOnly = courseData.syllabusModules.length === 1 && 
+                         courseData.syllabusModules[0] && 
+                         (courseData.syllabusModules[0].title.includes('Content') || 
+                          courseData.syllabusModules[0].title.includes('Lessons'));
+    
     if (courseData.syllabusModules.length > 0) {
         courseData.syllabusModules.forEach((module, moduleIndex) => {
             totalLessons += module.lessons.length;
-            let lessonsHTML = '';
             
-            module.lessons.forEach((lesson, lessonIndex) => {
-                let lessonItemsHTML = '';
-                if (lesson.items && lesson.items.length > 0) {
-                    lessonItemsHTML = lesson.items.map(item => {
-                        const cleanItem = item.replace(/\s+/g, ' ').trim();
-                        return `<li>${cleanItem}</li>`;
-                    }).join('');
-                } else {
-                    lessonItemsHTML = '<li>No content available for this lesson.</li>';
+            if (isLessonsOnly) {
+                // LESSONS-ONLY STRUCTURE: Each lesson in separate sbox
+                module.lessons.forEach((lesson, lessonIndex) => {
+                    let lessonItemsHTML = '';
+                    
+                    if (lesson.items && lesson.items.length > 0) {
+                        lessonItemsHTML = lesson.items.map(item => {
+                            const cleanItem = item.replace(/\s+/g, ' ').trim();
+                            return `<li>${cleanItem}</li>`;
+                        }).join('');
+                        
+                        modulesHTML += `
+                            <div class="sbox">
+                                <h4 class="fs-5 fw-normal font-poppins">${lesson.title}</h4>
+                                <hr class="border-3 my-2" style="background: #ffcd05;opacity: 1;padding: 2px;">
+                                <ul>
+                                    ${lessonItemsHTML}
+                                </ul>
+                            </div>`;
+                    } else {
+                        modulesHTML += `
+                            <div class="sbox">
+                                <h4 class="fs-5 fw-normal font-poppins">${lesson.title}</h4>
+                            </div>`;
+                    }
+                });
+            } else {
+                // MODULE-BASED STRUCTURE: Module with lessons inside
+                let lessonsHTML = '';
+                
+                module.lessons.forEach((lesson, lessonIndex) => {
+                    let lessonItemsHTML = '';
+                    
+                    if (lesson.items && lesson.items.length > 0) {
+                        lessonItemsHTML = lesson.items.map(item => {
+                            const cleanItem = item.replace(/\s+/g, ' ').trim();
+                            return `<li>${cleanItem}</li>`;
+                        }).join('');
+                        
+                        lessonsHTML += `
+                            <li>
+                                ${lesson.title}
+                                <ul>
+                                    ${lessonItemsHTML}
+                                </ul>
+                            </li>`;
+                    } else {
+                        lessonsHTML += `
+                            <li>
+                                ${lesson.title}
+                            </li>`;
+                    }
+                });
+
+                // MODULE STRUCTURE
+                modulesHTML += `
+                    <div class="sbox">
+                        <h4 class="fs-5 fw-normal font-poppins">${module.title}</h4>
+                        <hr class="border-3 my-2" style="background: #ffcd05;opacity: 1;padding: 2px;">`;
+                
+                if (module.description) {
+                    modulesHTML += `
+                        <p class="pl-3 mb-2">${module.description}</p>`;
                 }
                 
-                lessonsHTML += `
-                    <li>
-                        <b>${lesson.title}</b>
-                        <ul class="objective-tab-list">
-                            ${lessonItemsHTML}
+                modulesHTML += `
+                        <ul>
+                            ${lessonsHTML}
                         </ul>
-                    </li>`;
-            });
-
-            modulesHTML += `
-                <div class="sbox">
-                    <h4 class="h6 fw-normal font-poppins"><strong>${module.title}</strong></h4>
-                    <hr class="border-3 my-2" style="background: #ffcd05;opacity: 1;padding: 2px;">
-                    ${module.description ? `<p class="pl-3">${module.description}</p>` : ''}
-                    <ul>
-                        ${lessonsHTML}
-                    </ul>
-                </div>`;
+                    </div>`;
+            }
         });
     } else {
         modulesHTML = '<div class="sbox"><p>No syllabus content could be extracted. Please check the document structure.</p></div>';
     }
 
     const courseTitle = courseData.courseTitle || 'Course';
-    const syllabusTitle = `${courseTitle} Syllabus`;
     
-    return `<style>
-        .sbox {
-            margin: 10px 0;
-            border: 1px solid #f5f5f5;
-            background: #fff;
-            padding: 10px 18px;
-            box-shadow: 0 0 0px 1px rgba(20,23,28,.1), 0 3px 1px 0 rgba(20,23,28,.1);
-            color: #000;
-        }
-        </style>
-        <h2 class="font-poppins fw-bold fs-6"><strong>${courseTitle} Course Syllabus</strong></h2>
-        <p>This ${courseTitle} course consists of ${totalLessons} lessons divided into ${courseData.syllabusModules.length} modules. Students are required to complete each lesson in the sequence listed below.</p>
-        <div class="h3 font-poppins">Course Content</div>
+    return `<h2 class="font-poppins fw-bold 5">${courseTitle} Course Syllabus</h2>
+        <p>This ${courseTitle} course consists of ${totalLessons} lessons ${!isLessonsOnly && courseData.syllabusModules.length > 1 ? `divided into ${courseData.syllabusModules.length} modules` : ''}. Students are required to complete each lesson in the sequence listed below.</p>
         <div style="background: #f2f3f5;padding-bottom:1px;">
             <div class="border-0 pl-3 sbox" style="background-color: #ffcd05;">
-                <div class="fs-6 fw-normal lh-sm m-0 text-uppercase"><strong>Lessons</strong></div>
+                <div class="fs-5 fw-normal lh-sm m-0 text-uppercase">${isLessonsOnly ? 'Lessons' : 'Modules & Lessons'}</div>
             </div>
-            <h3 class="font-poppins fs-6 fw-normal pl-3 sbox"><strong>Introduction</strong></h3>
+            <h3 class="font-poppins fs-5 fw-normal pl-3 sbox">Introduction</h3>
             ${modulesHTML}
             <div class="sbox">
-                <h4 class="font-poppins fs-5 m-0 fw-normal"><strong>Final Examination</strong></h4>
+                <h4 class="font-poppins fs-5 m-0 fw-normal">Final Examination</h4>
             </div>
         </div>`;
 }

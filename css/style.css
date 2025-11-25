@@ -291,6 +291,7 @@ body {
     overflow-y: auto;
     background: var(--dark-bg);
     animation: fadeIn .5s ease;
+    color: var(--text-primary);
 }
 
 .preview-drawer-actions {
@@ -661,4 +662,43 @@ textarea.form-control::placeholder {
 
 .nav-tabs .nav-link:focus, .nav-tabs .nav-link:hover {
     border-color: none;
+}
+
+.sbox:nth-child(1) {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.sbox {
+    margin: 10px 0;
+    background: #fff;
+    padding: 10px 18px;
+    box-shadow: 0 0 0px 1px rgba(20, 23, 28, .1), 0 3px 1px 0 rgba(20, 23, 28, .1);
+    margin: 10px 0;
+    background: #fff;
+    padding: 10px 18px;
+    box-shadow: 0 0 0px 1px rgba(20, 23, 28, .1), 0 3px 1px 0 rgba(20, 23, 28, .1);
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateY(0) translateX(0) scale(1);
+    position: relative;
+    z-index: 1;
+    color: #000000;
+}
+
+.sbox:hover {
+    opacity: 1 !important;
+    filter: brightness(1.02) blur(0px) !important;
+    transform: translateY(-3px) translateX(2px) scale(1) !important;
+    box-shadow: 0 5px 10px rgba(255, 205, 5, 0.25), 0 3px 7px rgba(0, 0, 0, 0.1), 0 0 0 0px rgba(255, 205, 5, 0.4), inset 0 0px 11px rgba(255, 255, 255, 0.8) !important;
+    z-index: 100 !important;
+}
+
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6, .fs-1, .fs-2, .fs-3, .fs-4, .fs-5, .fs-6 {
+    font-family: "poppins", sans-serif;
+    font-weight: 600 !important;
 }
