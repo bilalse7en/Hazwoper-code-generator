@@ -885,7 +885,6 @@ function generateSyllabusHTML() {
     const courseTitle = courseData.courseTitle || 'Course';
     
     return `<h2 class="font-poppins fw-bold 5">${courseTitle} Course Syllabus</h2>
-        {# <p>This ${courseTitle} course consists of ${totalLessons} lessons ${!isLessonsOnly && courseData.syllabusModules.length > 1 ? `divided into ${courseData.syllabusModules.length} modules` : ''}. Students are required to complete each lesson in the sequence listed below.</p> #}
         <p>This ${courseTitle} consists of ${totalLessons} lessons ${!isLessonsOnly && courseData.syllabusModules.length > 1 ? `divided into ${courseData.syllabusModules.length} modules` : ''}. Students are required to take each lesson in sequential order as listed below.</p>
         <div style="background: #f2f3f5;padding-bottom:1px;">
             <div class="border-0 pl-3 sbox" style="background-color: #ffcd05;">
