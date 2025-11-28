@@ -684,7 +684,6 @@ function generateOverviewCode() {
 function generateCourseObjectivesCode() {
     if (!courseData.fileProcessed) return utils.showNotification("Please upload and process a DOCX file first.", "warning");
     
-    const introParagraph = courseData.courseObjectivesIntro || `This ${courseData.courseTitle || 'Course'} will equip workers with the information and authority required.`;
     let listItemsHtml = "";
     
     if (courseData.courseObjectivesList.length > 0) {
@@ -693,7 +692,7 @@ function generateCourseObjectivesCode() {
         listItemsHtml = "<li>No course objectives found in the document.</li>";
     }
     
-    const courseObjectivesHtml = `<h2 class="h3">Course Objectives</h2><p class="m-0"><strong>After completing this course, the learner will be able to:</strong></p><ul>${listItemsHtml}</ul>`;
+    const courseObjectivesHtml = `<h2 class="h3">Course Objectives</h2><p class="m-0"><b>After completing this course, the learner will be able to:</b></p><ul class="objective-tab-list">${listItemsHtml}</ul>`;
     
     document.getElementById("courseObjectivesCode").value = courseObjectivesHtml;
     showGeneratedCode('course', 'courseObjectivesCodeSection');
