@@ -854,7 +854,7 @@ function generateSyllabusHTML() {
                     } else {
                         lessonsHTML += `
                             <li>
-                                ${lesson.title}
+                                <strong>${lesson.title}</strong>
                             </li>`;
                     }
                 });
@@ -883,11 +883,11 @@ function generateSyllabusHTML() {
 
     const courseTitle = courseData.courseTitle || 'Course';
     
-    return `<h2 class="font-poppins fw-bold 5">${courseTitle} Course Syllabus</h2>
+    return `<h2 class="fs-2 mb-3">${courseTitle} Course Syllabus</h2>
         <p>This ${courseTitle} consists of ${totalLessons} lessons ${!isLessonsOnly && courseData.syllabusModules.length > 1 ? `divided into ${courseData.syllabusModules.length} modules` : ''}. Students are required to take each lesson in sequential order as listed below.</p>
         <div style="background: #f2f3f5;padding-bottom:1px;">
             <div class="border-0 pl-3 sbox" style="background-color: #ffcd05;">
-                <div class="fs-5 fw-normal lh-sm m-0 text-uppercase">${isLessonsOnly ? 'Lessons' : 'Modules & Lessons'}</div>
+                <div class="fs-5 fw-normal lh-sm m-0 text-uppercase">${isLessonsOnly ? 'Lessons' : 'Lessons'}</div>
             </div>
             <h3 class="font-poppins fs-5 fw-normal pl-3 sbox">Introduction</h3>
             ${modulesHTML}
