@@ -14,17 +14,17 @@ class HTMLCleaner {
             removeIds: true,
             removeStyleAttrs: true,
             removeDataAttrs: true,
-            removeEmptyTags: true,
             removeInlineStyles: true,
-            removeFontTags: true,
-            minifyHTML: true,
-            beautifyHTML: false,
             preserveEssentialAttrs: true,
-            convertLineBreaks: false,
             removeComments: true,
             normalizeWhitespace: true,
             removeScriptStyleTags: true,
-            removeBrTags: false
+            removeBrTags: true,
+            convertLineBreaks: true,
+            removeEmptyTags: true,
+            removeFontTags: false,
+            minifyHTML: false,
+            beautifyHTML: false
         };
     }
 
@@ -42,7 +42,6 @@ class HTMLCleaner {
             undoBtn: document.getElementById('undoClean'),
             selectAllBtn: document.getElementById('selectAllBtn'),
             deselectAllBtn: document.getElementById('deselectAllBtn'),
-            resetOptionsBtn: document.getElementById('resetOptionsBtn'),
             pasteExampleBtn: document.getElementById('pasteExample'),
             
             // Checkboxes
@@ -113,7 +112,6 @@ class HTMLCleaner {
         if (this.elements.undoBtn) this.elements.undoBtn.addEventListener('click', () => this.undoClean());
         if (this.elements.selectAllBtn) this.elements.selectAllBtn.addEventListener('click', () => this.selectAllOptions(true));
         if (this.elements.deselectAllBtn) this.elements.deselectAllBtn.addEventListener('click', () => this.selectAllOptions(false));
-        if (this.elements.resetOptionsBtn) this.elements.resetOptionsBtn.addEventListener('click', () => this.resetOptions());
         if (this.elements.pasteExampleBtn) this.elements.pasteExampleBtn.addEventListener('click', () => this.loadExample());
         
         // Checkbox events
@@ -146,7 +144,6 @@ class HTMLCleaner {
     }
 
     initialize() {
-        this.resetOptions();
         this.loadExample();
         this.updateStats();
     }
@@ -275,13 +272,64 @@ class HTMLCleaner {
         }
     }
 
-    cleanHTML() {
+    showLoader() {
+        const loader = document.getElementById('htmlEditorLoader');
+        if (loader) {
+            loader.style.display = 'flex';
+        }
+        // Disable editor during processing
+        if (this.elements.editor) {
+            this.elements.editor.disabled = true;
+        }
+    }
+    
+    hideLoader() {
+        const loader = document.getElementById('htmlEditorLoader');
+        if (loader) {
+            loader.style.display = 'none';
+        }
+        // Enable editor after processing
+        if (this.elements.editor) {
+            this.elements.editor.disabled = false;
+        }
+    }
+
+    async cleanHTML() {
         let content = this.elements.editor.value;
         
         if (!content.trim()) {
             this.showNotification('Please enter some HTML content first!', true);
             return;
         }
+        
+        // Check if any option is selected
+        const hasAnyOption = [
+            this.elements.removeNBSP,
+            this.elements.removeComments,
+            this.elements.removeScriptStyleTags,
+            this.elements.removeBrTags,
+            this.elements.removeFontTags,
+            this.elements.removeClasses,
+            this.elements.removeIds,
+            this.elements.removeStyleAttrs,
+            this.elements.removeDataAttrs,
+            this.elements.removeEmptyTags,
+            this.elements.removeInlineStyles,
+            this.elements.normalizeWhitespace,
+            this.elements.convertLineBreaks,
+            this.elements.minifyHTML,
+            this.elements.beautifyHTML
+        ].some(el => el?.checked);
+        
+        if (!hasAnyOption) {
+            this.showNotification('Please select at least one cleaning option!', true);
+            return;
+        }
+        
+        // Show loader
+        this.showLoader();
+        const loaderStartTime = performance.now();
+        const minLoaderDuration = 2000; // Minimum 2 seconds
         
         // Save to history
         const originalContent = content;
@@ -291,42 +339,221 @@ class HTMLCleaner {
             // Store original content for undo
         this.saveToHistory(originalContent);
             
-            // Step 1: Remove HTML comments
-            if (this.elements.removeComments?.checked) {
-                content = content.replace(/<!--[\s\S]*?-->/g, '');
+            // Process operations in specific order, one by one
+            // Step 1: Remove &nbsp;
+            if (this.elements.removeNBSP?.checked) {
+                content = content.replace(/&nbsp;/gi, ' ');
+                content = content.replace(/\u00A0/g, ' ');
+                this.showSuccessNotification('✓ Removed &nbsp; entities');
             }
             
-            // Step 2: Remove script and style tags
+            // Step 2: Remove classes
+            if (this.elements.removeClasses?.checked) {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(content, 'text/html');
+                const allElements = doc.body.querySelectorAll('*');
+                allElements.forEach(element => {
+                    element.removeAttribute('class');
+                });
+                content = doc.body.innerHTML;
+                this.showSuccessNotification('✓ Removed class attributes');
+            }
+            
+            // Step 3: Remove ids
+            if (this.elements.removeIds?.checked) {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(content, 'text/html');
+                const allElements = doc.body.querySelectorAll('*');
+                allElements.forEach(element => {
+                    element.removeAttribute('id');
+                });
+                content = doc.body.innerHTML;
+                this.showSuccessNotification('✓ Removed id attributes');
+            }
+            
+            // Step 4: Remove style attrs
+            if (this.elements.removeStyleAttrs?.checked) {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(content, 'text/html');
+                const allElements = doc.body.querySelectorAll('*');
+                allElements.forEach(element => {
+                    element.removeAttribute('style');
+                });
+                content = doc.body.innerHTML;
+                this.showSuccessNotification('✓ Removed style attributes');
+            }
+            
+            // Step 5: Remove data attrs
+            if (this.elements.removeDataAttrs?.checked) {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(content, 'text/html');
+                const allElements = doc.body.querySelectorAll('*');
+                allElements.forEach(element => {
+                    const attrs = Array.from(element.attributes);
+                    attrs.forEach(attr => {
+                        if (attr.name.startsWith('data-')) {
+                            element.removeAttribute(attr.name);
+                        }
+                    });
+                });
+                content = doc.body.innerHTML;
+                this.showSuccessNotification('✓ Removed data attributes');
+            }
+            
+            // Step 6: Remove inline styles
+            if (this.elements.removeInlineStyles?.checked) {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(content, 'text/html');
+                const allElements = doc.body.querySelectorAll('*');
+                allElements.forEach(element => {
+                    element.removeAttribute('style');
+                });
+                content = doc.body.innerHTML;
+                this.showSuccessNotification('✓ Removed inline styles');
+            }
+            
+            // Step 7: Remove font/span tags
+            if (this.elements.removeFontTags?.checked) {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(content, 'text/html');
+                // Get all font and span tags
+                const fontTags = doc.body.querySelectorAll('font');
+                const spanTags = doc.body.querySelectorAll('span');
+                
+                // Process in reverse order to avoid issues with nested tags
+                const allTags = Array.from([...fontTags, ...spanTags]).reverse();
+                
+                // Remove font and span tags by unpacking their content
+                allTags.forEach(element => {
+                    this.unpackElement(element);
+                });
+                
+                content = doc.body.innerHTML;
+                this.showSuccessNotification('✓ Removed font/span tags');
+            }
+            
+            // Step 8: Preserve essentials (this is a setting, not an operation)
+            if (this.elements.preserveEssentialAttrs?.checked) {
+                this.showSuccessNotification('✓ Preserving essential attributes');
+            }
+            
+            // Step 9: Remove comments
+            if (this.elements.removeComments?.checked) {
+                content = content.replace(/<!--[\s\S]*?-->/g, '');
+                this.showSuccessNotification('✓ Removed HTML comments');
+            }
+            
+            // Step 9: Normalize whitespace
+            if (this.elements.normalizeWhitespace?.checked) {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(content, 'text/html');
+                const walker = document.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT, null, false);
+                const textNodes = [];
+                let node;
+                while (node = walker.nextNode()) {
+                    textNodes.push(node);
+                }
+                textNodes.forEach(textNode => {
+                    textNode.textContent = textNode.textContent.replace(/\s+/g, ' ').trim();
+                });
+                content = doc.body.innerHTML;
+                this.showSuccessNotification('✓ Normalized whitespace');
+            }
+            
+            // Step 10: Remove script/style tags
             if (this.elements.removeScriptStyleTags?.checked) {
                 content = content.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '');
                 content = content.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
+                this.showSuccessNotification('✓ Removed script and style tags');
             }
             
-            // Step 3: Parse HTML using DOMParser
+            // Step 11: Remove br tags
+            if (this.elements.removeBrTags?.checked) {
             const parser = new DOMParser();
             const doc = parser.parseFromString(content, 'text/html');
+                const brTags = doc.body.querySelectorAll('br');
+                brTags.forEach(br => {
+                    const space = document.createTextNode(' ');
+                    if (br.parentNode) {
+                        br.parentNode.replaceChild(space, br);
+                    }
+                });
+                content = doc.body.innerHTML;
+                this.showSuccessNotification('✓ Removed br tags');
+            }
             
-            // Step 4: Apply DOM-based cleaning
-            this.cleanDOM(doc);
+            // Step 12: Convert line breaks
+            if (this.elements.convertLineBreaks?.checked) {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(content, 'text/html');
+                const html = doc.body.innerHTML;
+                const paragraphs = html.split(/(?:\r?\n){2,}/);
+                if (paragraphs.length > 1) {
+                    const newHTML = paragraphs.map(p => {
+                        const trimmed = p.trim();
+                        return trimmed ? `<p>${trimmed}</p>` : '';
+                    }).join('');
+                    doc.body.innerHTML = newHTML;
+                }
+                content = doc.body.innerHTML;
+                this.showSuccessNotification('✓ Converted line breaks to paragraphs');
+            }
             
-            // Step 5: Get cleaned HTML
-            let cleanedHTML = doc.body.innerHTML;
+            // Step 13: Remove font/span tags
+            if (this.elements.removeFontTags?.checked) {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(content, 'text/html');
+                // Get all font and span tags
+                const fontTags = doc.body.querySelectorAll('font');
+                const spanTags = doc.body.querySelectorAll('span');
+                
+                // Remove font tags by unpacking their content
+                fontTags.forEach(element => {
+                    this.unpackElement(element);
+                });
+                
+                // Remove span tags by unpacking their content
+                spanTags.forEach(element => {
+                    this.unpackElement(element);
+                });
+                
+                content = doc.body.innerHTML;
+                this.showSuccessNotification('✓ Removed font/span tags');
+            }
             
-            // Step 6: Apply text-based cleaning
-            cleanedHTML = this.cleanText(cleanedHTML);
+            // Step 14: Remove empty tags (last)
+            if (this.elements.removeEmptyTags?.checked) {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(content, 'text/html');
+                const allElementsReverse = Array.from(doc.body.querySelectorAll('*')).reverse();
+                allElementsReverse.forEach(element => {
+                    this.removeIfEmpty(element);
+                });
+                content = doc.body.innerHTML;
+                this.showSuccessNotification('✓ Removed empty tags');
+            }
             
-            // Step 7: Update editor with cleaned content
-            this.elements.editor.value = cleanedHTML;
+            // Apply beautify or minify if checked
+            if (this.elements.beautifyHTML?.checked) {
+                content = this.beautifyHTML(content);
+                this.showSuccessNotification('✓ Beautified HTML');
+            } else if (this.elements.minifyHTML?.checked) {
+                content = content.replace(/\s+/g, ' ').replace(/>\s+</g, '><').trim();
+                this.showSuccessNotification('✓ Minified HTML');
+            }
             
-            // Step 8: Update stats and preview
+            // Update editor with cleaned content
+            this.elements.editor.value = content;
+            
+            // Update stats and preview
             const endTime = performance.now();
             const timeTaken = Math.round(endTime - startTime);
             
             this.updateStats();
             
-            // Step 9: Calculate reduction
+            // Calculate reduction
             const originalLength = originalContent.length;
-            const cleanedLength = cleanedHTML.length;
+            const cleanedLength = content.length;
             const reduction = Math.round((originalLength - cleanedLength) / originalLength * 100);
             
             if (this.elements.lastCleanTime) {
@@ -337,19 +564,40 @@ class HTMLCleaner {
             }
             
             // Add to history
-            this.addToHistoryList(originalContent, cleanedHTML, timeTaken, reduction);
+            this.addToHistoryList(originalContent, content, timeTaken, reduction);
             
             // Ensure global instance is set
             window.htmlCleanerInstance = this;
             
-            this.showNotification(
-                `HTML cleaned in ${timeTaken}ms! ` +
-                `Reduced by ${reduction}% (${originalLength-cleanedLength} chars removed). ` +
-                `History: ${this.historyList ? this.historyList.length : 0} entries`
-            );
+            // Calculate how long loader has been showing
+            const loaderElapsed = performance.now() - loaderStartTime;
+            const remainingTime = Math.max(0, minLoaderDuration - loaderElapsed);
+            
+            // Hide loader after minimum duration
+            setTimeout(() => {
+                this.hideLoader();
+            }, remainingTime);
+            
+            // Final success notification (show after loader hides)
+            setTimeout(() => {
+                this.showNotification(
+                    `✓ All operations completed in ${timeTaken}ms! Reduced by ${reduction}%`,
+                    false,
+                    3000
+                );
+            }, remainingTime);
             
         } catch (error) {
             console.error('Error cleaning HTML:', error);
+            // Calculate how long loader has been showing
+            const loaderElapsed = performance.now() - loaderStartTime;
+            const remainingTime = Math.max(0, minLoaderDuration - loaderElapsed);
+            
+            // Hide loader after minimum duration
+            setTimeout(() => {
+                this.hideLoader();
+            }, remainingTime);
+            
             this.showNotification('Error cleaning HTML. Please check your input.', true);
         }
     }
@@ -367,37 +615,47 @@ class HTMLCleaner {
             });
         }
         
-        // Get all elements
-        const allElements = doc.body.querySelectorAll('*');
+        // First pass: remove empty elements (we need to do this in reverse order to handle nested empty tags)
+        if (this.elements.removeEmptyTags?.checked) {
+            // Get all elements in reverse order (from deepest to shallowest)
+            const allElementsReverse = Array.from(doc.body.querySelectorAll('*')).reverse();
+            allElementsReverse.forEach(element => {
+                this.removeIfEmpty(element);
+            });
+        }
         
+        // Second pass: process other operations
+        const allElements = doc.body.querySelectorAll('*');
         allElements.forEach(element => {
-            // Remove font and span tags (unpack their content)
+            // Remove font tags (unpack their content) - ONLY if checked
             if (this.elements.removeFontTags?.checked) {
-                if (element.tagName.toLowerCase() === 'font' || 
-                    element.tagName.toLowerCase() === 'span') {
+                if (element.tagName.toLowerCase() === 'font') {
                     this.unpackElement(element);
                     return;
                 }
             }
             
-            // Remove attributes
+            // Only process attributes if at least one attribute removal option is checked
+            const needsAttributeProcessing = this.elements.removeClasses?.checked ||
+                                           this.elements.removeIds?.checked ||
+                                           this.elements.removeStyleAttrs?.checked ||
+                                           this.elements.removeDataAttrs?.checked ||
+                                           this.elements.removeInlineStyles?.checked;
+            
+            if (needsAttributeProcessing) {
             const attrs = Array.from(element.attributes);
             attrs.forEach(attr => {
                 this.processAttribute(element, attr);
             });
-            
-            // Remove empty elements
-            if (this.elements.removeEmptyTags?.checked) {
-                this.removeIfEmpty(element);
             }
         });
         
-        // Convert line breaks to paragraphs if enabled
+        // Convert line breaks to paragraphs if enabled - ONLY if checked
         if (this.elements.convertLineBreaks?.checked) {
             this.convertLineBreaksToParagraphs(doc.body);
         }
         
-        // Normalize whitespace in text nodes
+        // Normalize whitespace in text nodes - ONLY if checked
         if (this.elements.normalizeWhitespace?.checked) {
             this.normalizeWhitespace(doc.body);
         }
@@ -415,26 +673,20 @@ class HTMLCleaner {
             return;
         }
         
-        // Remove specific attributes based on options
+        // Remove specific attributes ONLY if corresponding checkbox is checked
         if (this.elements.removeClasses?.checked && attrName === 'class') {
             element.removeAttribute('class');
         }
         else if (this.elements.removeIds?.checked && attrName === 'id') {
             element.removeAttribute('id');
         }
-        else if (this.elements.removeStyleAttrs?.checked && attrName === 'style') {
+        else if ((this.elements.removeStyleAttrs?.checked || this.elements.removeInlineStyles?.checked) && attrName === 'style') {
             element.removeAttribute('style');
         }
         else if (this.elements.removeDataAttrs?.checked && attrName.startsWith('data-')) {
             element.removeAttribute(attrName);
         }
-        else if (this.elements.removeInlineStyles?.checked && attrName === 'style') {
-            element.removeAttribute('style');
-        }
-        // Remove all other attributes (except essential ones)
-        else if (!essentialAttrs.includes(attrName)) {
-            element.removeAttribute(attrName);
-        }
+        // Don't remove other attributes unless explicitly checked
     }
 
     unpackElement(element) {
@@ -451,19 +703,52 @@ class HTMLCleaner {
     }
 
     removeIfEmpty(element) {
+        // List of tags that can be removed if empty
         const emptyTags = ['div', 'span', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 
-                          'li', 'td', 'th', 'section', 'article', 'aside', 'header', 'footer'];
+                          'li', 'td', 'th', 'section', 'article', 'aside', 'header', 'footer',
+                          'em', 'strong', 'i', 'b', 'u', 'small', 'sub', 'sup', 'mark', 'del', 'ins',
+                          'code', 'pre', 'blockquote', 'cite', 'abbr', 'dfn', 'kbd', 'samp', 'var',
+                          'a', 'label', 'button'];
         
         const tagName = element.tagName.toLowerCase();
         
         if (emptyTags.includes(tagName)) {
+            // Check if element has any meaningful text content
             const hasText = element.textContent.trim().length > 0;
-            const hasChildren = element.children.length > 0;
-            const hasMeaningfulAttributes = Array.from(element.attributes).some(attr => 
-                ['href', 'src', 'alt', 'title'].includes(attr.name.toLowerCase())
-            );
             
-            if (!hasText && !hasChildren && !hasMeaningfulAttributes) {
+            // Check if element has meaningful attributes (that should preserve it)
+            const hasMeaningfulAttributes = Array.from(element.attributes).some(attr => {
+                const attrName = attr.name.toLowerCase();
+                // Preserve if has href (links), src (images), alt (images), title (tooltips), id, or class
+                return ['href', 'src', 'alt', 'title', 'id', 'class'].includes(attrName) && attr.value.trim().length > 0;
+            });
+            
+            // Check if element has meaningful children
+            // A child is meaningful if it has text OR has meaningful attributes OR has meaningful children
+            let hasMeaningfulChildren = false;
+            for (let child of element.children) {
+                const childTagName = child.tagName.toLowerCase();
+                const childHasText = child.textContent.trim().length > 0;
+                const childHasAttrs = Array.from(child.attributes).some(attr => {
+                    const attrName = attr.name.toLowerCase();
+                    return ['href', 'src', 'alt', 'title', 'id', 'class'].includes(attrName) && attr.value.trim().length > 0;
+                });
+                
+                // If child has text or meaningful attributes, it's meaningful
+                if (childHasText || childHasAttrs) {
+                    hasMeaningfulChildren = true;
+                    break;
+                }
+                
+                // For certain tags, even if empty, they might be meaningful if they have attributes
+                if (childHasAttrs) {
+                    hasMeaningfulChildren = true;
+                    break;
+                }
+            }
+            
+            // Remove if no text, no meaningful children, and no meaningful attributes
+            if (!hasText && !hasMeaningfulChildren && !hasMeaningfulAttributes) {
                 element.remove();
             }
         }
@@ -502,12 +787,17 @@ class HTMLCleaner {
     }
 
     cleanText(html) {
-        // Replace &nbsp; with normal space (always do this, regardless of checkbox)
-        // This ensures &nbsp; is always replaced with a regular space
+        // Only replace &nbsp; if the checkbox is checked
+        if (this.elements.removeNBSP?.checked) {
         html = html.replace(/&nbsp;/gi, ' ');
-        
         // Also handle other nbsp variations
         html = html.replace(/\u00A0/g, ' '); // Unicode non-breaking space
+        }
+        
+        // Remove leading spaces after opening tags (e.g., <h1> Welcome</h1> -> <h1>Welcome</h1>)
+        // This pattern matches: > followed by whitespace, followed by a non-whitespace character
+        // It removes the whitespace between the tag and the first character
+        html = html.replace(/>(\s+)([^\s<])/g, '>$2');
         
         // Remove <br> tags if option is enabled (handle all variations)
         if (this.elements.removeBrTags?.checked) {
@@ -515,12 +805,9 @@ class HTMLCleaner {
             html = html.replace(/<\/?\s*br\s*\/?>/gi, ' ');
             // Clean up multiple spaces that might result from br removal
             html = html.replace(/\s+/g, ' ');
-        } else {
-            // Remove multiple line breaks (only if not removing all br tags)
-            html = html.replace(/(<br\s*\/?>\s*){3,}/gi, '<br><br>');
         }
         
-        // Remove extra whitespace
+        // Remove extra whitespace - ONLY if normalizeWhitespace is checked
         if (this.elements.normalizeWhitespace?.checked) {
             html = html
                 .replace(/\n/g, ' ')
@@ -529,11 +816,11 @@ class HTMLCleaner {
                 .trim();
         }
         
-        // Beautify HTML (format with proper indentation)
+        // Beautify HTML (format with proper indentation) - ONLY if checked
         if (this.elements.beautifyHTML?.checked) {
             html = this.beautifyHTML(html);
         }
-        // Minify HTML (only if beautify is not checked)
+        // Minify HTML (only if beautify is not checked) - ONLY if checked
         else if (this.elements.minifyHTML?.checked) {
             html = html
                 .replace(/\s+/g, ' ')
@@ -546,22 +833,29 @@ class HTMLCleaner {
     }
 
     beautifyHTML(html) {
+        // First, normalize the HTML - remove extra whitespace between tags
+        html = html.replace(/>\s+</g, '><').trim();
+        
         let formatted = '';
         let indent = 0;
-        const indentSize = 2; // 2 spaces per indent level
+        const indentSize = 2;
         const tab = ' '.repeat(indentSize);
         
         // List of self-closing/void tags
         const voidTags = ['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr'];
         
-        // Normalize whitespace between tags
-        html = html.replace(/>\s+</g, '><');
+        // List of inline elements that should stay on the same line
+        const inlineTags = ['a', 'abbr', 'acronym', 'b', 'bdi', 'bdo', 'big', 'cite', 'code', 'del', 'dfn', 'em', 'font', 
+                           'i', 'ins', 'kbd', 'label', 'mark', 'q', 's', 'samp', 'small', 'span', 'strong', 'sub', 'sup', 
+                           'time', 'tt', 'u', 'var', 'wbr'];
         
-        // Process the HTML
         let i = 0;
+        let currentLine = ''; // Track current line being built
+        let isInInlineContext = false; // Track if we're in an inline context
+        
         while (i < html.length) {
             if (html[i] === '<') {
-                // Find the end of the tag
+                // Find the complete tag
                 let tagEnd = html.indexOf('>', i);
                 if (tagEnd === -1) break;
                 
@@ -571,52 +865,203 @@ class HTMLCleaner {
                 const isClosing = tag.startsWith('</');
                 const isSelfClosing = tag.endsWith('/>') || voidTags.includes(tagName);
                 const isComment = tag.startsWith('<!--');
+                const isInline = inlineTags.includes(tagName);
+                
+                // Get text content between this tag and the next tag
+                let nextTagStart = html.indexOf('<', tagEnd + 1);
+                if (nextTagStart === -1) nextTagStart = html.length;
+                const textContent = html.substring(tagEnd + 1, nextTagStart).trim();
                 
                 if (isComment) {
-                    // Handle comments on their own line
+                    // Comments on their own line
+                    if (currentLine.trim()) {
+                        formatted += currentLine + '\n';
+                        currentLine = '';
+                    }
                     formatted += tab.repeat(indent) + tag + '\n';
                 } else if (isClosing) {
-                    // Decrease indent before closing tag
+                    if (isInline) {
+                        // Inline closing tag - add to current line
+                        currentLine += tag;
+                        // If there's text after, add space and text to the same line
+                        if (textContent) {
+                            currentLine += ' ' + textContent;
+                        }
+                    } else {
+                        // Block closing tag - new line
+                        if (currentLine.trim()) {
+                            formatted += currentLine + '\n';
+                            currentLine = '';
+                        }
                     indent = Math.max(0, indent - 1);
                     formatted += tab.repeat(indent) + tag + '\n';
+                        // Handle text content after closing tag
+                        if (textContent) {
+                            currentLine = tab.repeat(indent + 1) + textContent;
+                        }
+                    }
                 } else if (isSelfClosing) {
-                    // Self-closing tags don't change indent
+                    if (isInline) {
+                        // Inline self-closing tag - add to current line
+                        currentLine += tag;
+                        if (textContent) {
+                            currentLine += ' ' + textContent;
+                        }
+                    } else {
+                        // Block self-closing tag - new line
+                        if (currentLine.trim()) {
+                            formatted += currentLine + '\n';
+                            currentLine = '';
+                        }
                     formatted += tab.repeat(indent) + tag + '\n';
+                        if (textContent) {
+                            currentLine = tab.repeat(indent) + textContent;
+                        }
+                    }
                 } else {
-                    // Opening tag - add it and increase indent
+                    // Opening tag
+                    if (isInline) {
+                        // Inline opening tag - add to current line
+                        if (!currentLine.trim()) {
+                            // Start new line with proper indent if current line is empty
+                            currentLine = tab.repeat(indent);
+                        }
+                        // Add space before inline element if current line doesn't end with space or >
+                        if (currentLine.trim() && !currentLine.trim().endsWith('>') && !currentLine.trim().endsWith(' ')) {
+                            currentLine += ' ';
+                        }
+                        currentLine += tag;
+                        // If there's text content before nested tags, add it
+                        if (textContent) {
+                            currentLine += textContent;
+                        }
+                    } else {
+                        // Block opening tag - check if it has nested tags or just simple text
+                        let hasNestedBlockTags = false;
+                        let hasOnlyInlineTags = true;
+                        let matchingClosePos = -1;
+                        
+                        // Find matching closing tag and check for nested tags
+                        let searchPos = tagEnd + 1;
+                        let depth = 1;
+                        while (searchPos < html.length && depth > 0) {
+                            let nextOpen = html.indexOf('<', searchPos);
+                            if (nextOpen === -1) break;
+                            
+                            let nextClose = html.indexOf('>', nextOpen);
+                            if (nextClose === -1) break;
+                            
+                            let nextTag = html.substring(nextOpen, nextClose + 1);
+                            let nextTagMatch = nextTag.match(/<\/?([a-z][a-z0-9]*)/i);
+                            let nextTagName = nextTagMatch ? nextTagMatch[1].toLowerCase() : '';
+                            let isNextClosing = nextTag.startsWith('</');
+                            let isNextSelfClosing = nextTag.endsWith('/>') || voidTags.includes(nextTagName);
+                            
+                            if (isNextClosing && nextTagName === tagName) {
+                                depth--;
+                                if (depth === 0) {
+                                    matchingClosePos = nextClose + 1;
+                                    break;
+                                }
+                            } else if (!isNextClosing && !isNextSelfClosing) {
+                                depth++;
+                                // Check if nested tag is a block element
+                                if (!inlineTags.includes(nextTagName)) {
+                                    hasNestedBlockTags = true;
+                                    hasOnlyInlineTags = false;
+                                }
+                            }
+                            
+                            searchPos = nextClose + 1;
+                        }
+                        
+                        // If it only contains inline tags and text, keep everything on one line
+                        if (!hasNestedBlockTags && matchingClosePos > 0) {
+                            if (currentLine.trim()) {
+                                formatted += currentLine + '\n';
+                                currentLine = '';
+                            }
+                            // Extract the entire content between opening and closing tags
+                            let fullContent = html.substring(tagEnd + 1, html.lastIndexOf('</', matchingClosePos));
+                            let closeTagStart = html.lastIndexOf('</', matchingClosePos);
+                            let closeTag = html.substring(closeTagStart, matchingClosePos);
+                            
+                            // Normalize spaces: ensure space before inline elements
+                            // Pattern: text character followed by <inline-tag> should have a space
+                            fullContent = fullContent.replace(/([^\s>])(<)([a-z]+)/gi, (match, before, bracket, tagName) => {
+                                if (inlineTags.includes(tagName.toLowerCase())) {
+                                    return before + ' ' + bracket + tagName;
+                                }
+                                return match;
+                            });
+                            
+                            // Also ensure space after closing inline tags before text
+                            fullContent = fullContent.replace(/(<\/[^>]+>)([^\s<])/gi, '$1 $2');
+                            
+                            // Clean up multiple spaces but preserve single spaces
+                            fullContent = fullContent.replace(/\s+/g, ' ').trim();
+                            
+                            // Format: <tag>content</tag> on one line
+                            formatted += tab.repeat(indent) + tag + fullContent + closeTag + '\n';
+                            i = matchingClosePos;
+                            continue;
+                        } else {
+                            // Complex tag with nested block content - format each part on its own line
+                            if (currentLine.trim()) {
+                                formatted += currentLine + '\n';
+                                currentLine = '';
+                            }
                     formatted += tab.repeat(indent) + tag + '\n';
+                            
+                            // Add text content if present (before any nested tags)
+                            if (textContent) {
+                                currentLine = tab.repeat(indent + 1) + textContent;
+                            } else {
+                                // Start a new line for nested content
+                                currentLine = tab.repeat(indent + 1);
+                            }
+                            
                     indent++;
+                        }
+                    }
                 }
                 
                 i = tagEnd + 1;
             } else {
-                // Text content
-                let textEnd = html.indexOf('<', i);
-                if (textEnd === -1) textEnd = html.length;
-                
-                const text = html.substring(i, textEnd).trim();
-                if (text) {
-                    // Add text with current indent
-                    formatted += tab.repeat(indent) + text + '\n';
-                }
-                
-                i = textEnd;
+                // This shouldn't happen in normalized HTML, but handle it
+                i++;
             }
         }
         
-        // Clean up extra blank lines and trailing whitespace
-        return formatted
-            .split('\n')
-            .map(line => line.trimEnd())
-            .filter((line, idx, arr) => {
-                // Remove consecutive blank lines
-                if (!line.trim() && idx > 0 && !arr[idx - 1].trim()) {
-                    return false;
+        // Add any remaining current line
+        if (currentLine.trim()) {
+            formatted += currentLine + '\n';
+        }
+        
+        // Clean up: remove extra blank lines but preserve structure
+        let lines = formatted.split('\n');
+        let cleaned = [];
+        let lastWasEmpty = false;
+        
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i].trim();
+            if (!line) {
+                // Only add one blank line max between content
+                if (!lastWasEmpty && i > 0 && i < lines.length - 1) {
+                    cleaned.push('');
+                    lastWasEmpty = true;
                 }
-                return true;
-            })
-            .join('\n')
-            .trim();
+            } else {
+                cleaned.push(lines[i]); // Keep original line with indentation
+                lastWasEmpty = false;
+            }
+        }
+        
+        // Final cleanup: remove more than 2 consecutive blank lines
+        formatted = cleaned.join('\n');
+        formatted = formatted.replace(/\n{3,}/g, '\n\n');
+        
+        return formatted.trim();
     }
 
     saveToHistory(content) {
@@ -743,18 +1188,8 @@ class HTMLCleaner {
         this.showNotification(`All options ${select ? 'selected' : 'deselected'}!`);
     }
 
-    resetOptions() {
-        Object.keys(this.defaultOptions).forEach(key => {
-            if (this.elements[key]) {
-                this.elements[key].checked = this.defaultOptions[key];
-            }
-        });
-        
-        this.updateCleanScore();
-        this.showNotification('Options reset to default!');
-    }
 
-    showNotification(message, isError = false) {
+    showNotification(message, isError = false, duration = 2000) {
         // Create notification if it doesn't exist
         let notification = document.getElementById('cleanerNotification');
         
@@ -771,7 +1206,12 @@ class HTMLCleaner {
         
         setTimeout(() => {
             notification.classList.remove('show');
-        }, 3000);
+        }, duration);
+    }
+    
+    showSuccessNotification(message) {
+        // Show notification but don't block - process continues immediately
+        this.showNotification(message, false, 1500);
     }
 }
 

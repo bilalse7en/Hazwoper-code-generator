@@ -1,3 +1,89 @@
+// ========== HACKER THEME LANDING LOADER ANIMATION ==========
+(function() {
+    // Check if user has visited before
+    const hasVisited = localStorage.getItem('hasVisited');
+    const loader = document.getElementById('landingLoader');
+    const mainContent = document.getElementById('mainContent');
+    
+    if (!hasVisited) {
+        // First visit - show loader animation
+        if (loader) {
+            loader.style.display = 'flex';
+        }
+        if (mainContent) {
+            mainContent.style.display = 'none';
+        }
+        
+        // Terminal typing animation
+        const typingText = document.querySelector('.typing-text');
+        const progressText = document.querySelector('.progress-text');
+        const welcomeMessage = 'Welcome to Course Content Generator Suite';
+        let charIndex = 0;
+        
+        function typeText() {
+            if (charIndex < welcomeMessage.length && typingText) {
+                typingText.textContent += welcomeMessage.charAt(charIndex);
+                charIndex++;
+                setTimeout(typeText, 80); // Typing speed
+            }
+        }
+        
+        // Start typing animation
+        setTimeout(() => {
+            if (typingText) {
+                typingText.textContent = '';
+                typeText();
+            }
+        }, 500);
+        
+        // Update progress text dynamically
+        const progressMessages = [
+            '[INITIALIZING SYSTEM...]',
+            '[LOADING MODULES...]',
+            '[CONNECTING TO SERVER...]',
+            '[PREPARING INTERFACE...]',
+            '[SYSTEM READY]'
+        ];
+        
+        let progressIndex = 0;
+        const progressInterval = setInterval(() => {
+            if (progressText && progressIndex < progressMessages.length) {
+                progressText.textContent = progressMessages[progressIndex];
+                progressIndex++;
+            } else {
+                clearInterval(progressInterval);
+            }
+        }, 600);
+        
+        // After animation completes, hide loader and show main content
+        setTimeout(() => {
+            if (loader) {
+                loader.classList.add('hide');
+            }
+            
+            setTimeout(() => {
+                if (loader) {
+                    loader.style.display = 'none';
+                }
+                if (mainContent) {
+                    mainContent.style.display = 'block';
+                }
+                // Mark as visited in localStorage
+                localStorage.setItem('hasVisited', 'true');
+                clearInterval(progressInterval);
+            }, 800); // Wait for fade out animation
+        }, 6000); // Show loader for 4 seconds (increased for better effect)
+    } else {
+        // Returning visitor - hide loader immediately
+        if (loader) {
+            loader.style.display = 'none';
+        }
+        if (mainContent) {
+            mainContent.style.display = 'block';
+        }
+    }
+})();
+
 // ========== PREVIEW DRAWER STATE MANAGEMENT ==========
 const previewDrawerState = {
     isOpen: false,

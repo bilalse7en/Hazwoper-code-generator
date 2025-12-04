@@ -75,11 +75,22 @@ function extractOverview(elementsArray) {
     });
     
     if (overviewStart !== -1) {
-        const syllabusStart = elementsArray.findIndex(el => 
-            el.textContent.trim().toLowerCase().includes("syllabus") || 
-            el.textContent.trim().toLowerCase().includes("course syllabus")
+        // Stop at Course Objectives (which comes before Syllabus now)
+        const objectivesStart = elementsArray.findIndex((el, i) => 
+            i > overviewStart && 
+            (el.textContent.trim().toLowerCase().includes("course objectives") ||
+             el.textContent.trim().toLowerCase().includes("1.2"))
         );
-        const overviewEnd = syllabusStart !== -1 ? syllabusStart : elementsArray.length;
+        
+        // If Course Objectives not found, fall back to Syllabus
+        const syllabusStart = objectivesStart === -1 ? elementsArray.findIndex((el, i) => 
+            i > overviewStart && 
+            (el.textContent.trim().toLowerCase().includes("syllabus") || 
+             el.textContent.trim().toLowerCase().includes("course syllabus"))
+        ) : -1;
+        
+        const overviewEnd = objectivesStart !== -1 ? objectivesStart : 
+                           (syllabusStart !== -1 ? syllabusStart : elementsArray.length);
         const overviewElements = elementsArray.slice(overviewStart + 1, overviewEnd);
         courseData.overview = overviewElements.map(el => el.outerHTML).join("");
         courseData.overviewSections = [{ heading: "Overview", content: courseData.overview }];
@@ -87,45 +98,117 @@ function extractOverview(elementsArray) {
 }
 
 function extractCourseObjectives(elementsArray) {
-    const syllabusStart = elementsArray.findIndex(el => 
-        el.textContent.trim().toLowerCase().includes("syllabus")
-    );
+    // Find Course Objectives section independently (not dependent on Syllabus)
+    let objectivesStart = -1;
+    let objectivesEnd = -1;
     
-    if (syllabusStart !== -1) {
-        const syllabusElements = elementsArray.slice(syllabusStart);
-        
-        let foundSyllabusHeading = false;
-        for (const element of syllabusElements) {
-            const text = element.textContent.trim();
-            if (text.toLowerCase().includes("syllabus")) {
-                foundSyllabusHeading = true;
-                continue;
-            }
-            if (foundSyllabusHeading && element.tagName === 'P') {
-                courseData.courseObjectivesIntro = element.innerHTML.trim();
-                break;
+    // First, find where Course Objectives section starts
+    elementsArray.forEach((element, i) => {
+        const text = element.textContent.trim().toLowerCase();
+        // Look for "course objectives" heading (can be numbered like "1.2. Course Objectives")
+        if ((text.includes("course objectives") || text.includes("1.2")) && 
+            (element.tagName.match(/^H[1-6]$/i) || text.match(/^\d+\.\d*\s*.*course\s*objectives/i))) {
+            if (objectivesStart === -1) {
+                objectivesStart = i;
             }
         }
-        
-        let inObjectives = false;
-        for (const element of syllabusElements) {
+    });
+    
+    // If not found with heading, try finding it as regular text
+    if (objectivesStart === -1) {
+        elementsArray.forEach((element, i) => {
             const text = element.textContent.trim().toLowerCase();
-            if (text.includes("course objectives")) {
-                inObjectives = true;
+            if (text.includes("course objectives") && objectivesStart === -1) {
+                objectivesStart = i;
+            }
+        });
+    }
+    
+    if (objectivesStart === -1) {
+        console.log("Course Objectives section not found");
+        return;
+    }
+    
+    // Find where Course Objectives section ends (Syllabus section starts)
+    const syllabusStart = elementsArray.findIndex((el, i) => 
+        i > objectivesStart && 
+        (el.textContent.trim().toLowerCase().includes("syllabus") ||
+         el.textContent.trim().toLowerCase().includes("1.3"))
+    );
+    
+    objectivesEnd = syllabusStart !== -1 ? syllabusStart : elementsArray.length;
+    
+    console.log("Course Objectives section found at index:", objectivesStart, "ends at:", objectivesEnd);
+    
+    // Extract content from Course Objectives section
+    const objectivesElements = elementsArray.slice(objectivesStart, objectivesEnd);
+    
+    let foundObjectivesHeading = false;
+    let inObjectives = false;
+    
+    for (const element of objectivesElements) {
+        const text = element.textContent.trim();
+        const lowerText = text.toLowerCase();
+        const tagName = element.tagName;
+        
+        // Skip empty elements
+        if (!text) continue;
+        
+        // Check if this is the Course Objectives heading
+        if (lowerText.includes("course objectives") || lowerText.match(/^\d+\.\d*\s*.*course\s*objectives/i)) {
+            foundObjectivesHeading = true;
+            inObjectives = true;
+            continue;
+        }
+        
+        // If we found the heading, start collecting content
+        if (foundObjectivesHeading && inObjectives) {
+            // Look for intro text (paragraph after heading)
+            if (tagName === 'P' && !courseData.courseObjectivesIntro && 
+                !lowerText.includes("after completing") && 
+                !lowerText.includes("learner will")) {
+                // Check if next element might be the intro
+                const nextIndex = objectivesElements.indexOf(element) + 1;
+                if (nextIndex < objectivesElements.length) {
+                    const nextText = objectivesElements[nextIndex].textContent.trim().toLowerCase();
+                    if (nextText.includes("after completing") || nextText.includes("learner will")) {
+                        continue; // Skip this, the next one is the intro
+                    }
+                }
+            }
+            
+            // Look for intro paragraph with "After completing" or similar
+            if (tagName === 'P' && !courseData.courseObjectivesIntro && 
+                (lowerText.includes("after completing") || 
+                 lowerText.includes("learner will") ||
+                 lowerText.includes("student will"))) {
+                courseData.courseObjectivesIntro = element.innerHTML.trim();
                 continue;
             }
-            if (inObjectives && element.tagName === 'UL') {
+            
+            // Look for the list of objectives
+            if (tagName === 'UL') {
                 const items = element.querySelectorAll('li');
                 items.forEach(item => {
                     const itemText = item.innerHTML.trim();
-                    if (!isUnwantedObjective(itemText)) {
+                    if (itemText && !isUnwantedObjective(itemText)) {
                         courseData.courseObjectivesList.push(itemText);
                     }
                 });
+                // Continue in case there are multiple lists
+            }
+            
+            // Stop if we hit Syllabus or another major section
+            if (lowerText.includes("syllabus") || 
+                lowerText.includes("faq") ||
+                (tagName.match(/^H[1-3]$/i) && !lowerText.includes("course objectives"))) {
                 break;
             }
         }
     }
+    
+    console.log("Extracted Course Objectives:", courseData.courseObjectivesList.length);
+    console.log("Intro text:", courseData.courseObjectivesIntro ? courseData.courseObjectivesIntro.substring(0, 50) + "..." : "Not found");
 }
 
 function extractSyllabus(elementsArray) {
@@ -357,25 +440,46 @@ function extractAllSyllabusContent(elementsArray) {
     let foundSyllabusContent = false;
     
     // Find where the syllabus content actually starts
-    let syllabusStartIndex = -1;
+    // First, find Course Objectives section to ensure we start after it
+    let objectivesEndIndex = -1;
     for (let i = 0; i < elementsArray.length; i++) {
         const element = elementsArray[i];
         const text = element.textContent.trim().toLowerCase();
+        if ((text.includes("course objectives") || text.includes("1.2")) && 
+            (element.tagName.match(/^H[1-6]$/i) || text.match(/^\d+\.\d*\s*.*course\s*objectives/i))) {
+            // Find where Course Objectives section ends
+            for (let j = i + 1; j < elementsArray.length; j++) {
+                const nextText = elementsArray[j].textContent.trim().toLowerCase();
+                if (nextText.includes("syllabus") || nextText.includes("1.3") || 
+                    nextText.includes("course content")) {
+                    objectivesEndIndex = j;
+                    break;
+                }
+            }
+            break;
+        }
+    }
+    
+    let syllabusStartIndex = -1;
+    for (let i = (objectivesEndIndex !== -1 ? objectivesEndIndex : 0); i < elementsArray.length; i++) {
+        const element = elementsArray[i];
+        const text = element.textContent.trim().toLowerCase();
         
-        // Look for syllabus/content headings
-        if (text.includes("course content") || 
+        // Look for syllabus/content headings (but skip Course Objectives)
+        if ((text.includes("course content") || 
             text.includes("syllabus") || 
             text.includes("lessons") || 
-            text.includes("modules")) {
+            text.includes("modules")) &&
+            !text.includes("course objectives")) {
             syllabusStartIndex = i;
             foundSyllabusContent = true;
             break;
         }
     }
     
-    // If no specific syllabus heading found, start from beginning
+    // If no specific syllabus heading found, start after Course Objectives
     if (syllabusStartIndex === -1) {
-        syllabusStartIndex = 0;
+        syllabusStartIndex = objectivesEndIndex !== -1 ? objectivesEndIndex : 0;
     }
     
     console.log("Syllabus extraction starting from index:", syllabusStartIndex);
@@ -388,6 +492,12 @@ function extractAllSyllabusContent(elementsArray) {
         if (!text) continue;
         
         const lowerText = text.toLowerCase();
+        
+        // Skip Course Objectives content
+        if (lowerText.includes("course objectives") || 
+            lowerText.match(/^\d+\.\d*\s*.*course\s*objectives/i)) {
+            continue;
+        }
         
         // Skip the main syllabus heading itself
         if (lowerText.includes("course content") || 
@@ -580,6 +690,12 @@ function extractLessonsDirectly(elementsArray, startIndex) {
         
         if (!text) continue;
         
+        // Skip Course Objectives content
+        if (lowerText.includes("course objectives") || 
+            lowerText.match(/^\d+\.\d*\s*.*course\s*objectives/i)) {
+            continue;
+        }
+        
         // Check if we're in the syllabus section
         if (!inSyllabusSection && 
             (lowerText.includes("course content") || 
@@ -692,7 +808,9 @@ function generateCourseObjectivesCode() {
         listItemsHtml = "<li>No course objectives found in the document.</li>";
     }
     
-    const courseObjectivesHtml = `<h2 class="h3">Course Objectives</h2><p class="m-0"><strong>After completing this course, the learner will be able to:</strong></p><ul>${listItemsHtml}</ul>`;
+    // Use extracted intro text if available, otherwise use default
+    const introText = courseData.courseObjectivesIntro || "After completing this course, the learner will be able to:";
+    const courseObjectivesHtml = `<h2 class="h3">Course Objectives</h2><p class="m-0"><strong>${introText}</strong></p><ul>${listItemsHtml}</ul>`;
     
     document.getElementById("courseObjectivesCode").value = courseObjectivesHtml;
     showGeneratedCode('course', 'courseObjectivesCodeSection');
