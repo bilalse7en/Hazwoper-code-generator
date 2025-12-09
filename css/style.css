@@ -79,47 +79,47 @@ body {
 /* ========== TEXT ELEMENTS - THEME FIXES ========== */
 /* Fix all text elements that might be inheriting wrong colors */
 .text-white, .text-light {
-    color: var(--text-primary) !important;
+    color: var(--text-primary);
 }
 
 .text-dark {
-    color: var(--text-primary) !important;
+    color: var(--text-primary);
 }
 
 .text-muted {
-    color: var(--text-secondary) !important;
+    color: var(--text-secondary);
 }
 
 .text-black {
-    color: var(--text-primary) !important;
+    color: var(--text-primary);
 }
 
 .text-secondary {
-    color: var(--text-secondary) !important;
+    color: var(--text-secondary);
 }
 
 /* Fix specific Bootstrap text classes */
 .bg-light .text-dark,
 .bg-white .text-dark {
-    color: var(--text-primary) !important;
+    color: var(--text-primary);
 }
 
 /* Fix form text colors */
 .form-text {
-    color: var(--text-secondary) !important;
+    color: var(--text-secondary);
 }
 
 /* Fix table text colors */
 .table {
-    color: var(--text-primary) !important;
+    color: var(--text-primary);
 }
 
 .table th {
-    color: var(--text-primary) !important;
+    color: var(--text-primary);
 }
 
 .table td {
-    color: var(--text-primary) !important;
+    color: var(--text-primary);
 }
 
 /* Fix alert text colors */
@@ -131,173 +131,173 @@ body {
 
 /* Fix card text colors */
 .card {
-    color: var(--text-primary) !important;
+    color: var(--text-primary);
 }
 
 .card-body {
-    color: var(--text-primary) !important;
+    color: var(--text-primary);
 }
 
 /* Fix modal text colors */
 .modal-content {
-    background-color: var(--card-bg) !important;
-    color: var(--text-primary) !important;
+    background-color: var(--card-bg);
+    color: var(--text-primary);
 }
 
 .modal-header, .modal-footer {
-    border-color: var(--border-color) !important;
+    border-color: var(--border-color);
 }
 
 .modal-title {
-    color: var(--text-primary) !important;
+    color: var(--text-primary);
 }
 
 /* Fix list group text colors */
 .list-group-item {
-    background-color: var(--card-bg) !important;
-    border-color: var(--border-color) !important;
-    color: var(--text-primary) !important;
+    background-color: var(--card-bg);
+    border-color: var(--border-color);
+    color: var(--text-primary);
 }
 
 /* Fix badge text colors */
 .badge {
-    color: white !important; /* Keep badges with white text for contrast */
+    color: white; /* Keep badges with white text for contrast */
 }
 
 .badge.bg-light,
 .badge.bg-white {
-    color: var(--text-primary) !important;
+    color: var(--text-primary);
 }
 
 /* Fix dropdown text colors */
 .dropdown-menu {
-    background-color: var(--card-bg) !important;
-    border-color: var(--border-color) !important;
+    background-color: var(--card-bg);
+    border-color: var(--border-color);
 }
 
 .dropdown-item {
-    color: var(--text-primary) !important;
+    color: var(--text-primary);
 }
 
 .dropdown-item:hover {
-    background-color: var(--hover-bg) !important;
-    color: var(--text-primary) !important;
+    background-color: var(--hover-bg);
+    color: var(--text-primary);
 }
 
 .dropdown-header {
-    color: var(--text-secondary) !important;
+    color: var(--text-secondary);
 }
 
 /* Fix tooltip text colors */
 .tooltip-inner {
-    background-color: var(--darker-bg) !important;
-    color: var(--text-primary) !important;
+    background-color: var(--darker-bg);
+    color: var(--text-primary);
 }
 
 /* Fix popover text colors */
 .popover {
-    background-color: var(--card-bg) !important;
-    border-color: var(--border-color) !important;
-    color: var(--text-primary) !important;
+    background-color: var(--card-bg);
+    border-color: var(--border-color);
+    color: var(--text-primary);
 }
 
 .popover-header {
-    background-color: var(--darker-bg) !important;
-    border-bottom-color: var(--border-color) !important;
-    color: var(--text-primary) !important;
+    background-color: var(--darker-bg);
+    border-bottom-color: var(--border-color);
+    color: var(--text-primary);
 }
 
 .popover-body {
-    color: var(--text-primary) !important;
+    color: var(--text-primary);
 }
 
 /* Fix pagination text colors */
 .page-link {
-    background-color: var(--card-bg) !important;
-    border-color: var(--border-color) !important;
-    color: var(--text-primary) !important;
+    background-color: var(--card-bg);
+    border-color: var(--border-color);
+    color: var(--text-primary);
 }
 
 .page-item.disabled .page-link {
-    background-color: var(--hover-bg) !important;
-    color: var(--text-secondary) !important;
+    background-color: var(--hover-bg);
+    color: var(--text-secondary);
 }
 
 .page-item.active .page-link {
-    background-color: var(--primary-gradient) !important;
-    border-color: transparent !important;
-    color: white !important;
+    background-color: var(--primary-gradient);
+    border-color: transparent;
+    color: white;
 }
 
 /* Fix breadcrumb text colors */
 .breadcrumb {
-    background-color: var(--hover-bg) !important;
+    background-color: var(--hover-bg);
 }
 
 .breadcrumb-item.active {
-    color: var(--text-secondary) !important;
+    color: var(--text-secondary);
 }
 
 .breadcrumb-item a {
-    color: var(--text-primary) !important;
+    color: var(--text-primary);
 }
 
 /* Fix progress bar text colors */
 .progress {
-    background-color: var(--hover-bg) !important;
+    background-color: var(--hover-bg);
 }
 
 /* Fix input group text colors */
 .input-group-text {
-    background-color: var(--darker-bg) !important;
-    border-color: var(--border-color) !important;
-    color: var(--text-primary) !important;
+    background-color: var(--darker-bg);
+    border-color: var(--border-color);
+    color: var(--text-primary);
 }
 
 /* Fix nav link text colors */
 .nav-link {
-    color: var(--text-primary) !important;
+    color: var(--text-primary);
 }
 
 .nav-link:hover {
-    color: var(--text-secondary) !important;
+    color: var(--text-secondary);
 }
 
 .nav-tabs .nav-link.active {
-    color: var(--text-primary) !important;
+    color: var(--text-primary);
 }
 
 /* Fix offcanvas text colors */
 .offcanvas {
-    background-color: var(--card-bg) !important;
-    color: var(--text-primary) !important;
+    background-color: var(--card-bg);
+    color: var(--text-primary);
 }
 
 .offcanvas-header {
-    border-bottom-color: var(--border-color) !important;
+    border-bottom-color: var(--border-color);
 }
 
 .offcanvas-title {
-    color: var(--text-primary) !important;
+    color: var(--text-primary);
 }
 
 /* Fix accordion text colors */
 .accordion {
-    --bs-accordion-bg: var(--card-bg) !important;
-    --bs-accordion-color: var(--text-primary) !important;
-    --bs-accordion-border-color: var(--border-color) !important;
-    --bs-accordion-btn-color: var(--text-primary) !important;
-    --bs-accordion-btn-bg: var(--card-bg) !important;
-    --bs-accordion-active-color: var(--text-primary) !important;
-    --bs-accordion-active-bg: var(--darker-bg) !important;
+    --bs-accordion-bg: var(--card-bg);
+    --bs-accordion-color: var(--text-primary);
+    --bs-accordion-border-color: var(--border-color);
+    --bs-accordion-btn-color: var(--text-primary);
+    --bs-accordion-btn-bg: var(--card-bg);
+    --bs-accordion-active-color: var(--text-primary);
+    --bs-accordion-active-bg: var(--darker-bg);
 }
 
 .accordion-button:not(.collapsed) {
-    color: var(--text-primary) !important;
+    color: var(--text-primary);
 }
 
 .accordion-body {
-    color: var(--text-primary) !important;
+    color: var(--text-primary);
 }
 
 /* ========== HERO SECTION ========== */
@@ -715,7 +715,7 @@ body {
 input.form-control::placeholder,
 textarea.form-control::placeholder,
 select.form-select::placeholder {
-    color: var(--placeholder-color) !important;
+    color: var(--placeholder-color);
     opacity: 1;
 }
 
@@ -985,8 +985,8 @@ select.form-select::placeholder {
 }
 
 tr.bg-gray-300 td {
-    background: #ffe7e7 !important;
-    color: #000000 !important;
+    background: #ffe7e7;
+    color: #000000;
     text-decoration-style: double;
     text-decoration-line: line-through;
     text-wrap-mode: nowrap;
@@ -1015,21 +1015,21 @@ tr.bg-gray-300 td {
 }
 
 .sbox:hover {
-    opacity: 1 !important;
-    filter: brightness(1.02) blur(0px) !important;
-    transform: translateY(-3px) translateX(2px) scale(1) !important;
+    opacity: 1;
+    filter: brightness(1.02) blur(0px);
+    transform: translateY(-3px) translateX(2px) scale(1);
     box-shadow: 0 5px 10px rgba(255, 205, 5, 0.25), 
                 0 3px 7px var(--shadow-color), 
                 0 0 0 0px rgba(255, 205, 5, 0.4), 
-                inset 0 0px 11px rgba(255, 255, 255, 0.1) !important;
-    z-index: 100 !important;
+                inset 0 0px 11px rgba(255, 255, 255, 0.1);
+    z-index: 100;
 }
 
 /* ========== TYPOGRAPHY ========== */
 h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6, .fs-1, .fs-2, .fs-3, .fs-4, .fs-5, .fs-6 {
     font-family: "poppins", sans-serif;
-    font-weight: 600 !important;
-    color: var(--text-primary) !important;
+    font-weight: 600;
+    color: var(--text-primary);
 }
 
 /* ========== HTML CLEANER THEME ========== */
@@ -1084,7 +1084,7 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6, .fs-1, .fs-2, .fs-3, .fs-4
     margin: 0 2px;
     border-radius: 4px;
     font-weight: normal;
-    color: white !important;
+    color: white;
 }
 
 /* ========== HISTORY LIST ========== */
@@ -1095,7 +1095,7 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6, .fs-1, .fs-2, .fs-3, .fs-4
 
 .history-item {
     background: var(--hover-bg);
-    border-color: var(--border-color) !important;
+    border-color: var(--border-color);
     cursor: pointer;
     transition: all 0.3s ease;
     color: var(--text-primary);
@@ -2145,11 +2145,11 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6, .fs-1, .fs-2, .fs-3, .fs-4
 }
 
 .detail-card-value.text-success {
-    color: #28a745 !important;
+    color: #28a745;
 }
 
 .detail-card-value.text-danger {
-    color: #dc3545 !important;
+    color: #dc3545;
 }
 
 .comparison-stats {
@@ -2698,24 +2698,24 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6, .fs-1, .fs-2, .fs-3, .fs-4
 }
 
 .badge.bg-primary {
-    background: var(--primary-gradient) !important;
+    background: var(--primary-gradient);
     color: white;
 }
 
 .badge.bg-success {
-    background: var(--success-gradient) !important;
+    background: var(--success-gradient);
     color: white;
 }
 
 .badge.bg-warning {
-    background: linear-gradient(135deg, #ffc107, #856404) !important;
+    background: linear-gradient(135deg, #ffc107, #856404);
     color: #212529;
 }
 
 .badge.bg-light,
 .badge.bg-white {
-    background: var(--hover-bg) !important;
-    color: var(--text-primary) !important;
+    background: var(--hover-bg);
+    color: var(--text-primary);
 }
 
 /* ========== UTILITY CLASSES ========== */
@@ -2727,11 +2727,11 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6, .fs-1, .fs-2, .fs-3, .fs-4
 }
 
 .text-purple {
-    color: #6f42c1 !important;
+    color: #6f42c1;
 }
 
 .text-orange {
-    color: #fd7e14 !important;
+    color: #fd7e14;
 }
 
 .lead {
@@ -2743,7 +2743,7 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6, .fs-1, .fs-2, .fs-3, .fs-4
 }
 
 .d-none {
-    display: none !important;
+    display: none;
 }
 
 .flex-center {
@@ -2784,22 +2784,22 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6, .fs-1, .fs-2, .fs-3, .fs-4
 
 /* ========== CARD HEADER ENHANCEMENT ========== */
 .card-header.bg-dark {
-    background: linear-gradient(135deg, #2c3e50, #34495e) !important;
-    color: white !important;
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+    color: white;
 }
 
 .light-theme .card-header.bg-dark {
-    background: linear-gradient(135deg, #f8f9fa, #e9ecef) !important;
-    color: var(--text-primary) !important;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    color: var(--text-primary);
 }
 
 .card-header.bg-secondary {
-    background: linear-gradient(135deg, #7f8c8d, #95a5a6) !important;
-    color: white !important;
+    background: linear-gradient(135deg, #7f8c8d, #95a5a6);
+    color: white;
 }
 
 .light-theme .card-header.bg-secondary {
-    color: var(--text-primary) !important;
+    color: var(--text-primary);
 }
 
 /* ========== FADE IN UP ANIMATION ========== */
@@ -2913,7 +2913,7 @@ small {
 .light-theme .text-white-50,
 .light-theme .text-light,
 .light-theme .text-white {
-    color: var(--text-primary) !important;
+    color: var(--text-primary);
 }
 
 /* Fix for borders that might be too light */
@@ -2922,38 +2922,38 @@ small {
 .light-theme .border-bottom,
 .light-theme .border-start,
 .light-theme .border-end {
-    border-color: var(--border-color) !important;
+    border-color: var(--border-color);
 }
 
 /* Fix for disabled states */
 .form-control:disabled,
 .form-select:disabled {
-    background-color: var(--hover-bg) !important;
-    color: var(--text-secondary) !important;
-    opacity: 0.7 !important;
+    background-color: var(--hover-bg);
+    color: var(--text-secondary);
+    opacity: 0.7;
 }
 
 /* Fix for readonly states */
 .form-control[readonly] {
-    background-color: var(--hover-bg) !important;
-    color: var(--text-primary) !important;
+    background-color: var(--hover-bg);
+    color: var(--text-primary);
 }
 
 /* Fix for active states */
 .nav-pills .nav-link.active {
-    background-color: var(--primary-gradient) !important;
-    color: white !important;
+    background-color: var(--primary-gradient);
+    color: white;
 }
 
 /* Fix for hover states on light theme */
 .light-theme .btn-outline-secondary:hover {
-    background-color: var(--hover-bg) !important;
-    color: var(--text-primary) !important;
+    background-color: var(--hover-bg);
+    color: var(--text-primary);
 }
 
 /* Fix for code blocks inside pre tags */
 pre code {
-    color: var(--code-text) !important;
+    color: var(--code-text);
 }
 
 /* Fix for blockquotes */
@@ -2966,7 +2966,7 @@ blockquote {
 
 /* Fix for hr elements */
 hr {
-    border-color: var(--border-color) !important;
+    border-color: var(--border-color);
     opacity: 0.5;
 }
 
