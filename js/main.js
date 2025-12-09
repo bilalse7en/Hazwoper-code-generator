@@ -1,6 +1,5 @@
 // ========== HACKER THEME LANDING LOADER ANIMATION ==========
 (function() {
-    // Check if user has visited before
     const hasVisited = localStorage.getItem('hasVisited');
     const loader = document.getElementById('landingLoader');
     const mainContent = document.getElementById('mainContent');
@@ -24,7 +23,7 @@
             if (charIndex < welcomeMessage.length && typingText) {
                 typingText.textContent += welcomeMessage.charAt(charIndex);
                 charIndex++;
-                setTimeout(typeText, 80); // Typing speed
+                setTimeout(typeText, 80);
             }
         }
         
@@ -68,11 +67,10 @@
                 if (mainContent) {
                     mainContent.style.display = 'block';
                 }
-                // Mark as visited in localStorage
                 localStorage.setItem('hasVisited', 'true');
                 clearInterval(progressInterval);
-            }, 800); // Wait for fade out animation
-        }, 6000); // Show loader for 4 seconds (increased for better effect)
+            }, 800);
+        }, 6000);
     } else {
         // Returning visitor - hide loader immediately
         if (loader) {
@@ -180,6 +178,12 @@ function activateCodeArea(tab) {
         const selector = document.getElementById('courseCodeSelector');
         if (selector) selector.style.display = 'flex';
     }
+    
+    // For blog tab, show selector if it exists
+    if (tab === 'blog') {
+        const selector = document.getElementById('blogCodeSelector');
+        if (selector) selector.style.display = 'flex';
+    }
 }
 
 function showGeneratedCode(tab, sectionId) {
@@ -193,6 +197,17 @@ function showGeneratedCode(tab, sectionId) {
         // Update selector button if it exists
         if (tab === 'course') {
             const buttons = document.querySelectorAll('#courseCodeSelector .code-selector-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-target') === sectionId) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+        
+        // Update selector button for blog tab
+        if (tab === 'blog') {
+            const buttons = document.querySelectorAll('#blogCodeSelector .code-selector-btn');
             buttons.forEach(btn => {
                 btn.classList.remove('active');
                 if (btn.getAttribute('data-target') === sectionId) {
@@ -219,7 +234,7 @@ function openPreviewDrawer(codeElementId, title) {
     previewDrawerState.generatedCode = code;
     
     // Special handling for FAQ preview
-    if (codeElementId === 'faqCode' && courseData.faqData && courseData.faqData.length > 0) {
+    if (codeElementId === 'faqCode' && courseData && courseData.faqData && courseData.faqData.length > 0) {
         previewDrawerState.faqArray = courseData.faqData;
         
         // Update drawer for FAQ preview
@@ -229,7 +244,7 @@ function openPreviewDrawer(codeElementId, title) {
         let faqPreviewContent = `
             <div class="faq-preview-container">
                 <div class="mb-4">
-                    <p class="text-light">All ${previewDrawerState.faqArray.length} questions are displayed below. You can copy individual questions and answers.</p>
+                    <p>All ${previewDrawerState.faqArray.length} questions are displayed below. You can copy individual questions and answers.</p>
                 </div>
         `;
         
@@ -262,6 +277,50 @@ function openPreviewDrawer(codeElementId, title) {
         
         document.getElementById('previewDrawerContent').innerHTML = faqPreviewContent;
         
+    } else if (codeElementId === 'blogFaqCode' && blogFAQData && blogFAQData.faqData && blogFAQData.faqData.length > 0) {
+        // Special handling for Blog FAQ preview
+        previewDrawerState.faqArray = blogFAQData.faqData;
+        
+        // Update drawer for Blog FAQ preview
+        document.getElementById('previewDrawerTitle').innerHTML = `<i class="fas fa-eye me-2"></i>Blog FAQ Preview (${previewDrawerState.faqArray.length} Questions)`;
+        
+        // Create Blog FAQ preview with all questions and copy buttons
+        let faqPreviewContent = `
+            <div class="faq-preview-container">
+                <div class="mb-4">
+                    <p>All ${previewDrawerState.faqArray.length} blog FAQ questions are displayed below.</p>
+                </div>
+        `;
+        
+        previewDrawerState.faqArray.forEach((faq, index) => {
+            faqPreviewContent += `
+                <div class="faq-preview-item">
+                    <div class="faq-question-section">
+                        <h5>Question ${index + 1}:</h5>
+                        <div class="faq-content-box">
+                            <button class="copy-btn-small" onclick="copyBlogFaqQuestion(${index})">
+                                <i class="fas fa-copy"></i> Copy
+                            </button>
+                            <div>${faq.question}</div>
+                        </div>
+                    </div>
+                    <div class="faq-answer-section">
+                        <h5>Answer ${index + 1}:</h5>
+                        <div class="faq-content-box">
+                            <button class="copy-btn-small" onclick="copyBlogFaqAnswer(${index})">
+                                <i class="fas fa-copy"></i> Copy
+                            </button>
+                            <div>${faq.answer}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        
+        faqPreviewContent += `</div>`;
+        
+        document.getElementById('previewDrawerContent').innerHTML = faqPreviewContent;
+        
     } else if (codeElementId === 'htmlOutput' && previewDrawerState.resourceTableHTML) {
         // Special handling for Resources preview with table
         document.getElementById('previewDrawerTitle').innerHTML = `<i class="fas fa-eye me-2"></i>${title} Preview`;
@@ -280,7 +339,7 @@ function openPreviewDrawer(codeElementId, title) {
     
     // Show/hide copy code button (hide for FAQ as we have individual copy buttons)
     const copyBtn = document.getElementById('copyCodeDrawerBtn');
-    copyBtn.style.display = (codeElementId === 'faqCode' || codeElementId === 'htmlOutput') ? 'none' : 'inline-block';
+    copyBtn.style.display = (codeElementId === 'faqCode' || codeElementId === 'blogFaqCode' || codeElementId === 'htmlOutput') ? 'none' : 'inline-block';
     
     // Open the drawer with animation
     document.getElementById('previewDrawer').classList.add('open');
@@ -294,7 +353,6 @@ function openPreviewDrawer(codeElementId, title) {
     document.addEventListener('keydown', handleEscapeKey);
 }
 
-// Simple FAQ copying functions
 function copyFaqQuestion(index) {
     if (!previewDrawerState.faqArray || !previewDrawerState.faqArray[index]) {
         utils.showNotification("No question found to copy!", "warning");
@@ -313,6 +371,26 @@ function copyFaqAnswer(index) {
     
     const answer = previewDrawerState.faqArray[index].answer;
     copyToClipboardSimple(answer, "Answer");
+}
+
+function copyBlogFaqQuestion(index) {
+    if (!previewDrawerState.faqArray || !previewDrawerState.faqArray[index]) {
+        utils.showNotification("No blog question found to copy!", "warning");
+        return;
+    }
+    
+    const question = previewDrawerState.faqArray[index].question;
+    copyToClipboardSimple(question, "Blog Question");
+}
+
+function copyBlogFaqAnswer(index) {
+    if (!previewDrawerState.faqArray || !previewDrawerState.faqArray[index]) {
+        utils.showNotification("No blog answer found to copy!", "warning");
+        return;
+    }
+    
+    const answer = previewDrawerState.faqArray[index].answer;
+    copyToClipboardSimple(answer, "Blog Answer");
 }
 
 function copyToClipboardSimple(text, type) {
@@ -396,12 +474,10 @@ document.getElementById('previewDrawer').addEventListener('keydown', function(e)
     }
 });
 
-// ========== COPY TO CLIPBOARD FUNCTION ==========
 function copyToClipboard(elementId) {
     utils.copyToClipboard(elementId);
 }
 
-// Helper function to open preview drawer with custom content
 function openPreviewDrawerWithContent(content, title) {
     // Update state
     previewDrawerState.currentCodeElementId = '';
@@ -428,9 +504,204 @@ function openPreviewDrawerWithContent(content, title) {
     document.addEventListener('keydown', handleEscapeKey);
 }
 
+// ========== PERFECT ANIMATED THEME MANAGER ==========
+const themeManager = {
+    currentTheme: localStorage.getItem('theme') || 'dark',
+    isAnimating: false,
+    
+    init() {
+        // Add smooth transition styles
+        this.addTransitionStyles();
+        
+        // Apply theme without animation on initial load
+        document.body.classList.add(`${this.currentTheme}-theme`);
+        this.updateThemeToggleButton();
+        this.setupThemeToggle();
+        this.setupSystemThemeListener();
+    },
+    
+    applyTheme(theme, animate = true) {
+        if (this.isAnimating) return;
+        this.isAnimating = true;
+        
+        const oldTheme = this.currentTheme;
+        
+        if (animate) {
+            // Add transition class for smooth animations
+            document.body.classList.add('theme-changing');
+            
+            // Fade out current theme
+            document.body.style.opacity = '0.7';
+            document.body.style.transition = 'opacity 200ms ease-in-out';
+            
+            setTimeout(() => {
+                // Switch themes during the fade
+                document.body.classList.remove(`${oldTheme}-theme`);
+                document.body.classList.add(`${theme}-theme`);
+                
+                // Update state
+                localStorage.setItem('theme', theme);
+                this.currentTheme = theme;
+                
+                // Update UI
+                this.updateThemeToggleButton();
+                
+                // Fade back in
+                setTimeout(() => {
+                    document.body.style.opacity = '1';
+                    
+                    // Clean up after animation
+                    setTimeout(() => {
+                        document.body.classList.remove('theme-changing');
+                        document.body.style.transition = '';
+                        this.isAnimating = false;
+                    }, 200);
+                }, 50);
+                
+            }, 200);
+            
+        } else {
+            // Apply theme instantly (no animation)
+            document.body.classList.remove(`${oldTheme}-theme`);
+            document.body.classList.add(`${theme}-theme`);
+            
+            localStorage.setItem('theme', theme);
+            this.currentTheme = theme;
+            this.updateThemeToggleButton();
+            this.isAnimating = false;
+        }
+    },
+    
+    toggleTheme() {
+        const newTheme = this.currentTheme === 'dark' ? 'light' : 'dark';
+        
+        // Add button animation
+        const button = document.getElementById('globalThemeToggle');
+        if (button) {
+            button.classList.add('theme-toggling');
+            setTimeout(() => {
+                button.classList.remove('theme-toggling');
+            }, 300);
+        }
+        
+        this.applyTheme(newTheme, true);
+    },
+    
+    updateThemeToggleButton() {
+        const button = document.getElementById('globalThemeToggle');
+        if (!button) return;
+        
+        if (this.currentTheme === 'dark') {
+            button.innerHTML = '<i class="fas fa-sun me-2"></i>Switch to Light Mode';
+            button.classList.remove('btn-outline-dark');
+            button.classList.add('btn-outline-primary');
+        } else {
+            button.innerHTML = '<i class="fas fa-moon me-2"></i>Switch to Dark Mode';
+            button.classList.remove('btn-outline-primary');
+            button.classList.add('btn-outline-dark');
+        }
+        
+        // Animate the icon
+        const icon = button.querySelector('i');
+        if (icon) {
+            icon.style.transform = 'rotate(180deg) scale(1.2)';
+            setTimeout(() => {
+                icon.style.transform = 'rotate(0) scale(1)';
+            }, 300);
+        }
+    },
+    
+    setupThemeToggle() {
+        const button = document.getElementById('globalThemeToggle');
+        if (button) {
+            // Remove any existing listeners and re-add
+            button.replaceWith(button.cloneNode(true));
+            const newButton = document.getElementById('globalThemeToggle');
+            
+            newButton.addEventListener('click', () => this.toggleTheme());
+            
+            // Add keyboard support
+            newButton.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    this.toggleTheme();
+                }
+            });
+        }
+    },
+    
+    setupSystemThemeListener() {
+        if (!window.matchMedia) return;
+        
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        
+        const handleThemeChange = (e) => {
+            if (!localStorage.getItem('theme')) {
+                const theme = e.matches ? 'dark' : 'light';
+                this.applyTheme(theme, true);
+            }
+        };
+        
+        if (mediaQuery.addEventListener) {
+            mediaQuery.addEventListener('change', handleThemeChange);
+        } else if (mediaQuery.addListener) {
+            mediaQuery.addListener(handleThemeChange);
+        }
+        
+        // Set initial theme based on system preference if no user preference
+        if (!localStorage.getItem('theme')) {
+            const theme = mediaQuery.matches ? 'dark' : 'light';
+            this.applyTheme(theme, false);
+        }
+    },
+    
+    addTransitionStyles() {
+        // Add CSS for animations if not already present
+        if (!document.getElementById('theme-transition-styles')) {
+            const style = document.createElement('style');
+            style.id = 'theme-transition-styles';
+            style.textContent = `
+                /* Theme transition animations */
+                body.theme-changing * {
+                    transition: background-color 300ms ease-in-out,
+                                color 300ms ease-in-out,
+                                border-color 300ms ease-in-out,
+                                box-shadow 300ms ease-in-out !important;
+                }
+                
+                /* Button animation */
+                #globalThemeToggle.theme-toggling {
+                    transform: scale(0.95);
+                    transition: transform 150ms ease-in-out;
+                }
+                
+                #globalThemeToggle i {
+                    transition: transform 300ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+                }
+                
+                /* Smooth opacity transitions for page content */
+                body {
+                    opacity: 1;
+                    transition: opacity 300ms ease-in-out;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+    }
+};
+
 // ========== INITIALIZATION ==========
 document.addEventListener("DOMContentLoaded", function() {
+    themeManager.init();
     createAnimatedFavicon();
+    
+    // Add keyboard shortcut for theme toggle (Ctrl/Cmd + T)
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 't' && !e.shiftKey && !e.altKey) {
+            e.preventDefault();
+            themeManager.toggleTheme();
+        }
+    });
     
     // Set up code selector buttons for course tab
     const courseCodeSelector = document.getElementById('courseCodeSelector');
@@ -446,6 +717,32 @@ document.addEventListener("DOMContentLoaded", function() {
                 // Show selected section
                 const targetId = e.target.getAttribute('data-target');
                 showCodeSection(targetId);
+            }
+        });
+    }
+    
+    // Set up code selector buttons for blog tab
+    const blogCodeSelector = document.getElementById('blogCodeSelector');
+    if (blogCodeSelector) {
+        blogCodeSelector.addEventListener('click', function(e) {
+            if (e.target.classList.contains('code-selector-btn')) {
+                // Update active button
+                document.querySelectorAll('#blogCodeSelector .code-selector-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                e.target.classList.add('active');
+                
+                // Show selected section
+                const targetId = e.target.getAttribute('data-target');
+                const allSections = document.querySelectorAll('#blogCodeSections .code-section');
+                allSections.forEach(section => {
+                    section.style.display = 'none';
+                });
+                
+                const targetSection = document.getElementById(targetId);
+                if (targetSection) {
+                    targetSection.style.display = 'block';
+                }
             }
         });
     }
@@ -468,9 +765,12 @@ document.addEventListener("DOMContentLoaded", function() {
     ];
     
     fileInputs.forEach(({id, infoId}) => {
-        document.getElementById(id).addEventListener("change", function() {
-            utils.showFileInfo(this, infoId);
-        });
+        const input = document.getElementById(id);
+        if (input) {
+            input.addEventListener("change", function() {
+                utils.showFileInfo(this, infoId);
+            });
+        }
     });
 });
 
@@ -478,4 +778,3 @@ document.addEventListener("DOMContentLoaded", function() {
 document.getElementById('openaiKey')?.addEventListener('input', function(e) {
     window.OPENAI_API_KEY = e.target.value;
 });
-// ... rest of your existing courseData and other functions remain exactly the same ...

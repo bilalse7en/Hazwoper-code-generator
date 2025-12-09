@@ -5,7 +5,7 @@ const utils = {
         if (!file) return;
         const fileInfo = document.getElementById(fileInfoId);
         const fileSize = (file.size / 1024).toFixed(2);
-        fileInfo.innerHTML = `<div class="alert alert-info p-2"><div class="d-flex justify-content-between"><span><strong>Name:</strong> ${file.name}</span><span><strong>Size:</strong> ${fileSize} KB</span></div><div><strong>Type:</strong> ${file.type || "Unknown"}</div></div>`;
+        fileInfo.innerHTML = `<div class="alert p-2"><div class="d-flex justify-content-between"><span><strong>Name:</strong> ${file.name}</span><span><strong>Size:</strong> ${fileSize} KB</span></div><div><strong>Type:</strong> ${file.type || "Unknown"}</div></div>`;
         fileInfo.style.display = "block";
     },
 
