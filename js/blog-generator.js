@@ -629,7 +629,7 @@ function showGeneratedCode(type, sectionId) {
     const section = document.getElementById(sectionId);
     if (section) section.style.display = 'block';
 }
-function downloadDemoFile(){
+function downloadDemoFile2(){
     const a=document.createElement('a');
     a.style.display='none';
     a.href='https://media.hazwoper-osha.com/wp-content/uploads/2025/12/1765354092/Blog_Sample_File.docx';
