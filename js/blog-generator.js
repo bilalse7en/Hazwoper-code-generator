@@ -632,7 +632,7 @@ function showGeneratedCode(type, sectionId) {
 function downloadDemoFile(){
     const a=document.createElement('a');
     a.style.display='none';
-    a.href='https://staging-media.hazwoper-osha.com/wp-content/uploads/2025/12/1765349092/Blog_Sample_File.docx';
+    a.href='https://media.hazwoper-osha.com/wp-content/uploads/2025/12/1765354092/Blog_Sample_File.docx';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a)

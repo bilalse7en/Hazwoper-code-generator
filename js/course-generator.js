@@ -1018,7 +1018,7 @@ function generateSyllabusHTML() {
 function downloadDemoFile(){
     const a=document.createElement('a');
     a.style.display='none';
-    a.href='https://staging-media.hazwoper-osha.com/wp-content/uploads/2025/10/1759820370/demo-file-of-website-content-for-3-section.docx';
+    a.href='https://media.hazwoper-osha.com/wp-content/uploads/2025/12/1765354187/demo-file-of-website-content-for-3-section.docx';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a)
