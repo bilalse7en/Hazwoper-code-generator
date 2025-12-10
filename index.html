@@ -46,8 +46,8 @@
                     <div class="col-12 text-center">
                         <img src="https://staging-media.hazwoper-osha.com/wp-content/uploads/2025/10/1759824844/logo.gif"
                             alt="Website Logo" style="height: 125px;width: auto;border-radius: 50%;" class="mb-3">
-                        <h1>Course Content Generator Suite</h1>
-                        <p class="lead text-center">Extract Overview, Syllabus, FAQs, Glossary, Resources and Blog
+                        <h1>Course Content Generator</h1>
+                        <p class="lead text-center fw-normal">Extract Overview, Syllabus, FAQs, Glossary, Resources and Blog
                             Content from your documents</p>
                     </div>
                 </div>
@@ -129,7 +129,7 @@
                                                 structure. Create your course file following the same format, then
                                                 upload for easy website content code generation.</p>
                                             <button class="btn btn-outline-primary btn-sm" onclick="downloadDemoFile()">
-                                                <i class="fas fa-download me-2"></i>Download Demo File
+                                                <i class="fas fa-download me-2"></i>Download Demo Course File
                                             </button>
                                         </div>
 
@@ -167,9 +167,9 @@
                                                     class="fas fa-code me-2"></i>Generate Syllabus</button>
                                             <button class="btn btn-success me-2 mb-2" onclick="generateFAQCode()"><i
                                                     class="fas fa-code me-2"></i>Generate FAQ</button>
-                                            <button class="btn btn-outline-info me-2 mb-2" onclick="debugFAQs()"><i
+                                            <button class="btn btn-outline-info me-2 mb-2 d-none" onclick="debugFAQs()"><i
                                                     class="fas fa-bug me-2"></i>Debug FAQs</button>
-                                            <button class="btn btn-outline-info me-2 mb-2"
+                                            <button class="btn btn-outline-info me-2 mb-2 d-none"
                                                 onclick="debugExtraction()"><i class="fas fa-bug me-2"></i>Debug
                                                 Extraction</button>
                                         </div>
@@ -307,6 +307,14 @@
                                         <!-- FIXED: Added proper file input ID -->
                                         <input class="form-control" type="file" id="blogFileInput" accept=".docx" />
                                         <div class="file-info mt-2" id="blogFileInfo"></div>
+                                        <div class="my-3">
+                                            <p>Download our demo file to check the required
+                                                structure. Create your Blog file following the same format, then
+                                                upload for easy Blog content code generation.</p>
+                                            <button class="btn btn-outline-primary btn-sm" onclick="downloadDemoFile()">
+                                                <i class="fas fa-download me-2"></i>Download Demo Blog File
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                                 
@@ -361,7 +369,7 @@
                                             <button class="btn btn-warning me-2 mb-2" onclick="generateBlogFAQs()">
                                                 <i class="fas fa-question-circle me-2"></i>Generate FAQs
                                             </button>
-                                            <button class="btn btn-outline-info me-2 mb-2" onclick="debugBlogFAQs()">
+                                            <button class="btn btn-outline-info me-2 mb-2 d-none" onclick="debugBlogFAQs()">
                                                 <i class="fas fa-bug me-2"></i>Debug Blog FAQs
                                             </button>
                                         </div>

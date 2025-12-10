@@ -358,15 +358,15 @@ function generateBlogFAQs() {
         return;
     }
     
-    // Extract FAQs from under FAQ heading
-    extractFAQsUnderHeading();
+    // Extract FAQs using the SAME logic as course generator
+    extractBlogFAQContent();
     
     if (blogFAQData.faqData.length === 0) {
         utils.showNotification("No FAQ content found in the blog document.", "warning");
         return;
     }
 
-    // Generate FAQ HTML
+    // Generate FAQ HTML using the SAME logic as course generator
     const faqHTML = generateBlogFAQHTML();
     
     // Display FAQ code
@@ -380,11 +380,11 @@ function generateBlogFAQs() {
     utils.showNotification(`Blog FAQ code generated successfully! Found ${blogFAQData.faqData.length} questions.`, "success");
 }
 
-/** Extract FAQs from under FAQ heading only */
-function extractFAQsUnderHeading() {
+/** Extract FAQ content - EXACTLY like course generator */
+function extractBlogFAQContent() {
     blogFAQData.faqData = [];
     
-    console.log("Extracting FAQs from under FAQ heading...");
+    console.log("Extracting FAQs from blog content (using course logic)...");
     
     // Use the raw HTML
     if (!window.blogRawHTML) {
@@ -396,345 +396,170 @@ function extractFAQsUnderHeading() {
     tempDiv.innerHTML = window.blogRawHTML;
     cleanHTML(tempDiv);
     
-    // Step 1: Find FAQ heading
-    let faqHeading = null;
-    let faqHeadingLevel = null;
+    // Convert to array of elements like course generator does
+    const elementsArray = Array.from(tempDiv.children);
     
-    // Look for FAQ heading patterns
-    const faqPatterns = ['faq', 'frequently asked questions', 'questions and answers', 'faqs'];
+    let faqStart = -1;
     
-    // Find all headings
-    const headings = tempDiv.querySelectorAll('h1, h2, h3, h4, h5, h6');
-    
-    for (let heading of headings) {
-        const headingText = (heading.textContent || "").trim().toLowerCase();
-        
-        // Check if this is an FAQ heading
-        if (faqPatterns.some(pattern => headingText.includes(pattern))) {
-            faqHeading = heading;
-            faqHeadingLevel = parseInt(heading.tagName.charAt(1));
-            console.log(`Found FAQ heading: "${heading.textContent.trim()}" (H${faqHeadingLevel})`);
-            break;
+    // Find FAQ heading - EXACTLY like course generator
+    elementsArray.forEach((element, i) => {
+        const text = element.textContent.trim().toLowerCase();
+        if ((text.includes("faq") || text.includes("frequently asked questions")) && 
+            element.tagName.match(/^H[1-6]$/i) && faqStart === -1) {
+            faqStart = i;
         }
-    }
+    });
     
-    if (!faqHeading) {
-        console.log("No FAQ heading found");
+    if (faqStart === -1) {
+        console.log("No FAQ section found");
         return;
     }
     
-    // Step 2: Collect all content under this heading until next heading of same or higher level
-    let currentElement = faqHeading.nextElementSibling;
-    let faqContentElements = [];
-    let foundMetaData = false;
+    console.log("FAQ section found at index:", faqStart);
     
-    while (currentElement) {
-        const tagName = currentElement.tagName.toUpperCase();
+    // Find where FAQ section ends - EXACTLY like course generator
+    let faqEnd = elementsArray.length;
+    for (let i = faqStart + 1; i < elementsArray.length; i++) {
+        const element = elementsArray[i];
+        const text = element.textContent.trim();
         
-        // Stop if we hit another heading of same or higher level
-        if (tagName.match(/^H[1-6]$/)) {
-            const currentLevel = parseInt(tagName.charAt(1));
-            if (currentLevel <= faqHeadingLevel) {
-                break;
-            }
-        }
-        
-        // Check if we hit meta data section
-        const text = currentElement.textContent.trim().toLowerCase();
-        if (text.startsWith('meta description') || 
-            text.startsWith('meta title') || 
-            text.startsWith('slug') || 
-            text.startsWith('category') || 
-            text.startsWith('relevant courses')) {
-            foundMetaData = true;
+        if (text.includes("For Online Course Page:") || 
+            (element.tagName.match(/^H[1-6]$/i) && 
+             !text.toLowerCase().includes("faq") && 
+             i > faqStart + 3)) {
+            faqEnd = i;
             break;
         }
-        
-        // Add this element to FAQ content (skip empty elements)
-        if (currentElement.textContent.trim()) {
-            faqContentElements.push(currentElement);
-        }
-        currentElement = currentElement.nextElementSibling;
     }
     
-    console.log(`Found ${faqContentElements.length} content elements under FAQ heading`);
+    console.log("FAQ section ends at:", faqEnd);
     
-    // Step 3: Process FAQ content to extract questions and answers
-    processFAQContent(faqContentElements);
-}
-
-/** Process FAQ content elements */
-function processFAQContent(elements) {
-    let currentFAQ = { question: '', answer: [] };
+    // Extract FAQs using EXACTLY the same logic as course generator
+    let currentQuestion = "";
+    let currentAnswer = "";
     let collectingAnswer = false;
-    let stopProcessing = false;
     
-    for (let element of elements) {
-        if (stopProcessing) break;
-        
+    for (let i = faqStart + 1; i < faqEnd; i++) {
+        const element = elementsArray[i];
         const text = element.textContent.trim();
-        const tagName = element.tagName.toLowerCase();
+        const tagName = element.tagName;
+        const innerHTML = element.innerHTML.trim();
         
         if (!text) continue;
         
-        // Check if we've reached meta data or other non-FAQ content
-        if (text.toLowerCase().startsWith('meta description') || 
-            text.toLowerCase().startsWith('meta title') || 
-            text.toLowerCase().startsWith('slug') || 
-            text.toLowerCase().startsWith('category') || 
-            text.toLowerCase().startsWith('relevant courses')) {
-            stopProcessing = true;
-            break;
-        }
-        
-        // Check if this element contains a question
-        const isQuestion = isQuestionElement(text, tagName);
+        // Check if this is a question - EXACTLY like course generator
+        const isQuestion = (
+            /^\d+\.\s+/.test(text) ||
+            (innerHTML.includes('<strong>') && text.includes('?')) ||
+            (innerHTML.includes('<b>') && text.includes('?')) ||
+            (text.endsWith('?') && text.length < 200)
+        );
         
         if (isQuestion) {
-            // Save previous FAQ if we have one
-            if (currentFAQ.question && currentFAQ.answer.length > 0) {
+            if (currentQuestion && currentAnswer) {
                 blogFAQData.faqData.push({
-                    question: currentFAQ.question,
-                    answer: cleanAnswerText(currentFAQ.answer.join(' '))
+                    question: cleanBlogFAQText(currentQuestion),
+                    answer: currentAnswer // Keep HTML formatting
                 });
-                currentFAQ = { question: '', answer: [] };
+                console.log("Saved FAQ:", currentQuestion.substring(0, 50) + "...");
             }
             
-            // Extract question from this element
-            currentFAQ.question = extractQuestionText(text);
-            collectingAnswer = true;
+            currentQuestion = text;
             
-            // Extract answer from same element if it exists
-            const answerPart = extractAnswerFromElement(text, currentFAQ.question);
-            if (answerPart) {
-                currentFAQ.answer.push(answerPart);
+            // Check if answer is in same element - EXACTLY like course generator
+            const questionMatch = text.match(/^\d+\.\s+(.*?)(?:\?)(.*)$/);
+            if (questionMatch && questionMatch[2] && questionMatch[2].trim()) {
+                currentAnswer = questionMatch[2].trim();
+                collectingAnswer = true;
+            } else {
+                currentAnswer = "";
+                collectingAnswer = true;
             }
-            
         } else if (collectingAnswer && text) {
-            // Check if this element starts with answer prefixes (like "A:", "Answer:")
-            const cleanedText = removeAnswerPrefix(text);
-            if (cleanedText) {
-                currentFAQ.answer.push(cleanedText);
+            if (currentAnswer) {
+                currentAnswer += " " + element.outerHTML; // Keep HTML
+            } else {
+                currentAnswer = element.outerHTML; // Keep HTML
+            }
+            
+            // Check if next element is a new question - EXACTLY like course generator
+            const nextIsQuestion = i + 1 < faqEnd && (
+                /^\d+\.\s+/.test(elementsArray[i + 1].textContent.trim()) ||
+                (elementsArray[i + 1].innerHTML.includes('<strong>') && 
+                 elementsArray[i + 1].textContent.trim().includes('?'))
+            );
+            
+            if (nextIsQuestion) {
+                if (currentQuestion && currentAnswer) {
+                    blogFAQData.faqData.push({
+                        question: cleanBlogFAQText(currentQuestion),
+                        answer: currentAnswer // Keep HTML formatting
+                    });
+                    console.log("Saved FAQ (next question detected):", currentQuestion.substring(0, 50) + "...");
+                }
+                currentQuestion = "";
+                currentAnswer = "";
+                collectingAnswer = false;
             }
         }
     }
     
     // Save the last FAQ
-    if (currentFAQ.question && currentFAQ.answer.length > 0) {
+    if (currentQuestion && currentAnswer) {
         blogFAQData.faqData.push({
-            question: currentFAQ.question,
-            answer: cleanAnswerText(currentFAQ.answer.join(' '))
+            question: cleanBlogFAQText(currentQuestion),
+            answer: currentAnswer // Keep HTML formatting
         });
+        console.log("Saved final FAQ:", currentQuestion.substring(0, 50) + "...");
     }
     
-    console.log(`Extracted ${blogFAQData.faqData.length} FAQs`);
+    console.log("Total FAQ items extracted:", blogFAQData.faqData.length);
+    blogFAQData.faqData.forEach((faq, index) => {
+        console.log(`FAQ ${index + 1}:`, faq.question.substring(0, 100) + "...");
+    });
 }
 
-/** Extract answer from element text if question and answer are in same paragraph */
-function extractAnswerFromElement(text, question) {
-    // Remove the question part from the text
-    const questionIndex = text.indexOf(question);
-    if (questionIndex !== -1) {
-        const afterQuestion = text.substring(questionIndex + question.length).trim();
-        
-        // Check for answer prefixes after the question
-        if (afterQuestion) {
-            // Look for common answer separators
-            const separators = [':', '-', '—', '•', '○', '→'];
-            for (const separator of separators) {
-                const separatorIndex = afterQuestion.indexOf(separator);
-                if (separatorIndex !== -1 && separatorIndex < 10) { // Separator near the start
-                    const answer = afterQuestion.substring(separatorIndex + 1).trim();
-                    if (answer) {
-                        return answer;
-                    }
-                }
-            }
-            
-            // If no separator found, check if it starts with answer prefixes
-            const cleanedAnswer = removeAnswerPrefix(afterQuestion);
-            if (cleanedAnswer) {
-                return cleanedAnswer;
-            }
-            
-            // Otherwise return the whole thing after question
-            return afterQuestion;
-        }
-    }
-    
-    return null;
-}
-
-/** Check if element contains a question */
-function isQuestionElement(text, tagName) {
-    // Check for numbered/bulleted questions
-    const questionPatterns = [
-        /^q\d*:\s*/i,             // Q:, Q1:, Q2:
-        /^question\s*\d*:\s*/i,    // Question:, Question 1:
-        /^faq\s*\d*:\s*/i,        // FAQ:, FAQ 1:
-        /^\d+\.\s+.*\?/            // 1. Question text?
-    ];
-    
-    for (const pattern of questionPatterns) {
-        if (pattern.test(text)) {
-            return true;
-        }
-    }
-    
-    // For list items, if they contain a question mark, they're probably questions
-    if (tagName === 'li' && text.includes('?')) {
-        return true;
-    }
-    
-    // Check if text contains a question mark and looks like a question
-    if (text.includes('?')) {
-        const questionWords = ['what', 'when', 'where', 'why', 'how', 'can', 'is', 'are', 'does', 'do'];
-        const firstWord = text.toLowerCase().split(' ')[0];
-        if (questionWords.some(word => firstWord.startsWith(word))) {
-            return true;
-        }
-    }
-    
-    return false;
-}
-
-/** Extract question text from element */
-function extractQuestionText(text) {
-    let question = text.trim();
-    
-    // Remove numbering prefixes and Q: patterns
-    const prefixes = [
-        /^q\d*:\s*/i,
-        /^question\s*\d*:\s*/i,
-        /^faq\s*\d*:\s*/i,
-        /^\d+\.\s*/,
-        /^[a-zA-Z]\.\s*/,
-        /^\(\d+\)\s*/,
-        /^\[\d+\]\s*/
-    ];
-    
-    for (const prefix of prefixes) {
-        if (prefix.test(question)) {
-            question = question.replace(prefix, '');
-            break;
-        }
-    }
-    
-    // Ensure question ends with ?
-    if (!question.endsWith('?')) {
-        // If there's a question mark in the text, take everything up to it
-        const questionMarkIndex = question.indexOf('?');
-        if (questionMarkIndex !== -1) {
-            question = question.substring(0, questionMarkIndex + 1);
-        } else {
-            question += '?';
-        }
-    }
-    
-    return question.trim();
-}
-
-/** Remove answer prefixes from text */
-function removeAnswerPrefix(text) {
-    let cleaned = text.trim();
-    
-    // Remove only the answer prefixes at the beginning
-    const answerPrefixes = [
-        /^a:\s*/i,
-        /^answer:\s*/i,
-        /^ans:\s*/i,
-        /^a\)\s*/i,
-        /^\(a\)\s*/i,
-        /^\[a\]\s*/i,
-        /^→\s*/,
-        /^•\s*/,
-        /^-\s*/,
-        /^:\s*/  // Colon at start
-    ];
-    
-    for (const prefix of answerPrefixes) {
-        if (prefix.test(cleaned)) {
-            cleaned = cleaned.replace(prefix, '');
-            break;
-        }
-    }
-    
-    return cleaned.trim();
-}
-
-/** Clean answer text - preserve important words, remove duplicate questions */
-function cleanAnswerText(text) {
+/** Clean FAQ text - EXACTLY like course generator */
+function cleanBlogFAQText(text) {
     if (!text) return "";
     
-    let cleaned = text.trim();
+    let cleaned = text;
     
-    // Check if answer starts with a duplicate question (has question words)
-    const questionPatterns = [
-        /^when should i choose\s*/i,
-        /^what are the\s*/i,
-        /^how long does\s*/i,
-        /^is training\s*/i,
-        /^can sar\s*/i
-    ];
-    
-    for (const pattern of questionPatterns) {
-        if (pattern.test(cleaned)) {
-            // Find the end of the question (marked by ?)
-            const questionMarkIndex = cleaned.indexOf('?');
-            if (questionMarkIndex !== -1) {
-                // Keep everything after the question mark
-                cleaned = cleaned.substring(questionMarkIndex + 1).trim();
-                break;
-            }
-        }
-    }
-    
-    // Remove extra whitespace and normalize
+    cleaned = cleaned.replace(/^\d+\.\s*/, '');
+    cleaned = cleaned.replace(/^Q:\s*/i, '');
     cleaned = cleaned.replace(/\s+/g, ' ').trim();
-    
-    // Capitalize first letter if needed
-    if (cleaned.length > 0 && cleaned[0] !== cleaned[0].toUpperCase()) {
-        cleaned = cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
-    }
     
     return cleaned;
 }
 
-/** Generate FAQ HTML */
+/** Generate FAQ HTML - EXACTLY like course generator */
 function generateBlogFAQHTML() {
     if (blogFAQData.faqData.length === 0) {
         return "<!-- No FAQs found in the FAQ section -->";
     }
     
+    // Use EXACTLY the same HTML structure as course generator
     let faqHTML = `<div class="faq-section">\n`;
-    faqHTML += `  <h2 class="text-center mb-4">Frequently Asked Questions</h2>\n`;
-    faqHTML += `  <div class="accordion" id="faqAccordion">\n`;
     
     blogFAQData.faqData.forEach((faq, index) => {
-        const question = escapeHtml(faq.question);
-        let answer = escapeHtml(faq.answer);
+        const question = cleanBlogFAQText(faq.question);
+        let answer = faq.answer; // Keep original HTML
+        
+        // Clean up answer like course generator does
+        answer = answer.replace(/^A:\s*/i, '').trim();
         
         if (question && answer) {
-            const itemId = `faqItem${index}`;
-            const headingId = `faqHeading${index}`;
-            const collapseId = `faqCollapse${index}`;
+            faqHTML += `  <div class="faq-item">\n`;
+            faqHTML += `    <div class="faq-question">${index + 1}. ${escapeHtml(question)}</div>\n`;
+            faqHTML += `    <div class="faq-answer">${answer}</div>\n`; // Keep HTML formatting
+            faqHTML += `  </div>\n`;
             
-            faqHTML += `    <div class="accordion-item">\n`;
-            faqHTML += `      <h3 class="accordion-header" id="${headingId}">\n`;
-            faqHTML += `        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#${collapseId}" aria-expanded="false" aria-controls="${collapseId}">\n`;
-            faqHTML += `          ${question}\n`;
-            faqHTML += `        </button>\n`;
-            faqHTML += `      </h3>\n`;
-            faqHTML += `      <div id="${collapseId}" class="accordion-collapse collapse" aria-labelledby="${headingId}" data-bs-parent="#faqAccordion">\n`;
-            faqHTML += `        <div class="accordion-body">\n`;
-            faqHTML += `          ${answer}\n`;
-            faqHTML += `        </div>\n`;
-            faqHTML += `      </div>\n`;
-            faqHTML += `    </div>\n`;
+            if (index < blogFAQData.faqData.length - 1) {
+                faqHTML += `  <hr>\n`;
+            }
         }
     });
     
-    faqHTML += `  </div>\n`;
     faqHTML += `</div>`;
     
     return faqHTML;
@@ -746,20 +571,19 @@ function debugBlogFAQs() {
         return;
     }
     
-    // Extract FAQs first
-    extractFAQsUnderHeading();
+    // Extract FAQs using new method
+    extractBlogFAQContent();
     
     let debugHTML = `<h3>Blog FAQ Debug Information</h3>`;
     debugHTML += `<p>Total FAQ items found: ${blogFAQData.faqData.length}</p>`;
-    debugHTML += `<p><strong>Note:</strong> Only extracting content under FAQ/Frequently Asked Questions heading</p>`;
+    debugHTML += `<p><strong>Note:</strong> Using EXACT same extraction logic as course FAQs</p>`;
     
     if (blogFAQData.faqData.length === 0) {
         debugHTML += `<p>No FAQ items were extracted. This could be because:</p>`;
         debugHTML += `<ul>`;
         debugHTML += `<li>The blog doesn't have a FAQ section</li>`;
-        debugHTML += `<li>The FAQ heading is not recognized (should contain "FAQ" or "Frequently Asked Questions")</li>`;
-        debugHTML += `<li>There's no FAQ content under the FAQ heading</li>`;
-        debugHTML += `<li>The FAQ content doesn't contain recognizable questions (Q:, Question:, etc.)</li>`;
+        debugHTML += `<li>The FAQ section wasn't properly identified</li>`;
+        debugHTML += `<li>The questions don't follow the expected format</li>`;
         debugHTML += `</ul>`;
     } else {
         debugHTML += `<div class="faq-debug-items">`;
@@ -767,7 +591,8 @@ function debugBlogFAQs() {
             debugHTML += `<div class="debug-faq-item mb-4 p-3 border">`;
             debugHTML += `<h4>FAQ ${index + 1}:</h4>`;
             debugHTML += `<p><strong>Question:</strong> ${faq.question}</p>`;
-            debugHTML += `<p><strong>Answer:</strong> ${faq.answer}</p>`;
+            debugHTML += `<p><strong>Answer (RAW with HTML):</strong></p>`;
+            debugHTML += `<div style="background: #f8f9fa; padding: 10px; border: 1px solid #dee2e6; border-radius: 5px;">${faq.answer}</div>`;
             debugHTML += `<p><strong>Answer Length:</strong> ${faq.answer.length} characters</p>`;
             debugHTML += `</div>`;
         });
@@ -803,4 +628,12 @@ function showGeneratedCode(type, sectionId) {
     if (emptyState) emptyState.classList.add('d-none');
     const section = document.getElementById(sectionId);
     if (section) section.style.display = 'block';
+}
+function downloadDemoFile(){
+    const a=document.createElement('a');
+    a.style.display='none';
+    a.href='https://staging-media.hazwoper-osha.com/wp-content/uploads/2025/12/1765349092/Blog_Sample_File.docx';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a)
 }
