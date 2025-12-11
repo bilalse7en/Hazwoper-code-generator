@@ -1,4 +1,3 @@
-// ========== HACKER THEME LANDING LOADER ANIMATION ==========
 (function () {
     const hasVisited = localStorage.getItem('hasVisited');
     const loader = document.getElementById('landingLoader');
@@ -98,53 +97,6 @@ const codeSectionState = {
     currentTab: 'course',
     activeSection: null
 };
-
-// ========== ANIMATED FAVICON ==========
-function createAnimatedFavicon() {
-    const frameUrls = [
-        'https://api.imghippo.com/files/xaDF5036Pg.webp',
-        'https://api.imghippo.com/files/Byw8441LyU.webp',
-        'https://api.imghippo.com/files/OMRB5894PM.webp',
-        'https://api.imghippo.com/files/aWwT8956okE.webp',
-        'https://api.imghippo.com/files/szpK3253uQ.webp',
-        'https://api.imghippo.com/files/OCNp9289B.webp',
-        'https://api.imghippo.com/files/Cve4428hjE.webp',
-        'https://api.imghippo.com/files/oEdX3633KQ.webp',
-        'https://api.imghippo.com/files/pe5312jh.webp',
-        'https://api.imghippo.com/files/tN6032k.webp',
-        'https://api.imghippo.com/files/ALhs5878PIM.webp',
-        'https://api.imghippo.com/files/jJ7827D.webp',
-        'https://api.imghippo.com/files/hHv5541MA.webp',
-        'https://api.imghippo.com/files/JTKk1632gk.webp',
-        'https://api.imghippo.com/files/cy6079QM.webp',
-        'https://api.imghippo.com/files/hzUt2965X.webp',
-        'https://api.imghippo.com/files/Tngt2746aI.webp',
-        'https://api.imghippo.com/files/tNI6716EY.webp',
-        'https://api.imghippo.com/files/fdzK3248hwE.webp',
-        'https://api.imghippo.com/files/WmU5310QWs.webp',
-        'https://api.imghippo.com/files/btnl8092nWk.webp',
-        'https://api.imghippo.com/files/mBT8928I.webp',
-        'https://api.imghippo.com/files/uV5779NE.webp',
-        'https://api.imghippo.com/files/wdgF7812gz.webp',
-        'https://api.imghippo.com/files/HgWv5913es.webp'
-    ];
-
-    let currentFrame = 0;
-    const favicon = document.getElementById('animatedFavicon');
-
-    function rotateFavicon() {
-        if (frameUrls.length > 0) {
-            favicon.href = frameUrls[currentFrame];
-            currentFrame = (currentFrame + 1) % frameUrls.length;
-        }
-    }
-
-    if (frameUrls.length > 1) {
-        setInterval(rotateFavicon, 100);
-    } else if (frameUrls.length === 1) {
-        favicon.href = frameUrls[0];
-    }
-}
 
 // ========== CODE SECTION MANAGEMENT ==========
 function showCodeSection(sectionId) {
@@ -441,38 +393,44 @@ function handleEscapeKey(event) {
 }
 
 // Copy code from drawer
-document.getElementById('copyCodeDrawerBtn').addEventListener('click', function () {
-    if (previewDrawerState.generatedCode) {
-        navigator.clipboard.writeText(previewDrawerState.generatedCode).then(() => {
-            utils.showNotification("Code copied to clipboard!", "success");
-        }).catch(() => {
-            utils.showNotification("Failed to copy code. Please try again.", "error");
-        });
-    } else {
-        utils.showNotification("No code to copy!", "warning");
-    }
-});
+const copyCodeDrawerBtn = document.getElementById('copyCodeDrawerBtn');
+if (copyCodeDrawerBtn) {
+    copyCodeDrawerBtn.addEventListener('click', function () {
+        if (previewDrawerState.generatedCode) {
+            navigator.clipboard.writeText(previewDrawerState.generatedCode).then(() => {
+                utils.showNotification("Code copied to clipboard!", "success");
+            }).catch(() => {
+                utils.showNotification("Failed to copy code. Please try again.", "error");
+            });
+        } else {
+            utils.showNotification("No code to copy!", "warning");
+        }
+    });
+}
 
 // Focus trap for accessibility
-document.getElementById('previewDrawer').addEventListener('keydown', function (e) {
-    if (e.key === 'Tab') {
-        const focusableElements = this.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
-        const firstElement = focusableElements[0];
-        const lastElement = focusableElements[focusableElements.length - 1];
+const previewDrawer = document.getElementById('previewDrawer');
+if (previewDrawer) {
+    previewDrawer.addEventListener('keydown', function (e) {
+        if (e.key === 'Tab') {
+            const focusableElements = this.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+            const firstElement = focusableElements[0];
+            const lastElement = focusableElements[focusableElements.length - 1];
 
-        if (e.shiftKey) {
-            if (document.activeElement === firstElement) {
-                lastElement.focus();
-                e.preventDefault();
-            }
-        } else {
-            if (document.activeElement === lastElement) {
-                firstElement.focus();
-                e.preventDefault();
+            if (e.shiftKey) {
+                if (document.activeElement === firstElement) {
+                    lastElement.focus();
+                    e.preventDefault();
+                }
+            } else {
+                if (document.activeElement === lastElement) {
+                    firstElement.focus();
+                    e.preventDefault();
+                }
             }
         }
-    }
-});
+    });
+}
 
 function copyToClipboard(elementId) {
     utils.copyToClipboard(elementId);
@@ -510,9 +468,6 @@ const themeManager = {
     isAnimating: false,
 
     init() {
-        // Add smooth transition styles
-        this.addTransitionStyles();
-
         // Apply theme without animation on initial load
         document.body.classList.add(`${this.currentTheme}-theme`);
         this.updateThemeToggleButton();
@@ -522,43 +477,26 @@ const themeManager = {
 
     applyTheme(theme, animate = true) {
         if (this.isAnimating) return;
-        this.isAnimating = true;
+        this.isAnimating = false;
 
         const oldTheme = this.currentTheme;
 
         if (animate) {
-            // Add transition class for smooth animations
-            document.body.classList.add('theme-changing');
+            // Remove transition class
+            document.body.classList.remove('theme-changing');
 
-            // Fade out current theme
-            document.body.style.opacity = '0.7';
-            document.body.style.transition = 'opacity 200ms ease-in-out';
+            // Switch themes instantly without fade
+            document.body.classList.remove(`${oldTheme}-theme`);
+            document.body.classList.add(`${theme}-theme`);
 
-            setTimeout(() => {
-                // Switch themes during the fade
-                document.body.classList.remove(`${oldTheme}-theme`);
-                document.body.classList.add(`${theme}-theme`);
+            // Update state
+            localStorage.setItem('theme', theme);
+            this.currentTheme = theme;
 
-                // Update state
-                localStorage.setItem('theme', theme);
-                this.currentTheme = theme;
+            // Update UI
+            this.updateThemeToggleButton();
 
-                // Update UI
-                this.updateThemeToggleButton();
-
-                // Fade back in
-                setTimeout(() => {
-                    document.body.style.opacity = '1';
-
-                    // Clean up after animation
-                    setTimeout(() => {
-                        document.body.classList.remove('theme-changing');
-                        document.body.style.transition = '';
-                        this.isAnimating = false;
-                    }, 200);
-                }, 50);
-
-            }, 200);
+            this.isAnimating = false;
 
         } else {
             // Apply theme instantly (no animation)
@@ -575,13 +513,10 @@ const themeManager = {
     toggleTheme() {
         const newTheme = this.currentTheme === 'dark' ? 'light' : 'dark';
 
-        // Add button animation
+        // Remove button animation
         const button = document.getElementById('globalThemeToggle');
         if (button) {
-            button.classList.add('theme-toggling');
-            setTimeout(() => {
-                button.classList.remove('theme-toggling');
-            }, 300);
+            button.classList.remove('theme-toggling');
         }
 
         this.applyTheme(newTheme, true);
@@ -606,10 +541,8 @@ const themeManager = {
 
             const icon = button.querySelector('i');
             if (icon) {
-                icon.style.transform = 'rotate(180deg) scale(1.2)';
-                setTimeout(() => {
-                    icon.style.transform = 'rotate(0) scale(1)';
-                }, 300);
+                // Remove icon animation
+                icon.style.transform = 'rotate(0) scale(1)';
             }
         }
 
@@ -648,7 +581,7 @@ const themeManager = {
         const handleThemeChange = (e) => {
             if (!localStorage.getItem('theme')) {
                 const theme = e.matches ? 'dark' : 'light';
-                this.applyTheme(theme, true);
+                this.applyTheme(theme, false);
             }
         };
 
@@ -666,44 +599,14 @@ const themeManager = {
     },
 
     addTransitionStyles() {
-        // Add CSS for animations if not already present
-        if (!document.getElementById('theme-transition-styles')) {
-            const style = document.createElement('style');
-            style.id = 'theme-transition-styles';
-            style.textContent = `
-                /* Theme transition animations */
-                body.theme-changing * {
-                    transition: background-color 300ms ease-in-out,
-                                color 300ms ease-in-out,
-                                border-color 300ms ease-in-out,
-                                box-shadow 300ms ease-in-out !important;
-                }
-                
-                /* Button animation */
-                #globalThemeToggle.theme-toggling {
-                    transform: scale(0.95);
-                    transition: transform 150ms ease-in-out;
-                }
-                
-                #globalThemeToggle i {
-                    transition: transform 300ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
-                }
-                
-                /* Smooth opacity transitions for page content */
-                body {
-                    opacity: 1;
-                    transition: opacity 300ms ease-in-out;
-                }
-            `;
-            document.head.appendChild(style);
-        }
+        // This function is now empty since we removed all transitions
     }
 };
 
 // ========== INITIALIZATION ==========
 document.addEventListener("DOMContentLoaded", function () {
     themeManager.init();
-    createAnimatedFavicon();
+    // createAnimatedFavicon(); // Removed: function was not defined
 
     // Add keyboard shortcut for theme toggle (Ctrl/Cmd + T)
     document.addEventListener('keydown', function (e) {
@@ -748,6 +651,57 @@ document.addEventListener("DOMContentLoaded", function () {
             updateCollapseBtn();
         });
     }
+
+    // ========== PROFESSIONAL TOOLTIP SYSTEM FOR COLLAPSED SIDEBAR ==========
+    function initSidebarTooltips() {
+        const sidebar = document.getElementById('appSidebar');
+        if (!sidebar) return;
+
+        // Create tooltip element
+        let tooltip = document.getElementById('sidebarTooltip');
+        if (!tooltip) {
+            tooltip = document.createElement('div');
+            tooltip.id = 'sidebarTooltip';
+            tooltip.className = 'sidebar-tooltip';
+            document.body.appendChild(tooltip);
+        }
+
+        // Get all items that need tooltips
+        const tooltipItems = sidebar.querySelectorAll('.sidebar-nav .nav-link, .btn-theme-toggle, .sidebar-collapse-btn');
+
+        tooltipItems.forEach(item => {
+            item.addEventListener('mouseenter', function (e) {
+                if (!sidebar.classList.contains('collapsed')) return;
+                if (window.innerWidth < 992) return; // Don't show on mobile
+
+                // Get tooltip text
+                let tooltipText = '';
+                if (item.classList.contains('nav-link')) {
+                    tooltipText = item.getAttribute('aria-label') || item.querySelector('.nav-text')?.textContent || '';
+                } else if (item.classList.contains('btn-theme-toggle')) {
+                    tooltipText = themeManager.currentTheme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode';
+                } else if (item.classList.contains('sidebar-collapse-btn')) {
+                    tooltipText = 'Expand Sidebar';
+                }
+
+                if (!tooltipText) return;
+
+                // Position and show tooltip
+                const rect = item.getBoundingClientRect();
+                tooltip.textContent = tooltipText;
+                tooltip.style.top = `${rect.top + (rect.height / 2)}px`;
+                tooltip.style.left = `${rect.right + 12}px`;
+                tooltip.classList.add('visible');
+            });
+
+            item.addEventListener('mouseleave', function () {
+                tooltip.classList.remove('visible');
+            });
+        });
+    }
+
+    // Initialize tooltips
+    initSidebarTooltips();
 
     // Mobile menu toggle
     if (mobileMenuBtn && sidebar && sidebarOverlay) {
@@ -858,9 +812,4 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         }
     });
-});
-
-// Set OpenAI API key from input
-document.getElementById('openaiKey')?.addEventListener('input', function (e) {
-    window.OPENAI_API_KEY = e.target.value;
 });

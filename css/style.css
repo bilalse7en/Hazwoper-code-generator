@@ -758,97 +758,73 @@ body {
     margin: 0;
 }
 
-/* Tooltip for collapsed sidebar nav items */
-.app-sidebar.collapsed .sidebar-nav .nav-link::after {
-    content: attr(aria-label);
-    position: absolute;
-    left: calc(100% + 8px);
-    top: 50%;
-    transform: translateY(-50%) translateX(-5px);
-    background: var(--card-bg);
-    color: var(--text-primary);
-    padding: 8px 14px;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    white-space: nowrap;
-    box-shadow: 0 4px 15px var(--shadow-color);
-    border: 1px solid var(--border-color);
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
-    z-index: 1050;
+/* Collapsed sidebar styles */
+.app-sidebar.collapsed .sidebar-nav .nav-link {
+    overflow: visible;
 }
 
-/* Show tooltip on hover */
-.app-sidebar.collapsed .sidebar-nav .nav-link:hover::after {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(-50%) translateX(0);
-}
-
-/* Active state - left indicator (use box-shadow instead of ::before to avoid conflict) */
+/* Active state - use box-shadow for left indicator when collapsed */
 .app-sidebar.collapsed .sidebar-nav .nav-link.active {
     box-shadow: inset 4px 0 0 0 #007bff;
 }
 
-/* Tooltip for theme toggle when collapsed */
-.app-sidebar.collapsed .btn-theme-toggle::after {
-    content: 'Toggle Theme';
-    position: absolute;
-    left: calc(100% + 8px);
-    top: 50%;
-    transform: translateY(-50%) translateX(-5px);
-    background: var(--card-bg);
-    color: var(--text-primary);
-    padding: 8px 14px;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    white-space: nowrap;
-    box-shadow: 0 4px 15px var(--shadow-color);
-    border: 1px solid var(--border-color);
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
-    z-index: 1050;
+/* Hide the regular ::before active indicator when collapsed */
+.app-sidebar.collapsed .sidebar-nav .nav-link.active::before {
+    display: none;
 }
 
-.app-sidebar.collapsed .btn-theme-toggle:hover::after {
+/* ========== PROFESSIONAL SIDEBAR TOOLTIP ========== */
+.sidebar-tooltip {
+    position: fixed;
+    background: var(--card-bg);
+    color: var(--text-primary);
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    white-space: nowrap;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-color);
+    z-index: 99999;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-50%) translateX(-10px);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-tooltip.visible {
     opacity: 1;
     visibility: visible;
     transform: translateY(-50%) translateX(0);
 }
 
-/* Tooltip for collapse button when collapsed */
-.app-sidebar.collapsed .sidebar-collapse-btn::after {
-    content: 'Expand';
+/* Tooltip arrow */
+.sidebar-tooltip::before {
+    content: '';
     position: absolute;
-    left: calc(100% + 8px);
+    left: -8px;
     top: 50%;
-    transform: translateY(-50%) translateX(-5px);
-    background: var(--card-bg);
-    color: var(--text-primary);
-    padding: 8px 14px;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    white-space: nowrap;
-    box-shadow: 0 4px 15px var(--shadow-color);
-    border: 1px solid var(--border-color);
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
-    z-index: 1050;
+    transform: translateY(-50%);
+    border: 8px solid transparent;
+    border-right-color: var(--border-color);
+    border-left: none;
 }
 
-.app-sidebar.collapsed .sidebar-collapse-btn:hover::after {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(-50%) translateX(0);
+.sidebar-tooltip::after {
+    content: '';
+    position: absolute;
+    left: -6px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 7px solid transparent;
+    border-right-color: var(--card-bg);
+    border-left: none;
+}
+
+/* Light theme adjustments */
+.light-theme .sidebar-tooltip {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
 }
 
 /* Sidebar Overlay for Mobile */
