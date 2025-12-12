@@ -372,9 +372,6 @@ const imageConverter = {
                     </div>
                 </div>
                 <div class="queue-actions">
-                    <button class="btn btn-sm btn-outline-primary queue-btn" onclick="imageConverter.previewOriginal(${index})" title="Preview">
-                        <i class="fas fa-eye"></i>
-                    </button>
                     <button class="btn btn-sm btn-outline-danger queue-btn" onclick="imageConverter.removeFile(${index})" title="Remove">
                         <i class="fas fa-times"></i>
                     </button>

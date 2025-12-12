@@ -98,6 +98,30 @@ const codeSectionState = {
     activeSection: null
 };
 
+// ========== ANIMATED FAVICON ==========
+function createAnimatedFavicon() {
+    const frameUrls = [
+        'https://media.hazwoper-osha.com/wp-content/uploads/2025/12/1765460885/Hi.gif',
+    ];
+    
+    let currentFrame = 0;
+    const favicon = document.getElementById('animatedFavicon');
+    
+    function rotateFavicon() {
+        if (frameUrls.length > 0) {
+            favicon.href = frameUrls[currentFrame];
+            currentFrame = (currentFrame + 1) % frameUrls.length;
+        }
+    }
+    
+    if (frameUrls.length > 1) {
+        setInterval(rotateFavicon, 100);
+    } else if (frameUrls.length === 1) {
+        favicon.href = frameUrls[0];
+    }
+}
+
+
 // ========== CODE SECTION MANAGEMENT ==========
 function showCodeSection(sectionId) {
     // Hide all sections in the current tab
@@ -464,6 +488,7 @@ function openPreviewDrawerWithContent(content, title) {
 
 // ========== PERFECT ANIMATED THEME MANAGER ==========
 const themeManager = {
+    themes: ['dark', 'light', 'neon-gaming', 'bw', 'hacker'],
     currentTheme: localStorage.getItem('theme') || 'dark',
     isAnimating: false,
 
@@ -475,28 +500,32 @@ const themeManager = {
         this.setupSystemThemeListener();
     },
 
-    applyTheme(theme, animate = true) {
+    setTheme(theme, animate = true) {
         if (this.isAnimating) return;
-        this.isAnimating = false;
+        this.isAnimating = true;
 
         const oldTheme = this.currentTheme;
 
         if (animate) {
-            // Remove transition class
-            document.body.classList.remove('theme-changing');
-
-            // Switch themes instantly without fade
+            // Smooth theme transition
+            document.body.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+            
+            // Remove old theme class
             document.body.classList.remove(`${oldTheme}-theme`);
-            document.body.classList.add(`${theme}-theme`);
-
-            // Update state
-            localStorage.setItem('theme', theme);
-            this.currentTheme = theme;
-
-            // Update UI
-            this.updateThemeToggleButton();
-
-            this.isAnimating = false;
+            
+            // Add new theme class
+            setTimeout(() => {
+                document.body.classList.add(`${theme}-theme`);
+                
+                // Update state after animation
+                setTimeout(() => {
+                    localStorage.setItem('theme', theme);
+                    this.currentTheme = theme;
+                    this.updateThemeToggleButton();
+                    document.body.style.transition = '';
+                    this.isAnimating = false;
+                }, 300);
+            }, 10);
 
         } else {
             // Apply theme instantly (no animation)
@@ -510,65 +539,82 @@ const themeManager = {
         }
     },
 
-    toggleTheme() {
-        const newTheme = this.currentTheme === 'dark' ? 'light' : 'dark';
-
-        // Remove button animation
-        const button = document.getElementById('globalThemeToggle');
-        if (button) {
-            button.classList.remove('theme-toggling');
-        }
-
-        this.applyTheme(newTheme, true);
+    nextTheme() {
+        const currentIndex = this.themes.indexOf(this.currentTheme);
+        const nextIndex = (currentIndex + 1) % this.themes.length;
+        this.setTheme(this.themes[nextIndex], true);
     },
 
     updateThemeToggleButton() {
-        const button = document.getElementById('globalThemeToggle');
+        const button = document.getElementById('themeToggleBtn');
         const mobileButton = document.getElementById('mobileThemeToggle');
         const sidebar = document.getElementById('appSidebar');
         const isCollapsed = sidebar && sidebar.classList.contains('collapsed');
+        
+        const themeIcons = {
+            'dark': 'fa-moon',
+            'light': 'fa-sun',
+            'neon-gaming': 'fa-gamepad',
+            'bw': 'fa-chess-board',
+            'hacker': 'fa-terminal'
+        };
+        
+        const themeNames = {
+            'dark': 'Dark',
+            'light': 'Light',
+            'neon-gaming': 'Neon Gaming',
+            'bw': 'Black & White',
+            'hacker': 'Hacker'
+        };
 
         if (button) {
-            if (this.currentTheme === 'dark') {
-                button.innerHTML = isCollapsed
-                    ? '<i class="fas fa-sun"></i>'
-                    : '<i class="fas fa-sun"></i><span class="nav-text">Switch to Light Mode</span>';
-            } else {
-                button.innerHTML = isCollapsed
-                    ? '<i class="fas fa-moon"></i>'
-                    : '<i class="fas fa-moon"></i><span class="nav-text">Switch to Dark Mode</span>';
-            }
+            const nextIndex = (this.themes.indexOf(this.currentTheme) + 1) % this.themes.length;
+            const nextTheme = this.themes[nextIndex];
+            
+            // Update button content
+            button.innerHTML = isCollapsed
+                ? `<i class="fas ${themeIcons[this.currentTheme]}"></i>`
+                : `<i class="fas ${themeIcons[this.currentTheme]} me-2"></i><span class="nav-text">${themeNames[this.currentTheme]}</span>`;
 
-            const icon = button.querySelector('i');
-            if (icon) {
-                // Remove icon animation
-                icon.style.transform = 'rotate(0) scale(1)';
-            }
+            // Add tooltip for collapsed sidebar
+            button.title = isCollapsed ? themeNames[this.currentTheme] : '';
         }
 
         // Update mobile theme toggle
         if (mobileButton) {
-            mobileButton.innerHTML = this.currentTheme === 'dark'
-                ? '<i class="fas fa-sun"></i>'
-                : '<i class="fas fa-moon"></i>';
+            mobileButton.innerHTML = `<i class="fas ${themeIcons[this.currentTheme]}"></i>`;
+            mobileButton.title = themeNames[this.currentTheme];
         }
     },
 
     setupThemeToggle() {
-        const button = document.getElementById('globalThemeToggle');
+        // Main theme toggle button
+        const button = document.getElementById('themeToggleBtn');
         if (button) {
             // Remove any existing listeners and re-add
             button.replaceWith(button.cloneNode(true));
-            const newButton = document.getElementById('globalThemeToggle');
+            const newButton = document.getElementById('themeToggleBtn');
 
-            newButton.addEventListener('click', () => this.toggleTheme());
+            newButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.nextTheme();
+            });
 
             // Add keyboard support
             newButton.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
-                    this.toggleTheme();
+                    this.nextTheme();
                 }
+            });
+        }
+        
+        // Mobile theme toggle
+        const mobileButton = document.getElementById('mobileThemeToggle');
+        if (mobileButton) {
+            mobileButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.nextTheme();
             });
         }
     },
@@ -581,7 +627,7 @@ const themeManager = {
         const handleThemeChange = (e) => {
             if (!localStorage.getItem('theme')) {
                 const theme = e.matches ? 'dark' : 'light';
-                this.applyTheme(theme, false);
+                this.setTheme(theme, false);
             }
         };
 
@@ -594,12 +640,8 @@ const themeManager = {
         // Set initial theme based on system preference if no user preference
         if (!localStorage.getItem('theme')) {
             const theme = mediaQuery.matches ? 'dark' : 'light';
-            this.applyTheme(theme, false);
+            this.setTheme(theme, false);
         }
-    },
-
-    addTransitionStyles() {
-        // This function is now empty since we removed all transitions
     }
 };
 
