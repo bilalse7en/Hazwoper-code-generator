@@ -504,48 +504,49 @@ const themeManager = {
         if (this.isAnimating) return;
         this.isAnimating = true;
 
-        const overlay = document.getElementById('themeTransitionOverlay');
+        const sidebar = document.getElementById('appSidebar');
+        const mainContent = document.querySelector('.app-main');
 
-        // Remove the heavy global transition from body to prevent lag
-        document.body.style.transition = 'none';
+        // New "Professional" Flow: Exit -> Switch -> Enter
+        if (animate) {
+            // Step 1: Animate Out
+            if (sidebar) sidebar.classList.add('animate-exit-sidebar');
+            if (mainContent) mainContent.classList.add('animate-exit-main');
 
-        if (animate && overlay) {
-            // New "Perfect" Skeleton Transition
-            overlay.style.display = 'block';
-
-            // Force reflow
-            void overlay.offsetWidth;
-
-            // Fade in overlay
-            overlay.classList.add('active');
-
+            // Wait for Exit to complete (matches CSS 0.4s)
             setTimeout(() => {
                 const oldTheme = this.currentTheme;
 
-                // Switch theme classes behind the curtain
+                // Step 2: Switch Theme Logic (while hidden)
                 document.body.classList.remove(`${oldTheme}-theme`);
                 document.body.classList.add(`${theme}-theme`);
 
-                // Update state
                 localStorage.setItem('theme', theme);
                 this.currentTheme = theme;
                 this.updateThemeToggleButton();
 
-                // Wait a moment for styles to calculate/repaint behind the scene
+                // Step 3: Prepare for Entrance
+                // Clean up exit classes
+                if (sidebar) sidebar.classList.remove('animate-exit-sidebar');
+                if (mainContent) mainContent.classList.remove('animate-exit-main');
+
+                // Trigger Entrance
+                if (sidebar) sidebar.classList.add('animate-enter-sidebar');
+                if (mainContent) mainContent.classList.add('animate-enter-main');
+
+                // Step 4: Cleanup
                 setTimeout(() => {
-                    // Fade out overlay
-                    overlay.classList.remove('active');
+                    // Remove entrance classes to restore normal interaction
+                    if (sidebar) sidebar.classList.remove('animate-enter-sidebar');
+                    if (mainContent) mainContent.classList.remove('animate-enter-main');
 
-                    setTimeout(() => {
-                        overlay.style.display = 'none';
-                        this.isAnimating = false;
-                    }, 300); // 300ms matches CSS transition
-                }, 400); // Keep overlay for 400ms to mask layout shift
+                    this.isAnimating = false;
+                }, 600); // 600ms matches Entrance duration
 
-            }, 300); // Wait for fade in (300ms matches CSS transition)
+            }, 400); // 400ms matches Exit duration
 
         } else {
-            // Instant switch (no animation requested or overlay missing)
+            // Instant switch (initial load or no animation)
             const oldTheme = this.currentTheme;
             document.body.classList.remove(`${oldTheme}-theme`);
             document.body.classList.add(`${theme}-theme`);

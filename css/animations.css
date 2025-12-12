@@ -1,0 +1,89 @@
+/* ========== PROFESSIONAL THEME SWITCH ANIMATIONS ========== */
+
+/* Base transitions for smooth background color morphing */
+body,
+.app-sidebar,
+.app-main,
+.card,
+.navbar,
+.sidebar-header {
+    transition: background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease;
+}
+
+/* ENTRANCE ANIMATIONS */
+.animate-enter-sidebar {
+    animation: slideInSidebar 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+
+.animate-enter-main {
+    animation: slideInMain 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+
+/* EXIT ANIMATIONS */
+.animate-exit-sidebar {
+    animation: slideOutSidebar 0.4s cubic-bezier(0.7, 0, 0.84, 0) forwards !important;
+}
+
+.animate-exit-main {
+    animation: slideOutMain 0.4s cubic-bezier(0.7, 0, 0.84, 0) forwards !important;
+}
+
+/* KEYFRAMES */
+
+@keyframes slideInSidebar {
+    0% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideInMain {
+    0% {
+        transform: translateX(50px);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutSidebar {
+    0% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+}
+
+@keyframes slideOutMain {
+    0% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateX(50px);
+        opacity: 0;
+    }
+}
+
+/* Optimization */
+.animate-enter-sidebar,
+.animate-enter-main,
+.animate-exit-sidebar,
+.animate-exit-main {
+    will-change: transform, opacity;
+    pointer-events: none;
+    /* Prevent clicks during animation */
+}
