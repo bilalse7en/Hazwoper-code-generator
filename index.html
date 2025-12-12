@@ -8,13 +8,31 @@
     <link rel="icon" href="https://media.hazwoper-osha.com/wp-content/uploads/2025/12/1765460885/Hi.gif">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <!-- Google Fonts for Different Themes -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+
+    <!-- Primary Font (Used for most themes) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Gaming Font -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Exo+2:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Hacker Font -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=JetBrains+Mono:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+
+    <!-- BW/Minimalist Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/skeleton.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
 </head>
 
@@ -34,6 +52,24 @@
                 <div class="spinner-ring"></div>
                 <div class="spinner-ring"></div>
                 <div class="spinner-ring"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Theme Transition Overlay (Skeleton) -->
+    <div id="themeTransitionOverlay" class="theme-transition-overlay">
+        <div class="app-shell" style="height: 100vh; overflow: hidden;">
+            <div class="theme-skeleton-sidebar">
+                <div class="skeleton-logo"></div>
+                <div class="skeleton-nav-item"></div>
+                <div class="skeleton-nav-item"></div>
+                <div class="skeleton-nav-item"></div>
+                <div class="skeleton-nav-item"></div>
+            </div>
+            <div class="theme-skeleton-main">
+                <div class="skeleton-hero"></div>
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
             </div>
         </div>
     </div>
@@ -108,7 +144,7 @@
                             <span class="nav-text">Change Theme</span>
                         </button>
                     </div>
-                    
+
                     <button class="sidebar-collapse-btn" id="sidebarCollapseToggle">
                         <i class="fas fa-angle-double-left"></i>
                         <span class="nav-text">Collapse Sidebar</span>
@@ -142,7 +178,7 @@
                                 <img src="https://media.hazwoper-osha.com/wp-content/uploads/2025/12/1765460885/Hi.gif"
                                     alt="Website Logo" style="height: 125px;width: auto;border-radius: 50%;"
                                     class="mb-3">
-                                <h1>Course Content Generator</h1>
+                                <h1 id="mainTitle">Course Content Generator</h1>
                                 <p class="lead text-center fw-normal">Extract Overview, Syllabus, FAQs, Glossary,
                                     Resources and
                                     Blog

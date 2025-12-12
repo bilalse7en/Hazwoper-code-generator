@@ -30,6 +30,62 @@
     --terminal-text: #c9d1d9;
     --terminal-border: #30363d;
     --transition: all .4s cubic-bezier(.25, .8, .25, 1);
+
+    /* Fonts (Default/Dark) */
+    --font-primary: 'Inter', sans-serif;
+    --font-heading: 'Inter', sans-serif;
+    --font-mono: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+/* Global Typography Application */
+body {
+    font-family: var(--font-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--font-heading);
+}
+
+code,
+pre,
+.code-editor {
+    font-family: var(--font-mono);
+}
+
+#mainTitle {
+    font-size: 2.5rem;
+    font-weight: 700;
+    background: linear-gradient(to right, #007bff, #17a2b8);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-align: center;
+}
+
+/* Explicitly enforce fonts for Dark Theme (Default) */
+body.dark-theme,
+body:not(.light-theme):not(.bw-theme):not(.neon-gaming-theme):not(.hacker-theme) {
+    font-family: 'Inter', sans-serif;
+    letter-spacing: -0.01em;
+}
+
+body.dark-theme h1,
+body.dark-theme h2,
+body.dark-theme h3,
+body.dark-theme h4,
+body.dark-theme h5,
+body.dark-theme h6,
+body:not([class*="-theme"]) h1 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.025em;
 }
 
 .light-theme {
@@ -62,12 +118,48 @@
     --terminal-bg: #ffffff;
     --terminal-text: #212529;
     --terminal-border: #dee2e6;
+
+    /* Fonts (Light) */
+    --font-primary: 'Inter', sans-serif;
+    --font-heading: 'Inter', sans-serif;
+}
+
+/* Explicitly enforce fonts and style for Light Theme */
+body.light-theme {
+    font-family: 'Inter', sans-serif;
+    color: #2e343a;
+    background-color: #f4f6f8;
+}
+
+body.light-theme h1,
+body.light-theme h2,
+body.light-theme h3,
+body.light-theme h4,
+body.light-theme h5,
+body.light-theme h6,
+body.light-theme .navbar-brand {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: #1a1e23;
+}
+
+/* Professional Polish for Light Theme */
+.light-theme .card {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    /* Softer shadow */
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.light-theme .sidebar-nav .nav-link:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: #007bff;
 }
 
 .bw-theme {
     /* Black-Focused Theme Variables */
-    --primary-gradient: linear-gradient(135deg, #000000, #111111);
-    --primary-gradient-hover: linear-gradient(135deg, #111111, #000000);
+    --primary-gradient: linear-gradient(135deg, #333333, #000000);
+    --primary-gradient-hover: linear-gradient(135deg, #000000, #333333);
     --success-gradient: linear-gradient(135deg, #222222, #000000);
     --success-gradient-hover: linear-gradient(135deg, #000000, #222222);
     --dark-bg: #0a0a0a;
@@ -94,38 +186,123 @@
     --terminal-bg: #000000;
     --terminal-text: #ffffff;
     --terminal-border: #222222;
+
+    /* Fonts (BW) */
+    --font-primary: 'Space Grotesk', sans-serif;
+    --font-heading: 'Space Grotesk', sans-serif;
+}
+
+/* Explicitly enforce fonts and style for BW Theme */
+body.bw-theme {
+    font-family: 'Space Grotesk', sans-serif;
+    letter-spacing: -0.01em;
+}
+
+body.bw-theme h1,
+body.bw-theme h2,
+body.bw-theme h3,
+body.bw-theme h4,
+body.bw-theme h5,
+body.bw-theme h6,
+body.bw-theme .navbar-brand {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: -0.03em;
+}
+
+.bw-theme #mainTitle {
+    background: none;
+    -webkit-text-fill-color: initial;
+    background-clip: border-box;
+    -webkit-background-clip: border-box;
+    color: var(--text-primary);
+}
+
+/* Professional Polish for BW Theme (High Contrast/Brutalist) */
+.bw-theme .card,
+.bw-theme .btn,
+.bw-theme .form-control {
+    border: 2px solid #333 !important;
+    /* Thicker borders */
+    box-shadow: none !important;
+    /* Flat look */
+    border-radius: 4px;
+    /* Sharper corners */
+}
+
+.bw-theme .card:hover,
+.bw-theme .btn:hover {
+    box-shadow: 4px 4px 0px #333 !important;
+    /* Hard shadow on hover */
+    transform: translate(-2px, -2px);
 }
 
 /* Gaming Theme */
 .neon-gaming-theme {
-    --primary-gradient: linear-gradient(135deg, #ff00ff, #ff00cc, #cc00ff);
-    --primary-gradient-hover: linear-gradient(135deg, #ff33ff, #ff33cc, #dd33ff);
-    --success-gradient: linear-gradient(135deg, #00ffff, #00ccff, #00aaff);
-    --success-gradient-hover: linear-gradient(135deg, #33ffff, #33ccff, #33aaff);
-    --dark-bg: #000011;
-    --darker-bg: #000008;
-    --card-bg: rgba(20, 0, 40, 0.95);
+    /* 3 Colors Gradient: Purple (#bf00ff) -> Blue (#007fff) -> Green (#00ff00) */
+    --primary-gradient: linear-gradient(135deg, #bf00ff, #007fff, #00ff00);
+    --primary-gradient-smooth: linear-gradient(135deg, #bf00ff, #007fff, #00ff00);
+    --primary-gradient-hover: linear-gradient(135deg, #00ff00, #007fff, #bf00ff);
+
+    --success-gradient: linear-gradient(135deg, #00ff00, #007fff);
+    --success-gradient-hover: linear-gradient(135deg, #007fff, #00ff00);
+
+    --dark-bg: #050014;
+    --darker-bg: #02000a;
+    --card-bg: rgba(10, 0, 25, 0.95);
+
     --text-primary: #ffffff;
-    --text-secondary: #ffccff;
-    --border-color: rgba(255, 0, 255, 0.6);
+    --text-secondary: #d0d0ff;
+
+    --border-color: rgba(191, 0, 255, 0.5);
     --code-bg: #000020;
-    --code-text: #ff00ff;
-    --placeholder-color: #ff88ff;
-    --shadow-color: rgba(255, 0, 255, 0.4);
-    --navbar-bg: rgba(0, 0, 20, 0.98);
-    --sidebar-bg: #000014;
-    --input-bg: rgba(40, 0, 80, 0.9);
-    --input-border: rgba(255, 0, 255, 0.7);
-    --table-header-bg: rgba(255, 0, 255, 0.3);
-    --table-row-even: rgba(255, 0, 255, 0.15);
-    --table-row-odd: rgba(0, 255, 255, 0.15);
-    --hover-bg: rgba(255, 0, 255, 0.25);
-    --scrollbar-thumb: #ff00ff;
-    --scrollbar-track: rgba(255, 0, 255, 0.2);
-    --loader-bg: linear-gradient(135deg, #000008 0%, #000020 50%, #000008 100%);
+    --code-text: #00ff00;
+    --placeholder-color: #8888aa;
+
+    --shadow-color: rgba(191, 0, 255, 0.4);
+    --navbar-bg: rgba(5, 0, 20, 0.98);
+    --sidebar-bg: #050014;
+
+    --input-bg: rgba(191, 0, 255, 0.05);
+    --input-border: rgba(191, 0, 255, 0.5);
+
+    --table-header-bg: rgba(191, 0, 255, 0.2);
+    --table-row-even: rgba(191, 0, 255, 0.05);
+    --table-row-odd: rgba(0, 255, 255, 0.05);
+
+    --hover-bg: rgba(191, 0, 255, 0.15);
+    --scrollbar-thumb: #bf00ff;
+    --scrollbar-track: rgba(191, 0, 255, 0.1);
+
+    --loader-bg: linear-gradient(135deg, #bf00ff, #007fff, #00ff00);
+
     --terminal-bg: #000005;
-    --terminal-text: #ff00ff;
-    --terminal-border: #ff00ff;
+    --terminal-text: #bf00ff;
+    --terminal-border: #bf00ff;
+
+    /* Performance Optimizations */
+    --transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+
+    /* Fonts (Gaming) */
+    --font-primary: 'Exo 2', sans-serif;
+    --font-heading: 'Orbitron', sans-serif;
+}
+
+/* Explicitly enforce fonts for Gaming Theme */
+body.neon-gaming-theme {
+    font-family: 'Exo 2', sans-serif;
+}
+
+body.neon-gaming-theme h1,
+body.neon-gaming-theme h2,
+body.neon-gaming-theme h3,
+body.neon-gaming-theme h4,
+body.neon-gaming-theme h5,
+body.neon-gaming-theme h6,
+body.neon-gaming-theme .navbar-brand,
+body.neon-gaming-theme .sidebar-brand {
+    font-family: 'Orbitron', sans-serif;
 }
 
 
@@ -134,28 +311,24 @@
 
 /* ========== FIXED HOVER EFFECTS ========== */
 .neon-gaming-theme .hero-section {
-    background: 
+    background:
         linear-gradient(135deg, #000020 0%, #200040 100%),
         url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,0,255,0.3)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
     position: relative;
     overflow: hidden;
     border-bottom: 2px solid #ff00ff;
-    box-shadow: 
+    box-shadow:
         0 0 30px rgba(255, 0, 255, 0.3),
         inset 0 0 60px rgba(255, 0, 255, 0.15);
 }
 
-.neon-gaming-theme .hero-section h1 {
-    background: linear-gradient(135deg, 
-        #ff00ff 0%, 
-        #ff00cc 25%, 
-        #cc00ff 50%, 
-        #00ccff 75%, 
-        #00ffff 100%);
+.neon-gaming-theme .hero-section h1,
+.neon-gaming-theme #mainTitle {
+    background: var(--primary-gradient-smooth);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-shadow: 
+    text-shadow:
         0 0 20px rgba(255, 0, 255, 0.6),
         0 0 40px rgba(255, 0, 255, 0.4);
     font-weight: 800;
@@ -179,7 +352,7 @@
     position: relative;
     overflow: hidden;
     transition: all 0.25s ease;
-    box-shadow: 
+    box-shadow:
         0 6px 20px rgba(0, 0, 0, 0.6),
         0 0 15px rgba(255, 0, 255, 0.25),
         inset 0 0 30px rgba(255, 0, 255, 0.08);
@@ -189,7 +362,7 @@
 .neon-gaming-theme .card:hover {
     border-color: rgba(255, 51, 255, 0.7);
     transform: translateY(-3px);
-    box-shadow: 
+    box-shadow:
         0 10px 30px rgba(255, 0, 255, 0.4),
         0 6px 20px rgba(0, 0, 0, 0.7),
         inset 0 0 40px rgba(255, 0, 255, 0.12);
@@ -205,9 +378,10 @@
 }
 
 .neon-gaming-theme .card-header {
-    background: linear-gradient(135deg, 
-        rgba(255, 0, 255, 0.25) 0%, 
-        rgba(204, 0, 255, 0.25) 100%);
+    background: linear-gradient(135deg,
+            rgba(191, 0, 255, 0.15),
+            rgba(0, 127, 255, 0.15),
+            rgba(0, 255, 0, 0.15));
     border-bottom: 2px solid rgba(255, 0, 255, 0.4);
     color: #ffffff;
     font-weight: 700;
@@ -220,7 +394,7 @@
 }
 
 .neon-gaming-theme .card-header h4 {
-    background: linear-gradient(135deg, #ff00ff, #ff00cc);
+    background: var(--primary-gradient-smooth);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -240,16 +414,13 @@
 
 /* ========== FIXED BUTTON HOVER ========== */
 .neon-gaming-theme .btn-primary {
-    background: linear-gradient(135deg, 
-        #ff00ff 0%, 
-        #ff00cc 25%, 
-        #cc00ff 100%);
+    background: var(--primary-gradient-smooth);
     border: 2px solid rgba(255, 0, 255, 0.5);
     color: #ffffff !important;
     font-weight: 600;
     letter-spacing: 1px;
     transition: all 0.2s ease;
-    box-shadow: 
+    box-shadow:
         0 4px 15px rgba(255, 0, 255, 0.4),
         0 2px 5px rgba(0, 0, 0, 0.4);
     text-transform: uppercase;
@@ -261,13 +432,10 @@
 }
 
 .neon-gaming-theme .btn-primary:hover {
-    background: linear-gradient(135deg, 
-        #ff33ff 0%, 
-        #ff33cc 25%, 
-        #dd33ff 100%);
+    background: var(--primary-gradient-hover);
     border-color: rgba(255, 51, 255, 0.7);
     transform: translateY(-2px);
-    box-shadow: 
+    box-shadow:
         0 6px 20px rgba(255, 0, 255, 0.5),
         0 3px 10px rgba(0, 0, 0, 0.5);
     color: #ffffff !important;
@@ -276,7 +444,7 @@
 
 .neon-gaming-theme .btn-primary:active {
     transform: translateY(0);
-    box-shadow: 
+    box-shadow:
         0 2px 10px rgba(255, 0, 255, 0.3),
         0 1px 3px rgba(0, 0, 0, 0.4);
 }
@@ -286,7 +454,7 @@
     background: rgba(35, 0, 70, 0.9);
     border: 2px solid rgba(255, 0, 255, 0.4);
     border-radius: 10px;
-    box-shadow: 
+    box-shadow:
         0 5px 15px rgba(0, 0, 0, 0.5),
         0 0 15px rgba(255, 0, 255, 0.2);
     transition: all 0.2s ease;
@@ -298,7 +466,7 @@
     background: rgba(255, 0, 255, 0.15);
     border-color: rgba(255, 51, 255, 0.6);
     transform: translateY(-2px);
-    box-shadow: 
+    box-shadow:
         0 8px 20px rgba(255, 0, 255, 0.3),
         0 5px 15px rgba(0, 0, 0, 0.6);
     z-index: 10;
@@ -337,7 +505,7 @@
     background: rgba(35, 0, 70, 0.85);
     border: 3px dashed rgba(255, 0, 255, 0.4);
     border-radius: 15px;
-    box-shadow: 
+    box-shadow:
         inset 0 0 30px rgba(255, 0, 255, 0.15),
         0 0 20px rgba(255, 0, 255, 0.2);
     transition: all 0.25s ease;
@@ -348,7 +516,7 @@
     background: rgba(255, 0, 255, 0.15);
     border-color: rgba(255, 51, 255, 0.6);
     border-style: dashed;
-    box-shadow: 
+    box-shadow:
         inset 0 0 40px rgba(255, 0, 255, 0.2),
         0 0 30px rgba(255, 0, 255, 0.3);
     transform: scale(1.01);
@@ -368,7 +536,7 @@
     border: 2px solid rgba(255, 0, 255, 0.5);
     color: #ffffff;
     transition: all 0.2s ease;
-    box-shadow: 
+    box-shadow:
         inset 0 0 20px rgba(255, 0, 255, 0.15),
         0 0 10px rgba(255, 0, 255, 0.1);
     font-weight: 500;
@@ -378,7 +546,7 @@
 .neon-gaming-theme .form-select:focus {
     background: rgba(40, 0, 80, 0.95);
     border-color: rgba(255, 51, 255, 0.7);
-    box-shadow: 
+    box-shadow:
         inset 0 0 30px rgba(255, 0, 255, 0.2),
         0 0 20px rgba(255, 0, 255, 0.25);
     color: #ffffff;
@@ -389,7 +557,7 @@
 .neon-gaming-theme .preview-drawer {
     background: rgba(5, 0, 15, 0.97);
     border-left: 2px solid rgba(255, 0, 255, 0.5);
-    box-shadow: 
+    box-shadow:
         -5px 0 30px rgba(0, 0, 0, 0.7),
         inset 5px 0 20px rgba(255, 0, 255, 0.08);
 }
@@ -406,10 +574,10 @@
     border: 2px solid rgba(255, 0, 255, 0.5);
     font-family: 'Courier New', monospace;
     font-weight: 500;
-    text-shadow: 
+    text-shadow:
         0 0 5px rgba(255, 0, 255, 0.4),
         0 0 10px rgba(255, 0, 255, 0.2);
-    box-shadow: 
+    box-shadow:
         inset 0 0 30px rgba(255, 0, 255, 0.15),
         0 0 20px rgba(255, 0, 255, 0.2);
     transition: all 0.2s ease;
@@ -417,7 +585,7 @@
 
 .neon-gaming-theme .code-editor:focus {
     border-color: rgba(255, 51, 255, 0.7);
-    box-shadow: 
+    box-shadow:
         inset 0 0 40px rgba(255, 0, 255, 0.2),
         0 0 30px rgba(255, 0, 255, 0.3);
     outline: none;
@@ -426,14 +594,10 @@
 
 /* ========== FIXED PROGRESS BAR ========== */
 .neon-gaming-theme .progress-bar {
-    background: linear-gradient(90deg, 
-        #ff00ff 0%, 
-        #ff00cc 33%, 
-        #cc00ff 66%, 
-        #00ccff 100%);
+    background: linear-gradient(90deg, #bf00ff, #007fff, #00ff00);
     background-size: 200% 100%;
     animation: progressFlow 3s linear infinite;
-    box-shadow: 
+    box-shadow:
         0 0 10px rgba(255, 0, 255, 0.6),
         inset 0 1px 0 rgba(255, 255, 255, 0.3);
     border-radius: 6px;
@@ -446,7 +610,7 @@
     border: 2px solid rgba(255, 0, 255, 0.5);
     color: #ffffff;
     transition: all 0.2s ease;
-    box-shadow: 
+    box-shadow:
         0 0 10px rgba(255, 0, 255, 0.3),
         inset 0 0 10px rgba(255, 255, 255, 0.1);
 }
@@ -456,19 +620,20 @@
     background: rgba(255, 51, 255, 0.35);
     border-color: rgba(255, 51, 255, 0.7);
     transform: scale(1.05);
-    box-shadow: 
+    box-shadow:
         0 0 15px rgba(255, 0, 255, 0.4),
         inset 0 0 15px rgba(255, 255, 255, 0.15);
 }
 
 /* ========== FIXED NOTIFICATIONS ========== */
 .neon-gaming-theme .notification {
-    background: linear-gradient(135deg, 
-        rgba(255, 0, 255, 0.95) 0%, 
-        rgba(0, 204, 255, 0.95) 100%);
+    background: linear-gradient(135deg,
+            rgba(191, 0, 255, 0.95),
+            rgba(0, 127, 255, 0.95),
+            rgba(0, 255, 0, 0.95));
     border: 1px solid rgba(255, 255, 255, 0.3);
     color: #000000;
-    box-shadow: 
+    box-shadow:
         0 8px 25px rgba(255, 0, 255, 0.4),
         0 0 15px rgba(255, 255, 255, 0.2);
     font-weight: 600;
@@ -510,7 +675,7 @@
 
 /* ========== FIXED BADGES ========== */
 .neon-gaming-theme .badge.bg-primary {
-    background: linear-gradient(135deg, #ff00ff, #ff00cc);
+    background: linear-gradient(135deg, #bf00ff, #007fff, #00ff00);
     color: #000000;
     font-weight: 600;
     box-shadow: 0 0 10px rgba(255, 0, 255, 0.4);
@@ -526,13 +691,14 @@
 }
 
 .neon-gaming-theme .accordion-button:not(.collapsed) {
-    background: linear-gradient(135deg, 
-        rgba(255, 0, 255, 0.25) 0%, 
-        rgba(0, 204, 255, 0.25) 100%);
+    background: linear-gradient(135deg,
+            rgba(191, 0, 255, 0.25),
+            rgba(0, 127, 255, 0.25),
+            rgba(0, 255, 0, 0.25));
     color: #ff00ff;
     border-color: rgba(255, 51, 255, 0.6);
     text-shadow: 0 0 5px rgba(255, 0, 255, 0.4);
-    box-shadow: 
+    box-shadow:
         inset 0 0 20px rgba(255, 0, 255, 0.15),
         0 0 10px rgba(255, 0, 255, 0.2);
 }
@@ -542,19 +708,23 @@
     0% {
         background-position: 200% 0;
     }
+
     100% {
         background-position: -200% 0;
     }
 }
 
 @keyframes neonPulse {
-    0%, 100% {
-        text-shadow: 
+
+    0%,
+    100% {
+        text-shadow:
             0 0 15px rgba(255, 0, 255, 0.5),
             0 0 30px rgba(255, 0, 255, 0.3);
     }
+
     50% {
-        text-shadow: 
+        text-shadow:
             0 0 20px rgba(255, 0, 255, 0.7),
             0 0 40px rgba(255, 0, 255, 0.4);
     }
@@ -574,6 +744,21 @@
 .neon-gaming-theme h5,
 .neon-gaming-theme h6 {
     text-shadow: 0 0 2px rgba(255, 255, 255, 0.1);
+}
+
+/* Fix Blurry and Hidden Icons */
+.neon-gaming-theme i,
+.neon-gaming-theme .fas,
+.neon-gaming-theme .far,
+.neon-gaming-theme .fab {
+    text-shadow: none !important;
+    filter: none !important;
+    -webkit-text-fill-color: initial !important;
+    text-fill-color: initial !important;
+    background: none !important;
+    -webkit-background-clip: border-box !important;
+    background-clip: border-box !important;
+    opacity: 1 !important;
 }
 
 .neon-gaming-theme p,
@@ -617,34 +802,34 @@
 @media (max-width: 768px) {
     .neon-gaming-theme .hero-section h1 {
         font-size: 2rem;
-        text-shadow: 
+        text-shadow:
             0 0 15px rgba(255, 0, 255, 0.5),
             0 0 30px rgba(255, 0, 255, 0.3);
     }
-    
+
     .neon-gaming-theme .card {
         border-width: 1px;
-        box-shadow: 
+        box-shadow:
             0 4px 15px rgba(0, 0, 0, 0.5),
             0 0 10px rgba(255, 0, 255, 0.2);
     }
-    
+
     .neon-gaming-theme .card:hover {
         transform: translateY(-2px);
-        box-shadow: 
+        box-shadow:
             0 6px 20px rgba(255, 0, 255, 0.3),
             0 4px 15px rgba(0, 0, 0, 0.6);
     }
-    
+
     .neon-gaming-theme .btn-primary,
     .neon-gaming-theme .btn-success {
         font-size: 0.85rem;
         padding: 10px 18px;
     }
-    
+
     .neon-gaming-theme .file-upload-area {
         border-width: 2px;
-        box-shadow: 
+        box-shadow:
             inset 0 0 20px rgba(255, 0, 255, 0.1),
             0 0 15px rgba(255, 0, 255, 0.15);
     }
@@ -657,9 +842,9 @@
 }
 
 .neon-gaming-theme th {
-    background: linear-gradient(135deg, 
-        rgba(255, 0, 255, 0.2) 0%, 
-        rgba(0, 204, 255, 0.2) 100%);
+    background: linear-gradient(135deg,
+            rgba(255, 0, 255, 0.2) 0%,
+            rgba(0, 204, 255, 0.2) 100%);
     color: #ffffff;
     border-bottom: 2px solid rgba(255, 0, 255, 0.4);
     text-shadow: 0 0 3px rgba(255, 255, 255, 0.2);
@@ -685,12 +870,12 @@
 }
 
 .neon-gaming-theme ::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, 
-        rgba(255, 0, 255, 0.7) 0%, 
-        rgba(0, 204, 255, 0.7) 100%);
+    background: linear-gradient(135deg,
+            rgba(255, 0, 255, 0.7) 0%,
+            rgba(0, 204, 255, 0.7) 100%);
     border-radius: 5px;
     border: 2px solid rgba(0, 0, 15, 0.8);
-    box-shadow: 
+    box-shadow:
         0 0 10px rgba(255, 0, 255, 0.4);
 }
 
@@ -724,6 +909,42 @@
     --terminal-bg: #000000;
     --terminal-text: #00ff00;
     --terminal-border: #00ff00;
+
+    --font-primary: 'Share Tech Mono', monospace;
+    --font-heading: 'JetBrains Mono', monospace;
+    --font-mono: 'JetBrains Mono', monospace;
+}
+
+/* Explicitly enforce fonts for Hacker Theme */
+body.hacker-theme {
+    font-family: 'Share Tech Mono', monospace;
+}
+
+body.hacker-theme h1,
+body.hacker-theme h2,
+body.hacker-theme h3,
+body.hacker-theme h4,
+body.hacker-theme h5,
+body.hacker-theme h6,
+body.hacker-theme .navbar-brand {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-shadow: 0 0 5px rgba(0, 255, 0, 0.4);
+    /* CRT Glow */
+}
+
+/* Professional Polish for Hacker Theme (Matrix/Terminal) */
+.hacker-theme .card {
+    border: 1px solid #004400;
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.1);
+}
+
+.hacker-theme .form-control:focus,
+.hacker-theme .btn:hover {
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+    border-color: #00ff00;
 }
 
 /* ========== HACKER THEME SPECIFIC STYLES ========== */
@@ -740,7 +961,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: 
+    background:
         linear-gradient(0deg, transparent 50%, rgba(0, 255, 0, 0.03) 50%),
         linear-gradient(90deg, transparent 50%, rgba(0, 255, 0, 0.03) 50%);
     background-size: 10px 10px;
@@ -748,7 +969,12 @@
     opacity: 0.3;
 }
 
-.hacker-theme .hero-section h1 {
+.hacker-theme .hero-section h1,
+.hacker-theme #mainTitle {
+    background: none;
+    -webkit-text-fill-color: initial;
+    background-clip: border-box;
+    -webkit-background-clip: border-box;
     color: #00ff00;
     text-shadow: 0 0 10px #00ff00;
     position: relative;
@@ -785,7 +1011,7 @@
     background: #000c00;
     border: 1px solid #004400;
     box-shadow: 0 0 15px rgba(0, 255, 0, 0.1),
-                inset 0 0 15px rgba(0, 255, 0, 0.05);
+        inset 0 0 15px rgba(0, 255, 0, 0.05);
     position: relative;
 }
 
@@ -878,101 +1104,291 @@
 
 /* ========== OPTIMIZED ANIMATIONS (Performance-friendly) ========== */
 @keyframes gamingGradient {
-    0% { background-position: 0% center; }
-    100% { background-position: 300% center; }
+    0% {
+        background-position: 0% center;
+    }
+
+    100% {
+        background-position: 300% center;
+    }
 }
 
 @keyframes gamingBorder {
-    0% { background-position: 0% 0%; }
-    100% { background-position: 300% 300%; }
+    0% {
+        background-position: 0% 0%;
+    }
+
+    100% {
+        background-position: 300% 300%;
+    }
 }
 
 @keyframes gamingShine {
-    0% { left: -100%; }
-    100% { left: 100%; }
+    0% {
+        left: -100%;
+    }
+
+    100% {
+        left: 100%;
+    }
 }
 
 @keyframes gamingProgress {
-    0% { background-position: 100% 0%; }
-    100% { background-position: 0% 0%; }
+    0% {
+        background-position: 100% 0%;
+    }
+
+    100% {
+        background-position: 0% 0%;
+    }
 }
 
 @keyframes hackerGlitch {
-    0%, 100% { transform: translateX(0); }
-    5% { transform: translateX(-2px); }
-    10% { transform: translateX(2px); }
-    15% { transform: translateX(-1px); }
-    20% { transform: translateX(1px); }
-    25% { transform: translateX(0); }
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    5% {
+        transform: translateX(-2px);
+    }
+
+    10% {
+        transform: translateX(2px);
+    }
+
+    15% {
+        transform: translateX(-1px);
+    }
+
+    20% {
+        transform: translateX(1px);
+    }
+
+    25% {
+        transform: translateX(0);
+    }
 }
 
 @keyframes glitch-1 {
-    0% { clip: rect(42px, 9999px, 44px, 0); }
-    5% { clip: rect(12px, 9999px, 59px, 0); }
-    10% { clip: rect(48px, 9999px, 29px, 0); }
-    15% { clip: rect(42px, 9999px, 73px, 0); }
-    20% { clip: rect(63px, 9999px, 27px, 0); }
-    25% { clip: rect(34px, 9999px, 55px, 0); }
-    30% { clip: rect(86px, 9999px, 73px, 0); }
-    35% { clip: rect(20px, 9999px, 20px, 0); }
-    40% { clip: rect(26px, 9999px, 60px, 0); }
-    45% { clip: rect(25px, 9999px, 66px, 0); }
-    50% { clip: rect(57px, 9999px, 98px, 0); }
-    55% { clip: rect(5px, 9999px, 46px, 0); }
-    60% { clip: rect(82px, 9999px, 31px, 0); }
-    65% { clip: rect(54px, 9999px, 27px, 0); }
-    70% { clip: rect(28px, 9999px, 99px, 0); }
-    75% { clip: rect(45px, 9999px, 69px, 0); }
-    80% { clip: rect(23px, 9999px, 85px, 0); }
-    85% { clip: rect(54px, 9999px, 84px, 0); }
-    90% { clip: rect(45px, 9999px, 47px, 0); }
-    95% { clip: rect(37px, 9999px, 20px, 0); }
-    100% { clip: rect(4px, 9999px, 91px, 0); }
+    0% {
+        clip: rect(42px, 9999px, 44px, 0);
+    }
+
+    5% {
+        clip: rect(12px, 9999px, 59px, 0);
+    }
+
+    10% {
+        clip: rect(48px, 9999px, 29px, 0);
+    }
+
+    15% {
+        clip: rect(42px, 9999px, 73px, 0);
+    }
+
+    20% {
+        clip: rect(63px, 9999px, 27px, 0);
+    }
+
+    25% {
+        clip: rect(34px, 9999px, 55px, 0);
+    }
+
+    30% {
+        clip: rect(86px, 9999px, 73px, 0);
+    }
+
+    35% {
+        clip: rect(20px, 9999px, 20px, 0);
+    }
+
+    40% {
+        clip: rect(26px, 9999px, 60px, 0);
+    }
+
+    45% {
+        clip: rect(25px, 9999px, 66px, 0);
+    }
+
+    50% {
+        clip: rect(57px, 9999px, 98px, 0);
+    }
+
+    55% {
+        clip: rect(5px, 9999px, 46px, 0);
+    }
+
+    60% {
+        clip: rect(82px, 9999px, 31px, 0);
+    }
+
+    65% {
+        clip: rect(54px, 9999px, 27px, 0);
+    }
+
+    70% {
+        clip: rect(28px, 9999px, 99px, 0);
+    }
+
+    75% {
+        clip: rect(45px, 9999px, 69px, 0);
+    }
+
+    80% {
+        clip: rect(23px, 9999px, 85px, 0);
+    }
+
+    85% {
+        clip: rect(54px, 9999px, 84px, 0);
+    }
+
+    90% {
+        clip: rect(45px, 9999px, 47px, 0);
+    }
+
+    95% {
+        clip: rect(37px, 9999px, 20px, 0);
+    }
+
+    100% {
+        clip: rect(4px, 9999px, 91px, 0);
+    }
 }
 
 @keyframes glitch-2 {
-    0% { clip: rect(65px, 9999px, 100px, 0); }
-    5% { clip: rect(52px, 9999px, 74px, 0); }
-    10% { clip: rect(79px, 9999px, 85px, 0); }
-    15% { clip: rect(75px, 9999px, 5px, 0); }
-    20% { clip: rect(67px, 9999px, 61px, 0); }
-    25% { clip: rect(14px, 9999px, 79px, 0); }
-    30% { clip: rect(1px, 9999px, 66px, 0); }
-    35% { clip: rect(86px, 9999px, 30px, 0); }
-    40% { clip: rect(23px, 9999px, 98px, 0); }
-    45% { clip: rect(85px, 9999px, 72px, 0); }
-    50% { clip: rect(71px, 9999px, 75px, 0); }
-    55% { clip: rect(2px, 9999px, 48px, 0); }
-    60% { clip: rect(30px, 9999px, 16px, 0); }
-    65% { clip: rect(59px, 9999px, 50px, 0); }
-    70% { clip: rect(41px, 9999px, 62px, 0); }
-    75% { clip: rect(2px, 9999px, 82px, 0); }
-    80% { clip: rect(47px, 9999px, 73px, 0); }
-    85% { clip: rect(3px, 9999px, 27px, 0); }
-    90% { clip: rect(40px, 9999px, 86px, 0); }
-    95% { clip: rect(45px, 9999px, 72px, 0); }
-    100% { clip: rect(23px, 9999px, 49px, 0); }
+    0% {
+        clip: rect(65px, 9999px, 100px, 0);
+    }
+
+    5% {
+        clip: rect(52px, 9999px, 74px, 0);
+    }
+
+    10% {
+        clip: rect(79px, 9999px, 85px, 0);
+    }
+
+    15% {
+        clip: rect(75px, 9999px, 5px, 0);
+    }
+
+    20% {
+        clip: rect(67px, 9999px, 61px, 0);
+    }
+
+    25% {
+        clip: rect(14px, 9999px, 79px, 0);
+    }
+
+    30% {
+        clip: rect(1px, 9999px, 66px, 0);
+    }
+
+    35% {
+        clip: rect(86px, 9999px, 30px, 0);
+    }
+
+    40% {
+        clip: rect(23px, 9999px, 98px, 0);
+    }
+
+    45% {
+        clip: rect(85px, 9999px, 72px, 0);
+    }
+
+    50% {
+        clip: rect(71px, 9999px, 75px, 0);
+    }
+
+    55% {
+        clip: rect(2px, 9999px, 48px, 0);
+    }
+
+    60% {
+        clip: rect(30px, 9999px, 16px, 0);
+    }
+
+    65% {
+        clip: rect(59px, 9999px, 50px, 0);
+    }
+
+    70% {
+        clip: rect(41px, 9999px, 62px, 0);
+    }
+
+    75% {
+        clip: rect(2px, 9999px, 82px, 0);
+    }
+
+    80% {
+        clip: rect(47px, 9999px, 73px, 0);
+    }
+
+    85% {
+        clip: rect(3px, 9999px, 27px, 0);
+    }
+
+    90% {
+        clip: rect(40px, 9999px, 86px, 0);
+    }
+
+    95% {
+        clip: rect(45px, 9999px, 72px, 0);
+    }
+
+    100% {
+        clip: rect(23px, 9999px, 49px, 0);
+    }
 }
 
 @keyframes hackerScan {
-    0% { top: 0; opacity: 0; }
-    50% { opacity: 1; }
-    100% { top: 100%; opacity: 0; }
+    0% {
+        top: 0;
+        opacity: 0;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        top: 100%;
+        opacity: 0;
+    }
 }
 
 @keyframes hackerShine {
-    0% { left: -100%; }
-    100% { left: 100%; }
+    0% {
+        left: -100%;
+    }
+
+    100% {
+        left: 100%;
+    }
 }
 
 @keyframes hackerCursor {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
 }
 
 @keyframes hackerProgress {
-    0% { background-position: 100% 0%; }
-    100% { background-position: 0% 0%; }
+    0% {
+        background-position: 100% 0%;
+    }
+
+    100% {
+        background-position: 0% 0%;
+    }
 }
 
 /* ========== PERFORMANCE OPTIMIZATIONS ========== */
@@ -992,6 +1408,7 @@
 
 /* Reduce motion for users who prefer it */
 @media (prefers-reduced-motion: reduce) {
+
     .gaming-theme *,
     .hacker-theme * {
         animation-duration: 0.01ms !important;
@@ -1002,11 +1419,12 @@
 
 /* Optimize animations for mobile */
 @media (max-width: 768px) {
+
     .gaming-theme .hero-section h1,
     .hacker-theme .hero-section h1 {
         animation: none !important;
     }
-    
+
     .gaming-theme .card::before,
     .hacker-theme .card::before {
         animation: none !important;
@@ -1266,12 +1684,12 @@
     border: 1px solid #333333;
 }
 
-.bw-theme{
+.bw-theme {
     background: #111111;
     border: 1px solid #333333;
 }
 
-.bw-theme{
+.bw-theme {
     color: #ffffff;
 }
 
@@ -1402,7 +1820,7 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     overflow-x: hidden;
     transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1),
-                color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ========== TEXT ELEMENTS - THEME FIXES ========== */
@@ -2016,10 +2434,12 @@ body {
         transform: scale(0, 0);
         opacity: 0.5;
     }
+
     20% {
         transform: scale(25, 25);
         opacity: 0.3;
     }
+
     100% {
         opacity: 0;
         transform: scale(40, 40);

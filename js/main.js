@@ -103,17 +103,17 @@ function createAnimatedFavicon() {
     const frameUrls = [
         'https://media.hazwoper-osha.com/wp-content/uploads/2025/12/1765460885/Hi.gif',
     ];
-    
+
     let currentFrame = 0;
     const favicon = document.getElementById('animatedFavicon');
-    
+
     function rotateFavicon() {
         if (frameUrls.length > 0) {
             favicon.href = frameUrls[currentFrame];
             currentFrame = (currentFrame + 1) % frameUrls.length;
         }
     }
-    
+
     if (frameUrls.length > 1) {
         setInterval(rotateFavicon, 100);
     } else if (frameUrls.length === 1) {
@@ -504,31 +504,49 @@ const themeManager = {
         if (this.isAnimating) return;
         this.isAnimating = true;
 
-        const oldTheme = this.currentTheme;
+        const overlay = document.getElementById('themeTransitionOverlay');
 
-        if (animate) {
-            // Smooth theme transition
-            document.body.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
-            
-            // Remove old theme class
-            document.body.classList.remove(`${oldTheme}-theme`);
-            
-            // Add new theme class
+        // Remove the heavy global transition from body to prevent lag
+        document.body.style.transition = 'none';
+
+        if (animate && overlay) {
+            // New "Perfect" Skeleton Transition
+            overlay.style.display = 'block';
+
+            // Force reflow
+            void overlay.offsetWidth;
+
+            // Fade in overlay
+            overlay.classList.add('active');
+
             setTimeout(() => {
+                const oldTheme = this.currentTheme;
+
+                // Switch theme classes behind the curtain
+                document.body.classList.remove(`${oldTheme}-theme`);
                 document.body.classList.add(`${theme}-theme`);
-                
-                // Update state after animation
+
+                // Update state
+                localStorage.setItem('theme', theme);
+                this.currentTheme = theme;
+                this.updateThemeToggleButton();
+
+                // Wait a moment for styles to calculate/repaint behind the scene
                 setTimeout(() => {
-                    localStorage.setItem('theme', theme);
-                    this.currentTheme = theme;
-                    this.updateThemeToggleButton();
-                    document.body.style.transition = '';
-                    this.isAnimating = false;
-                }, 300);
-            }, 10);
+                    // Fade out overlay
+                    overlay.classList.remove('active');
+
+                    setTimeout(() => {
+                        overlay.style.display = 'none';
+                        this.isAnimating = false;
+                    }, 300); // 300ms matches CSS transition
+                }, 400); // Keep overlay for 400ms to mask layout shift
+
+            }, 300); // Wait for fade in (300ms matches CSS transition)
 
         } else {
-            // Apply theme instantly (no animation)
+            // Instant switch (no animation requested or overlay missing)
+            const oldTheme = this.currentTheme;
             document.body.classList.remove(`${oldTheme}-theme`);
             document.body.classList.add(`${theme}-theme`);
 
@@ -550,7 +568,7 @@ const themeManager = {
         const mobileButton = document.getElementById('mobileThemeToggle');
         const sidebar = document.getElementById('appSidebar');
         const isCollapsed = sidebar && sidebar.classList.contains('collapsed');
-        
+
         const themeIcons = {
             'dark': 'fa-moon',
             'light': 'fa-sun',
@@ -558,7 +576,7 @@ const themeManager = {
             'bw': 'fa-chess-board',
             'hacker': 'fa-terminal'
         };
-        
+
         const themeNames = {
             'dark': 'Dark',
             'light': 'Light',
@@ -570,7 +588,7 @@ const themeManager = {
         if (button) {
             const nextIndex = (this.themes.indexOf(this.currentTheme) + 1) % this.themes.length;
             const nextTheme = this.themes[nextIndex];
-            
+
             // Update button content
             button.innerHTML = isCollapsed
                 ? `<i class="fas ${themeIcons[this.currentTheme]}"></i>`
@@ -608,7 +626,7 @@ const themeManager = {
                 }
             });
         }
-        
+
         // Mobile theme toggle
         const mobileButton = document.getElementById('mobileThemeToggle');
         if (mobileButton) {
@@ -648,7 +666,7 @@ const themeManager = {
 // ========== INITIALIZATION ==========
 document.addEventListener("DOMContentLoaded", function () {
     themeManager.init();
-    // createAnimatedFavicon(); // Removed: function was not defined
+    createAnimatedFavicon();
 
     // Add keyboard shortcut for theme toggle (Ctrl/Cmd + T)
     document.addEventListener('keydown', function (e) {
